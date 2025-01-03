@@ -1,0 +1,7 @@
+POST http://localhost:8080/auth/sign-up
+Content-Type: application/json
+
+{
+  "username": "saa",
+  "password": "Pa1!ordaa"
+}
