@@ -47,14 +47,14 @@ public class TopSizeEntity extends BaseEntity{
         this.sleeveLength = sleeveLength;
     }
 
-    public static TopSizeEntity from(Long productId, TopProduct topProduct) {
+    public static TopSizeEntity from(Long productId, TopProduct.TopSize topSize) {
         return new TopSizeEntity(
                 productId,
-                topProduct.getTopSize(),
-                topProduct.getTotalLength(),
-                topProduct.getShoulderWidth(),
-                topProduct.getChestWidth(),
-                topProduct.getSleeveLength()
+                topSize.getTopSize(),
+                topSize.getTotalLength(),
+                topSize.getShoulderWidth(),
+                topSize.getChestWidth(),
+                topSize.getSleeveLength()
         );
     }
 }
