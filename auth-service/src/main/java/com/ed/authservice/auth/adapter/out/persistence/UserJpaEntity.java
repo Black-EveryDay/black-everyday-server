@@ -19,27 +19,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserJpaEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userId;
+  @Column(unique = true, nullable = false, length = 36)
+  private final String userPublicId = UUID.randomUUID().toString();
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long userId;
+  @Column(unique = true, nullable = false, length = 20)
+  private String username;
 
-    @Column(unique = true, nullable = false, length = 36)
-    private String userPublicId = UUID.randomUUID().toString();
+  @Column(nullable = false, length = 50)
+  private String password;
 
-    @Column(nullable = false, length = 20)
-    private String username;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private UserRole userRole;
 
-    @Column(nullable = false, length = 50)
-    private String password;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole userRole;
-
-    @Builder
-    private UserJpaEntity(String username, String password, UserRole userRole) {
-        this.username = username;
-        this.password = password;
-        this.userRole = userRole;
-    }
+  @Builder
+  private UserJpaEntity(String username, String password, UserRole userRole) {
+    this.username = username;
+    this.password = password;
+    this.userRole = userRole;
+  }
 }

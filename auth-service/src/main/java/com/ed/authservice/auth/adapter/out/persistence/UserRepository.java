@@ -9,14 +9,17 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class UserRepository implements UserPersistencePort {
 
-    private final UserJpaRepository userJpaRepository;
+  private final UserJpaRepository userJpaRepository;
 
-    @Override
-    public void saveUser(User user) {
-        userJpaRepository.save(UserJpaEntity.builder()
-                        .username(user.getUsername())
-                        .password(user.getPassword())
-                        .userRole(user.getUserRole())
-                .build());
-    }
+  @Override
+  public void saveUser(User user) {
+    userJpaRepository.save(
+        UserJpaEntity.builder().username(user.getUsername()).password(user.getPassword())
+            .userRole(user.getUserRole()).build());
+  }
+
+  @Override
+  public boolean existsUser(String username) {
+    return userJpaRepository.existsByUsername(username);
+  }
 }
