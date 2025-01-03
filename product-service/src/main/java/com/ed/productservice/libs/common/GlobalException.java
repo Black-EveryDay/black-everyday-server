@@ -55,4 +55,14 @@ public class GlobalException extends ResponseEntityExceptionHandler {
 		return new ErrorResponse(stackTraces, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	@ExceptionHandler(BrandNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public final ErrorResponse handleBrandException(Exception ex, WebRequest request) {
+		List<StackTraceElement> stackTraces = null;
+		if (stackTrace) {
+			stackTraces = Arrays.asList(ex.getStackTrace());
+		}
+		logger.error("ERROR ::: [AllException] ", ex);
+		return new ErrorResponse(stackTraces, ex.getMessage(), HttpStatus.NOT_FOUND);
+	}
 }
