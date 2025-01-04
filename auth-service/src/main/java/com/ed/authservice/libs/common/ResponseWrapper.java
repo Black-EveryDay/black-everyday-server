@@ -1,5 +1,6 @@
 package com.ed.authservice.libs.common;
 
+import com.ed.authservice.libs.exception.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
