@@ -2,9 +2,12 @@ package com.ed.authservice.auth.application.service;
 
 import com.ed.authservice.auth.application.port.in.AuthSingUpCommand;
 import com.ed.authservice.auth.application.port.in.AuthUseCase;
+import com.ed.authservice.auth.application.port.out.AuthSignUpResponse;
 import com.ed.authservice.auth.application.port.out.UserPersistencePort;
 import com.ed.authservice.auth.domain.User;
 import com.ed.authservice.auth.domain.UserRole;
+import com.ed.authservice.libs.exception.ExceptionStatus;
+import com.ed.authservice.libs.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +21,7 @@ public class AuthService implements AuthUseCase {
   public AuthSignUpResponse signUp(AuthSingUpCommand authSingUpCommand) {
 
     if (userPersistencePort.existsUser(authSingUpCommand.getUsername())) {
-      throw new IllegalArgumentException("User already exists");
+      throw new ServiceException(ExceptionStatus.USERNAME_ALREADY_USED);
     }
 
     User user = User.builder().username(authSingUpCommand.getUsername())
