@@ -1,4 +1,4 @@
-package com.ed.authservice.libs.common;
+package com.ed.authservice.libs.exception;
 
 import java.util.List;
 import lombok.Getter;

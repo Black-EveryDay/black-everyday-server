@@ -1,4 +1,4 @@
-package com.ed.authservice.libs.common;
+package com.ed.authservice.libs.exception;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -56,5 +56,4 @@ public class GlobalException extends ResponseEntityExceptionHandler {
     logger.error("ERROR ::: [AllException] ", ex);
     return new ErrorResponse(stackTraces, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
   }
-
 }
