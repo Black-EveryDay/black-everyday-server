@@ -15,7 +15,7 @@ public class AuthService implements AuthUseCase {
   private final UserPersistencePort userPersistencePort;
 
   @Override
-  public void signUp(AuthSingUpCommand authSingUpCommand) {
+  public AuthSignUpResponse signUp(AuthSingUpCommand authSingUpCommand) {
 
     if (userPersistencePort.existsUser(authSingUpCommand.getUsername())) {
       throw new IllegalArgumentException("User already exists");
@@ -24,7 +24,13 @@ public class AuthService implements AuthUseCase {
     User user = User.builder().username(authSingUpCommand.getUsername())
         .password(authSingUpCommand.getPassword()).userRole(UserRole.DEFAULT_CUSTOMER).build();
 
-    userPersistencePort.saveUser(user);
+    User savedUser = userPersistencePort.saveUser(user);
+
+    return AuthSignUpResponse.builder()
+        .publicId(savedUser.getPublicId())
+        .username(savedUser.getUsername())
+        .userRole(savedUser.getUserRole())
+        .build();
   }
 
 }

@@ -4,7 +4,7 @@ import com.ed.authservice.auth.domain.User;
 
 public interface UserPersistencePort {
 
-  void saveUser(User user);
+  User saveUser(User user);
 
   boolean existsUser(String username);
 }

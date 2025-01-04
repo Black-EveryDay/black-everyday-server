@@ -12,10 +12,18 @@ public class UserRepository implements UserPersistencePort {
   private final UserJpaRepository userJpaRepository;
 
   @Override
-  public void saveUser(User user) {
-    userJpaRepository.save(
+  public User saveUser(User user) {
+    UserJpaEntity savedUser = userJpaRepository.save(
         UserJpaEntity.builder().username(user.getUsername()).password(user.getPassword())
             .userRole(user.getUserRole()).build());
+
+    return User.builder()
+        .id(savedUser.getUserId())
+        .publicId(savedUser.getUserPublicId())
+        .username(savedUser.getUsername())
+        .password(savedUser.getPassword())
+        .userRole(savedUser.getUserRole())
+        .build();
   }
 
   @Override

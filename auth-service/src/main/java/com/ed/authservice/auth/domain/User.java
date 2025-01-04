@@ -4,14 +4,16 @@ import lombok.Builder;
 
 public class User {
 
-  private final String id;
+  private final Long id;
+  private final String publicId;
   private final String username;
   private final String password;
   private final UserRole userRole;
 
   @Builder
-  private User(String id, String username, String password, UserRole userRole) {
+  private User(Long id, String publicId, String username, String password, UserRole userRole) {
     this.id = id;
+    this.publicId = publicId;
     this.username = username;
     this.password = password;
     this.userRole = userRole;

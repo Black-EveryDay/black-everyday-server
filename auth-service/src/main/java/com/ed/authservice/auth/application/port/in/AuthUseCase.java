@@ -1,6 +1,8 @@
 package com.ed.authservice.auth.application.port.in;
 
+import com.ed.authservice.auth.application.port.out.AuthSignUpResponse;
+
 public interface AuthUseCase {
 
-  void signUp(AuthSingUpCommand authSingUpCommand);
+  AuthSignUpResponse signUp(AuthSingUpCommand authSingUpCommand);
 }
