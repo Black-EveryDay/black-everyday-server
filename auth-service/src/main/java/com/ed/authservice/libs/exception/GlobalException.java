@@ -35,6 +35,16 @@ public class GlobalException extends ResponseEntityExceptionHandler {
                 HttpStatus.BAD_REQUEST));
   }
 
+  @ExceptionHandler(ServiceException.class)
+  public final ErrorResponse handleServiceExceptions(ServiceException ex, WebRequest request) {
+    List<StackTraceElement> stackTraces = null;
+    if (stackTrace) {
+      stackTraces = Arrays.asList(ex.getStackTrace());
+    }
+    logger.error("ERROR ::: [ServiceException] ", ex);
+    return new ErrorResponse(stackTraces, ex.getMessage(), ex.getHttpStatus());
+  }
+
   @ExceptionHandler(IOException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public final ErrorResponse handleIOExceptions(Exception ex, WebRequest request) {
