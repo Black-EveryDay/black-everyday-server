@@ -2,13 +2,11 @@ package com.ed.productservice.infrastructure.persistence.entity;
 
 import com.ed.productservice.domain.vo.BrandType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "ed_brands")
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class BrandEntity {
@@ -26,4 +24,10 @@ public class BrandEntity {
 
     @Column(name = "brand_address", nullable = false)
     private String brandAddress;
+
+    public BrandEntity(String brandName, BrandType brandType, String brandAddress) {
+        this.brandName = brandName;
+        this.brandType = brandType;
+        this.brandAddress = brandAddress;
+    }
 }

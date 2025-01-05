@@ -2,6 +2,8 @@ package com.ed.productservice.presentation.web.request;
 
 import com.ed.productservice.domain.ProductForCreate;
 import com.ed.productservice.domain.TopProduct;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -11,6 +13,8 @@ public record TopProductCreateRequest(
         ProductCommonInfo productInfo,
         List<TopSizeRequest> topSizeRequestList
 ) {
+    @Getter
+    @NoArgsConstructor
     public static class TopSizeRequest {
         private String topSize;
         private BigDecimal totalLength;

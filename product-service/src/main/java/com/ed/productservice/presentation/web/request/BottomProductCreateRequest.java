@@ -2,6 +2,8 @@ package com.ed.productservice.presentation.web.request;
 
 import com.ed.productservice.domain.BottomProduct;
 import com.ed.productservice.domain.ProductForCreate;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -11,6 +13,8 @@ public record BottomProductCreateRequest(
         List<BottomSizeRequest> bottomSizeRequestList
 
 ) {
+    @Getter
+    @NoArgsConstructor
     public static class BottomSizeRequest{
         private String bottomSize;
         private BigDecimal waistWidth;

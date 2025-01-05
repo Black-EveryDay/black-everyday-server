@@ -1,6 +1,7 @@
 package com.ed.productservice.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,6 +17,7 @@ public class BottomProduct {
     }
 
     @Getter
+    @NoArgsConstructor
     public static class BottomSize{
         private String bottomSize;
         private BigDecimal waistWidth;
