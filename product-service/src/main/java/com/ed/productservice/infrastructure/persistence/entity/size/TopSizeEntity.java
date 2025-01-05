@@ -1,11 +1,10 @@
-package com.ed.productservice.infrastructure.persistence.entity;
+package com.ed.productservice.infrastructure.persistence.entity.size;
 
-import com.ed.productservice.domain.TopProduct;
+import com.ed.productservice.infrastructure.persistence.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 
@@ -13,8 +12,7 @@ import java.math.BigDecimal;
 @Table(name = "ed_top_size")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
-public class TopSizeEntity extends BaseEntity{
+public class TopSizeEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "top_size_id")
@@ -45,16 +43,5 @@ public class TopSizeEntity extends BaseEntity{
         this.shoulderWidth = shoulderWidth;
         this.chestWidth = chestWidth;
         this.sleeveLength = sleeveLength;
-    }
-
-    public static TopSizeEntity from(Long productId, TopProduct.TopSize topSize) {
-        return new TopSizeEntity(
-                productId,
-                topSize.getTopSize(),
-                topSize.getTotalLength(),
-                topSize.getShoulderWidth(),
-                topSize.getChestWidth(),
-                topSize.getSleeveLength()
-        );
     }
 }

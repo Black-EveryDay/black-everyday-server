@@ -1,9 +1,10 @@
-package com.ed.productservice.infrastructure.persistence.entity;
+package com.ed.productservice.infrastructure.persistence.entity.size;
 
-import com.ed.productservice.domain.BottomProduct;
+import com.ed.productservice.infrastructure.persistence.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
@@ -11,8 +12,7 @@ import java.math.BigDecimal;
 @Table(name = "ed_bottom_size")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
-public class BottomSizeEntity extends BaseEntity{
+public class BottomSizeEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bottom_size_id")
@@ -39,15 +39,5 @@ public class BottomSizeEntity extends BaseEntity{
         this.totalLength = totalLength;
         this.thighCircumference = thighCircumference;
         this.hipWidth = hipWidth;
-    }
-
-    public static BottomSizeEntity from(Long productId, BottomProduct.BottomSize bottomSize) {
-        return new BottomSizeEntity(
-                productId,
-                bottomSize.getBottomSize(),
-                bottomSize.getBottomTotalLength(),
-                bottomSize.getThighWidth(),
-                bottomSize.getHipWidth()
-        );
     }
 }
