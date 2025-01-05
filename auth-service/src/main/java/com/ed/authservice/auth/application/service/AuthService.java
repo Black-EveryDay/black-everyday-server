@@ -1,6 +1,6 @@
 package com.ed.authservice.auth.application.service;
 
-import com.ed.authservice.auth.application.port.in.AuthSingUpCommand;
+import com.ed.authservice.auth.application.port.in.AuthSignUpCommand;
 import com.ed.authservice.auth.application.port.in.AuthUseCase;
 import com.ed.authservice.auth.application.port.out.AuthSignUpResponse;
 import com.ed.authservice.auth.application.port.out.UserPersistencePort;
@@ -18,14 +18,14 @@ public class AuthService implements AuthUseCase {
   private final UserPersistencePort userPersistencePort;
 
   @Override
-  public AuthSignUpResponse signUp(AuthSingUpCommand authSingUpCommand) {
+  public AuthSignUpResponse signUp(AuthSignUpCommand authSignUpCommand) {
 
-    if (userPersistencePort.existsUser(authSingUpCommand.getUsername())) {
+    if (userPersistencePort.existsUser(authSignUpCommand.getUsername())) {
       throw new ServiceException(ExceptionStatus.USERNAME_ALREADY_USED);
     }
 
-    User user = User.builder().username(authSingUpCommand.getUsername())
-        .password(authSingUpCommand.getPassword()).userRole(UserRole.DEFAULT_CUSTOMER).build();
+    User user = User.builder().username(authSignUpCommand.getUsername())
+        .password(authSignUpCommand.getPassword()).userRole(UserRole.DEFAULT_CUSTOMER).build();
 
     User savedUser = userPersistencePort.saveUser(user);
 

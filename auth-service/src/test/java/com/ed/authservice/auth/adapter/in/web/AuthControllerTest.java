@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.ed.authservice.auth.adapter.in.web.dto.SignUpRequest;
-import com.ed.authservice.auth.application.port.in.AuthSingUpCommand;
+import com.ed.authservice.auth.application.port.in.AuthSignUpCommand;
 import com.ed.authservice.auth.application.port.in.AuthUseCase;
 import com.ed.authservice.auth.application.port.out.AuthSignUpResponse;
 import com.ed.authservice.auth.domain.UserRole;
@@ -62,7 +62,7 @@ class AuthControllerTest {
           .userRole(UserRole.DEFAULT_CUSTOMER)
           .build();
 
-      given(authUseCase.signUp(any(AuthSingUpCommand.class))).willReturn(authSignUpResponse);
+      given(authUseCase.signUp(any(AuthSignUpCommand.class))).willReturn(authSignUpResponse);
 
       //when
       ResultActions resultActions = mockMvc.perform(post(uri)
@@ -77,7 +77,7 @@ class AuthControllerTest {
           .andExpect(
               jsonPath("$.body.userRole").value(authSignUpResponse.getUserRole().toString()));
 
-      verify(authUseCase, times(1)).signUp(any(AuthSingUpCommand.class));
+      verify(authUseCase, times(1)).signUp(any(AuthSignUpCommand.class));
     }
 
     @ParameterizedTest
@@ -102,7 +102,7 @@ class AuthControllerTest {
           .password(passWord)
           .build();
 
-      given(authUseCase.signUp(any(AuthSingUpCommand.class))).willThrow(new ServiceException(
+      given(authUseCase.signUp(any(AuthSignUpCommand.class))).willThrow(new ServiceException(
           ExceptionStatus.USERNAME_ALREADY_USED));
 
       //when

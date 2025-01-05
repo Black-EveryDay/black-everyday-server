@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class AuthSingUpCommand {
+public class AuthSignUpCommand {
 
   private String username;
   private String password;
 
   @Builder
-  private AuthSingUpCommand(String username, String password) {
+  private AuthSignUpCommand(String username, String password) {
     this.username = username;
     this.password = password;
   }

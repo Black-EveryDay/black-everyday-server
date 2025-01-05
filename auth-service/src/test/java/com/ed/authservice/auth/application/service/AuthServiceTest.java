@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-import com.ed.authservice.auth.application.port.in.AuthSingUpCommand;
+import com.ed.authservice.auth.application.port.in.AuthSignUpCommand;
 import com.ed.authservice.auth.application.port.out.AuthSignUpResponse;
 import com.ed.authservice.auth.application.port.out.UserPersistencePort;
 import com.ed.authservice.auth.domain.User;
@@ -33,43 +33,42 @@ class AuthServiceTest {
   void shouldSignUpSuccessTest() {
     //given
     UUID publicId = UUID.randomUUID();
-    AuthSingUpCommand authSingUpCommand = AuthSingUpCommand.builder()
+    AuthSignUpCommand authSignUpCommand = AuthSignUpCommand.builder()
         .username("test")
         .password("Test12!@")
         .build();
 
-    given(userPersistencePort.existsUser(authSingUpCommand.getUsername())).willReturn(false);
+    given(userPersistencePort.existsUser(authSignUpCommand.getUsername())).willReturn(false);
 
     given(userPersistencePort.saveUser(any(User.class))).willReturn(User.builder()
         .publicId(publicId.toString())
-        .username(authSingUpCommand.getUsername())
+        .username(authSignUpCommand.getUsername())
         .userRole(UserRole.DEFAULT_CUSTOMER)
         .build());
 
     //when
-    AuthSignUpResponse authSignUpResponse = authService.signUp(authSingUpCommand);
+    AuthSignUpResponse authSignUpResponse = authService.signUp(authSignUpCommand);
 
     //then
-    assertEquals(authSingUpCommand.getUsername(), authSignUpResponse.getUsername());
+    assertEquals(authSignUpCommand.getUsername(), authSignUpResponse.getUsername());
     assertEquals(publicId.toString(), authSignUpResponse.getPublicId());
     assertEquals(UserRole.DEFAULT_CUSTOMER, authSignUpResponse.getUserRole());
   }
 
   @Test
-
   @DisplayName("Should sign up Fail")
   void shouldSignUpFailTest() {
     //given
-    AuthSingUpCommand authSingUpCommand = AuthSingUpCommand.builder()
+    AuthSignUpCommand authSignUpCommand = AuthSignUpCommand.builder()
         .username("test")
         .password("Test12!@")
         .build();
 
-    given(userPersistencePort.existsUser(authSingUpCommand.getUsername())).willReturn(true);
+    given(userPersistencePort.existsUser(authSignUpCommand.getUsername())).willReturn(true);
 
     //when-then
     ServiceException serviceException = assertThrows(ServiceException.class,
-        () -> authService.signUp(authSingUpCommand));
+        () -> authService.signUp(authSignUpCommand));
     assertEquals(HttpStatus.CONFLICT, serviceException.getHttpStatus());
     assertEquals("Username already used", serviceException.getMessage());
   }
