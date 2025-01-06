@@ -3,3 +3,4 @@ spring:
     name: auth-service
   profiles:
     active: local
+    include: jwt
