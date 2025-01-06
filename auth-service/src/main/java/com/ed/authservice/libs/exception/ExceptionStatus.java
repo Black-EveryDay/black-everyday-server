@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 public enum ExceptionStatus {
   //User
   USERNAME_ALREADY_USED(HttpStatus.CONFLICT, "u001", "Username already used"),
+  USER_NOT_FOUND(HttpStatus.NOT_FOUND, "u002", "user not found"),
+  USER_PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "u003", "Password not match"),
   ;
 
   private final HttpStatus status;
