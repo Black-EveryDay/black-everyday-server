@@ -2,9 +2,12 @@ package com.ed.authservice.auth.adapter.in.web;
 
 import static com.ed.authservice.libs.common.ApiResponseUtils.created;
 
+import com.ed.authservice.auth.adapter.in.web.dto.SignInRequest;
 import com.ed.authservice.auth.adapter.in.web.dto.SignUpRequest;
+import com.ed.authservice.auth.application.port.in.AuthSignInCommand;
 import com.ed.authservice.auth.application.port.in.AuthSignUpCommand;
 import com.ed.authservice.auth.application.port.in.AuthUseCase;
+import com.ed.authservice.auth.application.port.out.AuthSignInResponse;
 import com.ed.authservice.auth.application.port.out.AuthSignUpResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
