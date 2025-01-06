@@ -10,6 +10,7 @@ import com.ed.authservice.auth.domain.User;
 import com.ed.authservice.auth.domain.UserRole;
 import com.ed.authservice.libs.exception.ExceptionStatus;
 import com.ed.authservice.libs.exception.ServiceException;
+import com.ed.authservice.libs.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class AuthService implements AuthUseCase {
 
   private final UserPersistencePort userPersistencePort;
+  private final JwtUtil jwtUtil;
 
   @Override
   public AuthSignUpResponse signUp(AuthSignUpCommand authSignUpCommand) {
@@ -46,7 +48,10 @@ public class AuthService implements AuthUseCase {
       throw new ServiceException(ExceptionStatus.USER_PASSWORD_NOT_MATCH);
     }
 
-    return null;
+    String jwt = jwtUtil.generateToken(user);
+    return AuthSignInResponse.builder()
+        .token(jwt)
+        .build();
   }
 
 }
