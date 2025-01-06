@@ -28,8 +28,9 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
       ServerHttpRequest request,
       ServerHttpResponse response) {
 
-    if (body instanceof ErrorResponse) {
-      return new ApiResponse<>(false, body);
+    if (body instanceof ErrorResponse errorResponse) {
+      response.setStatusCode(errorResponse.getStatus());
+      return new ApiResponse<>(false, errorResponse);
     }
 
     return new ApiResponse<>(true, body);
