@@ -12,12 +12,14 @@ import com.ed.authservice.libs.exception.ExceptionStatus;
 import com.ed.authservice.libs.exception.ServiceException;
 import com.ed.authservice.libs.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService implements AuthUseCase {
 
+  private final PasswordEncoder passwordEncoder;
   private final UserPersistencePort userPersistencePort;
   private final JwtUtil jwtUtil;
 
@@ -28,8 +30,11 @@ public class AuthService implements AuthUseCase {
       throw new ServiceException(ExceptionStatus.USERNAME_ALREADY_USED);
     }
 
-    User user = User.builder().username(authSignUpCommand.getUsername())
-        .password(authSignUpCommand.getPassword()).userRole(UserRole.DEFAULT_CUSTOMER).build();
+    User user = User.builder()
+        .username(authSignUpCommand.getUsername())
+        .password(passwordEncoder.encode(authSignUpCommand.getPassword()))
+        .userRole(UserRole.DEFAULT_CUSTOMER)
+        .build();
 
     User savedUser = userPersistencePort.saveUser(user);
 
@@ -44,7 +49,7 @@ public class AuthService implements AuthUseCase {
   public AuthSignInResponse signIn(AuthSignInCommand authSignInCommand) {
     User user = userPersistencePort.findByUsername(authSignInCommand.getUsername());
 
-    if (!user.getPassword().equals(authSignInCommand.getPassword())) {
+    if (!passwordEncoder.matches(authSignInCommand.getPassword(), user.getPassword())) {
       throw new ServiceException(ExceptionStatus.USER_PASSWORD_NOT_MATCH);
     }
 
@@ -53,5 +58,4 @@ public class AuthService implements AuthUseCase {
         .token(jwt)
         .build();
   }
-
 }
