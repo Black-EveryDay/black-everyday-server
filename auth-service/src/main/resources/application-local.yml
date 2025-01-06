@@ -1,3 +1,6 @@
+server:
+  port: 19092
+
 spring:
   jpa:
     hibernate:
@@ -10,9 +13,13 @@ spring:
         default_schema: public
         default_batch_fetch_size: 500
     open-in-view: false
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${SPRING_DATASOURCE_URL}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/  # Eureka 서버의 URL을 지정
