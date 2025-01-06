@@ -17,7 +17,7 @@ public class AuditorAwareImpl implements AuditorAware<String> {
 
       // 회원가입, 로그인인 경우 넘어감
       String requestURI = request.getRequestURI();
-      if (requestURI.matches("^/api/v\\\\d+/auth.*")) {
+      if (requestURI.matches("^/api/v\\d+/auth.*")) {
         return Optional.empty();
       }
 
