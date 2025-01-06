@@ -29,4 +29,13 @@ public class AuthController {
         .password(signUpRequest.getPassword())
         .build()));
   }
+
+  @PostMapping("/sign-in")
+  public AuthSignInResponse signIn(
+      @Valid @RequestBody SignInRequest signInRequest) {
+    return authUseCase.signIn(AuthSignInCommand.builder()
+        .username(signInRequest.getUsername())
+        .password(signInRequest.getPassword())
+        .build());
+  }
 }
