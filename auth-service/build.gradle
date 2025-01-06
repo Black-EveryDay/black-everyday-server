@@ -26,6 +26,9 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // Password Encoder
+    implementation 'org.springframework.security:spring-security-crypto:6.4.2'
+
     // DevTools
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'

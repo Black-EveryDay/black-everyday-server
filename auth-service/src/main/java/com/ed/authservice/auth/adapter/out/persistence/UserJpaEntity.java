@@ -29,7 +29,7 @@ public class UserJpaEntity {
   @Column(unique = true, nullable = false, length = 20)
   private String username;
 
-  @Column(nullable = false, length = 50)
+  @Column(nullable = false, length = 60)
   private String password;
 
   @Enumerated(EnumType.STRING)
