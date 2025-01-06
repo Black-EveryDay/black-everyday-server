@@ -7,4 +7,6 @@ public interface UserPersistencePort {
   User saveUser(User user);
 
   boolean existsUser(String username);
+
+  User findByUsername(String username);
 }

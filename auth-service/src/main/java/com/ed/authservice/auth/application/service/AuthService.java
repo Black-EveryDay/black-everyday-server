@@ -1,7 +1,9 @@
 package com.ed.authservice.auth.application.service;
 
+import com.ed.authservice.auth.application.port.in.AuthSignInCommand;
 import com.ed.authservice.auth.application.port.in.AuthSignUpCommand;
 import com.ed.authservice.auth.application.port.in.AuthUseCase;
+import com.ed.authservice.auth.application.port.out.AuthSignInResponse;
 import com.ed.authservice.auth.application.port.out.AuthSignUpResponse;
 import com.ed.authservice.auth.application.port.out.UserPersistencePort;
 import com.ed.authservice.auth.domain.User;
@@ -34,6 +36,17 @@ public class AuthService implements AuthUseCase {
         .username(savedUser.getUsername())
         .userRole(savedUser.getUserRole())
         .build();
+  }
+
+  @Override
+  public AuthSignInResponse signIn(AuthSignInCommand authSignInCommand) {
+    User user = userPersistencePort.findByUsername(authSignInCommand.getUsername());
+
+    if (!user.getPassword().equals(authSignInCommand.getPassword())) {
+      throw new ServiceException(ExceptionStatus.USER_PASSWORD_NOT_MATCH);
+    }
+
+    return null;
   }
 
 }
