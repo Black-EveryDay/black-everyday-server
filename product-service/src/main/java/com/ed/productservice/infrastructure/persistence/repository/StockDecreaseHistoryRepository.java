@@ -9,7 +9,8 @@ import org.springframework.data.repository.query.Param;
 public interface StockDecreaseHistoryRepository extends
     JpaRepository<StockDecreaseHistoryEntity, Long> {
 
-    List<StockDecreaseHistoryEntity> findAllByReservationId(String reservationId);
+    @Query("SELECT s FROM StockDecreaseHistoryEntity s WHERE s.reservationId = :reservationId AND s.isDeleted = false")
+    List<StockDecreaseHistoryEntity> findAllByReservationId(@Param("reservationId") String reservationId);
 
     @Query("select s from StockDecreaseHistoryEntity s where s.reservationId = :reservationId and s.productId = :productId and s.size =:size")
     List<StockDecreaseHistoryEntity> findByProductIdAndSizeAndReservationId(@Param("productId") Long productId, @Param("size") String size,
