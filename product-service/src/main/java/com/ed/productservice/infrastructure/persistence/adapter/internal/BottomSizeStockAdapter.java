@@ -2,8 +2,7 @@ package com.ed.productservice.infrastructure.persistence.adapter.internal;
 
 import com.ed.productservice.domain.vo.ProductReservationInfoDomain;
 import com.ed.productservice.infrastructure.persistence.entity.size.BottomSizeStockEntity;
-import com.ed.productservice.infrastructure.persistence.entity.size.TopSizeStockEntity;
-import com.ed.productservice.infrastructure.persistence.repository.BottomSizeRepository;
+import com.ed.productservice.infrastructure.persistence.repository.BottomSizeStockRepository;
 import com.ed.productservice.presentation.web.request.InventoryReservationRequest.ProductReservationInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,17 +11,17 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class BottomSizeStockAdapter {
 
-    private final BottomSizeRepository bottomSizeRepository;
+    private final BottomSizeStockRepository bottomSizeStockRepository;
 
     public void bottomPrepare(ProductReservationInfo item) {
-        BottomSizeStockEntity bottomSizeStockEntity = bottomSizeRepository.findByProductIdAndBottomSize(
+        BottomSizeStockEntity bottomSizeStockEntity = bottomSizeStockRepository.findByProductIdAndBottomSize(
             item.productId(), item.size());
 
         bottomSizeStockEntity.validateStockAvailability(item.quantity());
     }
 
     public void bottomDecreaseStock(ProductReservationInfoDomain reservationInfo) {
-        BottomSizeStockEntity bottomSizeStockEntity = bottomSizeRepository.findByProductIdAndBottomSize(
+        BottomSizeStockEntity bottomSizeStockEntity = bottomSizeStockRepository.findByProductIdAndBottomSize(
             reservationInfo.getProductId(),
             reservationInfo.getSize());
 
@@ -30,7 +29,7 @@ public class BottomSizeStockAdapter {
     }
 
     public void bottomIncrease(ProductReservationInfoDomain item) {
-        BottomSizeStockEntity entity = bottomSizeRepository.findByProductIdAndBottomSize(
+        BottomSizeStockEntity entity = bottomSizeStockRepository.findByProductIdAndBottomSize(
             item.getProductId(),
             item.getSize());
 
