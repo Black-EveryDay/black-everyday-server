@@ -17,7 +17,6 @@ public class ProductMapper {
                 .price(productForCreate.getPrice())
                 .description(productForCreate.getDescription())
                 .color(productForCreate.getColor())
-                .quantity(productForCreate.getQuantity())
                 .image(productForCreate.getImage())
                 .status(productForCreate.getStatus())
                 .category(productForCreate.getCategory())
@@ -37,7 +36,6 @@ public class ProductMapper {
                 entity.getPrice(),
                 entity.getDescription(),
                 entity.getColor(),
-                entity.getQuantity(),
                 entity.getImage(),
                 entity.getStatus(),
                 entity.getCategory(),

@@ -2,7 +2,13 @@ package com.ed.productservice.infrastructure.persistence.entity;
 
 import com.ed.productservice.domain.vo.ProductCategory;
 import com.ed.productservice.domain.vo.ProductStatus;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +30,6 @@ public class ProductEntity extends BaseEntity {
     private int price;
     private String description;
     private String color;
-    private Integer quantity;
     private String image;
 
     @Enumerated(EnumType.STRING)
@@ -32,14 +37,15 @@ public class ProductEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ProductCategory category;
 
-    public ProductEntity(String productPublicId, Long brandId, String name, int price, String description, String color, Integer quantity, String image, ProductStatus status, ProductCategory category) {
+    public ProductEntity(String productPublicId, Long brandId, String name, int price,
+        String description, String color, String image, ProductStatus status,
+        ProductCategory category) {
         this.productPublicId = productPublicId;
         this.brandId = brandId;
         this.name = name;
         this.price = price;
         this.description = description;
         this.color = color;
-        this.quantity = quantity;
         this.image = image;
         this.status = status;
         this.category = category;
