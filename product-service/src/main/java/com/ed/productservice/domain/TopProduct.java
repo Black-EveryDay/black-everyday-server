@@ -22,13 +22,17 @@ public class TopProduct {
         private BigDecimal shoulderWidth;
         private BigDecimal chestWidth;
         private BigDecimal sleeveLength;
+        private Integer quantity;
 
-        public TopSize(String topSize, BigDecimal totalLength, BigDecimal shoulderWidth, BigDecimal chestWidth, BigDecimal sleeveLength) {
+
+        public TopSize(String topSize, BigDecimal totalLength, BigDecimal shoulderWidth,
+            BigDecimal chestWidth, BigDecimal sleeveLength, Integer quantity) {
             this.topSize = topSize;
             this.totalLength = totalLength;
             this.shoulderWidth = shoulderWidth;
             this.chestWidth = chestWidth;
             this.sleeveLength = sleeveLength;
+            this.quantity = quantity;
         }
     }
 }
