@@ -30,6 +30,7 @@ public class CouponIssueInfoJpaEntity {
   @Column(nullable = false)
   private Boolean isIssuable;
 
+  @Column
   private Integer maxIssuance;
 
   @Builder
@@ -39,7 +40,7 @@ public class CouponIssueInfoJpaEntity {
     this.couponIssuanceType = couponIssuanceType;
     this.couponIssuerType = couponIssuerType;
     this.couponIssuerId = couponIssuerId == null ? null : couponIssuerId.toString();
-    this.isIssuable = isIssuable;
+    this.isIssuable = isIssuable != null && isIssuable;
     this.maxIssuance = maxIssuance;
   }
 
