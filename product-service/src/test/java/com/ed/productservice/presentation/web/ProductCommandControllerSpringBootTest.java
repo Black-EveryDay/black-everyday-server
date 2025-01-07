@@ -140,21 +140,24 @@ class ProductCommandControllerSpringBootTest {
                         new BigDecimal("32.0"),
                         new BigDecimal("44.0"),
                         new BigDecimal("28.0"),
-                        new BigDecimal("98.0")
+                        new BigDecimal("98.0"),
+                    100
                 ),
                 new BottomProductCreateRequest.BottomSizeRequest(
                         "M",
                         new BigDecimal("34.0"),
                         new BigDecimal("46.0"),
                         new BigDecimal("30.0"),
-                        new BigDecimal("99.0")
+                        new BigDecimal("99.0"),
+                    100
                 ),
                 new BottomProductCreateRequest.BottomSizeRequest(
                         "L",
                         new BigDecimal("36.0"),
                         new BigDecimal("48.0"),
                         new BigDecimal("32.0"),
-                        new BigDecimal("100.0")
+                        new BigDecimal("100.0"),
+                    100
                 )
         );
 
@@ -180,21 +183,24 @@ class ProductCommandControllerSpringBootTest {
                         new BigDecimal("65.0"),
                         new BigDecimal("42.0"),
                         new BigDecimal("48.0"),
-                        new BigDecimal("61.0")
+                        new BigDecimal("61.0"),
+                    10
                 ),
                 new TopProductCreateRequest.TopSizeRequest(
                         "M",
                         new BigDecimal("67.0"),
                         new BigDecimal("44.0"),
                         new BigDecimal("50.0"),
-                        new BigDecimal("62.0")
+                        new BigDecimal("62.0"),
+                    10
                 ),
                 new TopProductCreateRequest.TopSizeRequest(
                         "L",
                         new BigDecimal("69.0"),
                         new BigDecimal("46.0"),
                         new BigDecimal("52.0"),
-                        new BigDecimal("63.0")
+                        new BigDecimal("63.0"),
+                    10
                 )
         );
 

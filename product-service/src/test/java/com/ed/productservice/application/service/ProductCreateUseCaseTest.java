@@ -61,7 +61,8 @@ class ProductCreateUseCaseTest {
                         new BigDecimal("65.0"),
                         new BigDecimal("42.0"),
                         new BigDecimal("48.0"),
-                        new BigDecimal("61.0")
+                        new BigDecimal("61.0"),
+                    100
                 )
         );
 
@@ -77,7 +78,6 @@ class ProductCreateUseCaseTest {
                 29900,
                 "편안한 착용감의 데일리 티셔츠",
                 "BLACK",
-                100,
                 "top_image_url.jpg",
                 ProductStatus.ACTIVE,
                 ProductCategory.TOP,
@@ -127,7 +127,8 @@ class ProductCreateUseCaseTest {
                         new BigDecimal("32.0"),
                         new BigDecimal("44.0"),
                         new BigDecimal("28.0"),
-                        new BigDecimal("98.0")
+                        new BigDecimal("98.0"),
+                        10
                 )
         );
 
@@ -143,7 +144,6 @@ class ProductCreateUseCaseTest {
                 29900,
                 "편안한 착용감의 데일리 팬츠",
                 "BLACK",
-                100,
                 "bottom_image_url.jpg",
                 ProductStatus.ACTIVE,
                 ProductCategory.BOTTOM,
