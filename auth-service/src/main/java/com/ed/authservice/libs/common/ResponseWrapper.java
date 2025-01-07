@@ -28,8 +28,8 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
       ServerHttpRequest request,
       ServerHttpResponse response) {
 
-    if (body instanceof ErrorResponse errorResponse) {
-      return new ApiResponse<>(false, errorResponse);
+    if (body instanceof ErrorResponse) {
+      return new ApiResponse<>(false, body);
     }
 
     return new ApiResponse<>(true, body);
