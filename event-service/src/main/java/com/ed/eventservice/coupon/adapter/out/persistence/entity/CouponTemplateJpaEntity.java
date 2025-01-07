@@ -1,6 +1,5 @@
 package com.ed.eventservice.coupon.adapter.out.persistence.entity;
 
-import com.ed.eventservice.coupon.domain.CouponTemplate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -11,8 +10,10 @@ import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @Table(name = "ed_coupon_templates")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -52,31 +53,5 @@ public class CouponTemplateJpaEntity extends BaseJpaEntity {
     this.couponUsageTargetInfoJpaEntity = couponUsageTargetInfoJpaEntity;
     this.couponDiscountInfoJpaEntity = couponDiscountInfoJpaEntity;
     this.couponExpirationInfoJpaEntity = couponExpirationInfoJpaEntity;
-  }
-
-  public static CouponTemplateJpaEntity from(CouponTemplate couponTemplate) {
-    return CouponTemplateJpaEntity.builder()
-        .couponName(couponTemplate.getCouponName())
-        .couponIssueInfoJpaEntity(
-            CouponIssueInfoJpaEntity.from(couponTemplate.getCouponIssueInfo()))
-        .couponUsageTargetInfoJpaEntity(
-            CouponUsageTargetInfoJpaEntity.from(couponTemplate.getCouponUsageTargetInfo()))
-        .couponDiscountInfoJpaEntity(
-            CouponDiscountInfoJpaEntity.from(couponTemplate.getCouponDiscountInfo()))
-        .couponExpirationInfoJpaEntity(
-            CouponExpirationInfoJpaEntity.from(couponTemplate.getCouponExpirationInfo()))
-        .build();
-  }
-
-  public CouponTemplate toDomain() {
-    return CouponTemplate.builder()
-        .id(this.id)
-        .publicId(UUID.fromString(this.publicId))
-        .couponName(this.couponName)
-        .couponIssueInfo(this.couponIssueInfoJpaEntity.toCouponIssueInfo())
-        .couponUsageTargetInfo(this.couponUsageTargetInfoJpaEntity.toCouponUsageTargetInfo())
-        .couponDiscountInfo(this.couponDiscountInfoJpaEntity.toCouponDiscountInfo())
-        .couponExpirationInfo(this.couponExpirationInfoJpaEntity.toCouponExpirationInfo())
-        .build();
   }
 }
