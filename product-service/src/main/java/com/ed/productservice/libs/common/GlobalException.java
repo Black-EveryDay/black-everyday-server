@@ -55,14 +55,40 @@ public class GlobalException extends ResponseEntityExceptionHandler {
 		return new ErrorResponse(stackTraces, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@ExceptionHandler(BrandNotFoundException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public final ErrorResponse handleBrandException(Exception ex, WebRequest request) {
+	@ExceptionHandler(BrandException.class)
+	public ResponseEntity<ErrorResponse> handleBrandException(BrandException ex, WebRequest request) {
 		List<StackTraceElement> stackTraces = null;
 		if (stackTrace) {
 			stackTraces = Arrays.asList(ex.getStackTrace());
 		}
-		logger.error("ERROR ::: [AllException] ", ex);
-		return new ErrorResponse(stackTraces, ex.getMessage(), HttpStatus.NOT_FOUND);
+		logger.error("ERROR ::: [BrandException] ", ex);
+
+		ErrorResponse errorResponse = new ErrorResponse(
+			stackTraces,
+			ex.getMessage(),
+			ex.getErrorCode().getStatus()
+		);
+
+		return ResponseEntity
+			.status(ex.getErrorCode().getStatus())
+			.body(errorResponse);
 	}
+
+	@ExceptionHandler(ProductException.class)
+	public ResponseEntity<ErrorResponse> handleProductException(ProductException ex, WebRequest request) {
+		List<StackTraceElement> stackTraces = null;
+		if (stackTrace) {
+			stackTraces = Arrays.asList(ex.getStackTrace());
+		}
+		logger.error("ERROR ::: [ProductException] ", ex);
+		ErrorResponse errorResponse = new ErrorResponse(
+			stackTraces,
+			ex.getMessage(),
+			ex.getErrorCode().getStatus()
+		);
+
+		return ResponseEntity
+			.status(ex.getErrorCode().getStatus())
+			.body(errorResponse);
+    }
 }
