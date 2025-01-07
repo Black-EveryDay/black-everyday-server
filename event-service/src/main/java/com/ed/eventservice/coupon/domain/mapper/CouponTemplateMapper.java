@@ -8,12 +8,9 @@ import java.time.Duration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring", imports = {Duration.class})
 public interface CouponTemplateMapper {
-
-  CouponTemplateMapper INSTANCE = Mappers.getMapper(CouponTemplateMapper.class);
 
   @Mapping(target = "couponIssueInfo.couponIssuanceType", source = "couponIssuanceType")
   @Mapping(target = "couponIssueInfo.couponIssuerType", source = "couponIssuerType")
