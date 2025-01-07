@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "ed_users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserJpaEntity {
+public class UserJpaEntity extends BaseJpaEntity {
 
   @Column(unique = true, nullable = false, length = 36)
   private final String userPublicId = UUID.randomUUID().toString();
@@ -29,7 +29,7 @@ public class UserJpaEntity {
   @Column(unique = true, nullable = false, length = 20)
   private String username;
 
-  @Column(nullable = false, length = 50)
+  @Column(nullable = false, length = 60)
   private String password;
 
   @Enumerated(EnumType.STRING)

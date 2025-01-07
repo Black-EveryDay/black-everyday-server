@@ -35,14 +35,28 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.BAD_REQUEST));
   }
 
+  @ExceptionHandler(AdapterException.class)
+  public final ResponseEntity<ErrorResponse> handleAdapterExceptions(AdapterException ex,
+      WebRequest request) {
+    List<StackTraceElement> stackTraces = null;
+    if (stackTrace) {
+      stackTraces = Arrays.asList(ex.getStackTrace());
+    }
+    logger.error("ERROR ::: [AdapterException] ", ex);
+    return ResponseEntity.status(ex.getHttpStatus())
+        .body(new ErrorResponse(stackTraces, ex.getMessage(), ex.getHttpStatus()));
+  }
+
   @ExceptionHandler(ServiceException.class)
-  public final ErrorResponse handleServiceExceptions(ServiceException ex, WebRequest request) {
+  public final ResponseEntity<ErrorResponse> handleServiceExceptions(ServiceException ex,
+      WebRequest request) {
     List<StackTraceElement> stackTraces = null;
     if (stackTrace) {
       stackTraces = Arrays.asList(ex.getStackTrace());
     }
     logger.error("ERROR ::: [ServiceException] ", ex);
-    return new ErrorResponse(stackTraces, ex.getMessage(), ex.getHttpStatus());
+    return ResponseEntity.status(ex.getHttpStatus())
+        .body(new ErrorResponse(stackTraces, ex.getMessage(), ex.getHttpStatus()));
   }
 
   @ExceptionHandler(IOException.class)

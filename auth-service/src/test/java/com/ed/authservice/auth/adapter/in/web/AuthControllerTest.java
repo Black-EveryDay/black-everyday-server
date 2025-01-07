@@ -8,11 +8,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.ed.authservice.auth.adapter.in.web.dto.SignInRequest;
 import com.ed.authservice.auth.adapter.in.web.dto.SignUpRequest;
+import com.ed.authservice.auth.application.port.in.AuthSignInCommand;
 import com.ed.authservice.auth.application.port.in.AuthSignUpCommand;
 import com.ed.authservice.auth.application.port.in.AuthUseCase;
+import com.ed.authservice.auth.application.port.out.AuthSignInResponse;
 import com.ed.authservice.auth.application.port.out.AuthSignUpResponse;
 import com.ed.authservice.auth.domain.UserRole;
+import com.ed.authservice.libs.exception.AdapterException;
 import com.ed.authservice.libs.exception.ExceptionStatus;
 import com.ed.authservice.libs.exception.ServiceException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +28,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,6 +42,9 @@ class AuthControllerTest {
 
   @Autowired
   private ObjectMapper objectMapper;
+
+  @MockitoBean
+  private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
   @MockitoBean
   private AuthUseCase authUseCase;
@@ -115,6 +123,97 @@ class AuthControllerTest {
           .andExpect(jsonPath("$.success").value(false))
           .andExpect(
               jsonPath("$.body.message").value(errorMessage));
+    }
+  }
+
+  @Nested
+  @DisplayName("SignInTest")
+  class SignIn {
+
+    @Test
+    @DisplayName("Should sign in success")
+    void shouldSignInSuccess() throws Exception {
+      //given
+      final String uri = "/api/v1/auth/sign-in";
+
+      final SignInRequest signInRequest = SignInRequest.builder()
+          .username("test1")
+          .password("Test@123")
+          .build();
+
+      final String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhdXRoLXNlcnZpY2UiLCJpYXQiOjE3MzYxNDgzMDQsImV4cCI6MTgyMjU0ODMwNCwidXNlcklkIjoiZDFhMzU0ZDMtMWQ1Yi00YzE3LWI3MjctOGIzNTFjOWRhZTYzIiwidXNlclJvbGUiOiJERUZBVUxUX0NVU1RPTUVSIn0.9_adct0nTs87ft543pXb_mYGy8fyy2yDZ2HECRPNoAqoCr8ku47gHWSwovGfxnIvqVd8rEJxA-JfRksC4Vbg1w";
+
+      final AuthSignInResponse authSignInResponse = AuthSignInResponse.builder()
+          .token(token)
+          .build();
+
+      given(authUseCase.signIn(any(AuthSignInCommand.class))).willReturn(authSignInResponse);
+
+      //when
+      ResultActions resultActions = mockMvc.perform(post(uri)
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(objectMapper.writeValueAsString(signInRequest)));
+
+      //then
+      resultActions.andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.body.token").value(token));
+
+      verify(authUseCase, times(1)).signIn(any(AuthSignInCommand.class));
+    }
+
+    @Test
+    @DisplayName("Should sign in Fail when cannot found user by username")
+    void shouldSignInFailWhenCannotFoundUserByUsername() throws Exception {
+      //given
+      final String uri = "/api/v1/auth/sign-in";
+
+      final SignInRequest signInRequest = SignInRequest.builder()
+          .username("test1")
+          .password("Test@123")
+          .build();
+
+      given(authUseCase.signIn(any(AuthSignInCommand.class)))
+          .willThrow(new AdapterException(ExceptionStatus.USER_NOT_FOUND));
+
+      //when
+      ResultActions resultActions = mockMvc.perform(post(uri)
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(objectMapper.writeValueAsString(signInRequest)));
+
+      //then
+      resultActions.andExpect(status().isNotFound())
+          .andExpect(jsonPath("$.success").value(false))
+          .andExpect(jsonPath("$.body.message").value("user not found"));
+
+      verify(authUseCase, times(1)).signIn(any(AuthSignInCommand.class));
+    }
+
+    @Test
+    @DisplayName("Should sign in Fail when password not match")
+    void shouldSignInFailWhenPasswordNotMatch() throws Exception {
+      //given
+      final String uri = "/api/v1/auth/sign-in";
+
+      final SignInRequest signInRequest = SignInRequest.builder()
+          .username("test1")
+          .password("Test@123")
+          .build();
+
+      given(authUseCase.signIn(any(AuthSignInCommand.class)))
+          .willThrow(new ServiceException(ExceptionStatus.USER_PASSWORD_NOT_MATCH));
+
+      //when
+      ResultActions resultActions = mockMvc.perform(post(uri)
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(objectMapper.writeValueAsString(signInRequest)));
+
+      //then
+      resultActions.andExpect(status().isBadRequest())
+          .andExpect(jsonPath("$.success").value(false))
+          .andExpect(jsonPath("$.body.message").value("Password not match"));
+
+      verify(authUseCase, times(1)).signIn(any(AuthSignInCommand.class));
     }
   }
 }

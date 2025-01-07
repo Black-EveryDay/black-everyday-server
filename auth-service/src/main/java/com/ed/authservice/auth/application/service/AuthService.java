@@ -1,21 +1,27 @@
 package com.ed.authservice.auth.application.service;
 
+import com.ed.authservice.auth.application.port.in.AuthSignInCommand;
 import com.ed.authservice.auth.application.port.in.AuthSignUpCommand;
 import com.ed.authservice.auth.application.port.in.AuthUseCase;
+import com.ed.authservice.auth.application.port.out.AuthSignInResponse;
 import com.ed.authservice.auth.application.port.out.AuthSignUpResponse;
 import com.ed.authservice.auth.application.port.out.UserPersistencePort;
 import com.ed.authservice.auth.domain.User;
 import com.ed.authservice.auth.domain.UserRole;
 import com.ed.authservice.libs.exception.ExceptionStatus;
 import com.ed.authservice.libs.exception.ServiceException;
+import com.ed.authservice.libs.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService implements AuthUseCase {
 
+  private final PasswordEncoder passwordEncoder;
   private final UserPersistencePort userPersistencePort;
+  private final JwtUtil jwtUtil;
 
   @Override
   public AuthSignUpResponse signUp(AuthSignUpCommand authSignUpCommand) {
@@ -24,8 +30,11 @@ public class AuthService implements AuthUseCase {
       throw new ServiceException(ExceptionStatus.USERNAME_ALREADY_USED);
     }
 
-    User user = User.builder().username(authSignUpCommand.getUsername())
-        .password(authSignUpCommand.getPassword()).userRole(UserRole.DEFAULT_CUSTOMER).build();
+    User user = User.builder()
+        .username(authSignUpCommand.getUsername())
+        .password(passwordEncoder.encode(authSignUpCommand.getPassword()))
+        .userRole(UserRole.DEFAULT_CUSTOMER)
+        .build();
 
     User savedUser = userPersistencePort.saveUser(user);
 
@@ -36,4 +45,17 @@ public class AuthService implements AuthUseCase {
         .build();
   }
 
+  @Override
+  public AuthSignInResponse signIn(AuthSignInCommand authSignInCommand) {
+    User user = userPersistencePort.findByUsername(authSignInCommand.getUsername());
+
+    if (!passwordEncoder.matches(authSignInCommand.getPassword(), user.getPassword())) {
+      throw new ServiceException(ExceptionStatus.USER_PASSWORD_NOT_MATCH);
+    }
+
+    String jwt = jwtUtil.generateToken(user);
+    return AuthSignInResponse.builder()
+        .token(jwt)
+        .build();
+  }
 }

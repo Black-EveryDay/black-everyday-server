@@ -2,6 +2,8 @@ package com.ed.authservice.auth.adapter.out.persistence;
 
 import com.ed.authservice.auth.application.port.out.UserPersistencePort;
 import com.ed.authservice.auth.domain.User;
+import com.ed.authservice.libs.exception.AdapterException;
+import com.ed.authservice.libs.exception.ExceptionStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -29,5 +31,16 @@ public class UserRepository implements UserPersistencePort {
   @Override
   public boolean existsUser(String username) {
     return userJpaRepository.existsByUsername(username);
+  }
+
+  @Override
+  public User findByUsername(String username) {
+    return userJpaRepository.findByUsername(username).map(userJpaEntity -> User.builder()
+        .id(userJpaEntity.getUserId())
+        .publicId(userJpaEntity.getUserPublicId())
+        .username(userJpaEntity.getUsername())
+        .password(userJpaEntity.getPassword())
+        .userRole(userJpaEntity.getUserRole())
+        .build()).orElseThrow(() -> new AdapterException(ExceptionStatus.USER_NOT_FOUND));
   }
 }
