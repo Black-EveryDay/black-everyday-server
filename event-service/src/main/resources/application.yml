@@ -1,1 +1,5 @@
-spring.application.name=event-service
+spring:
+  application:
+    name: event-service
+  profiles:
+    active: local
