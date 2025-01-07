@@ -1,10 +1,13 @@
 package com.ed.productservice.application.service.internal;
 
+import static com.ed.productservice.libs.common.ErrorCode.STOCK_RESERVATION_NOT_FOUND;
+
 import com.ed.productservice.domain.vo.ProductCategory;
 import com.ed.productservice.domain.vo.ProductReservationInfoDomain;
 import com.ed.productservice.infrastructure.persistence.adapter.internal.BottomSizeStockAdapter;
 import com.ed.productservice.infrastructure.persistence.adapter.internal.TopSizeStockAdapter;
 import com.ed.productservice.infrastructure.persistence.adapter.internal.StockAdapter;
+import com.ed.productservice.libs.common.ProductException;
 import com.ed.productservice.presentation.web.request.InventoryReservationRequest.ProductReservationInfo;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +51,10 @@ public class StockService {
     public void increaseStock(String reservationId) {
         List<ProductReservationInfoDomain> itemList = stockAdapter.findAllByReservationId(
             reservationId);
+
+        if (itemList.isEmpty()) {
+            throw new ProductException(STOCK_RESERVATION_NOT_FOUND);
+        }
 
         for (ProductReservationInfoDomain item : itemList) {
             if (item.getProductCategory().equals(ProductCategory.TOP)) {
