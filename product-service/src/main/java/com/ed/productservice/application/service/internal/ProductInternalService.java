@@ -79,7 +79,7 @@ public class ProductInternalService {
 
     @Transactional
     public String increaseStock(String reservationId) {
-        stockService.increase(reservationId);
+        stockService.increaseStock(reservationId);
 
         return reservationId;
     }

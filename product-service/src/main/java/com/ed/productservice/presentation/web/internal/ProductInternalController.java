@@ -35,7 +35,7 @@ public class ProductInternalController {
     }
 
     @PostMapping("/inventory/reservations/{reservationId}/increase")
-    public ProductReservationResponse increaseStock(
+    public ProductReservationResponse rollbackStock(
         @PathVariable("reservationId") String reservationId) {
 
         return ProductReservationResponse.from(productInternalService.increaseStock(reservationId));

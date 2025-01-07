@@ -45,7 +45,7 @@ public class StockService {
         stockAdapter.save(productReservationInfo, reservationId);
     }
 
-    public void increase(String reservationId) {
+    public void increaseStock(String reservationId) {
         List<ProductReservationInfoDomain> itemList = stockAdapter.findAllByReservationId(
             reservationId);
 
