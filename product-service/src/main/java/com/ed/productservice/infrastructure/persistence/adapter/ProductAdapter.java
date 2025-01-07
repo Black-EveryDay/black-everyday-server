@@ -1,11 +1,14 @@
 package com.ed.productservice.infrastructure.persistence.adapter;
 
+import static com.ed.productservice.libs.common.ErrorCode.PRODUCT_NOT_FOUND;
+
 import com.ed.productservice.application.port.out.ProductOutPort;
 import com.ed.productservice.domain.ProductForCreate;
 import com.ed.productservice.domain.vo.Product;
 import com.ed.productservice.infrastructure.persistence.adapter.mapper.ProductMapper;
 import com.ed.productservice.infrastructure.persistence.entity.ProductEntity;
 import com.ed.productservice.infrastructure.persistence.repository.ProductRepository;
+import com.ed.productservice.libs.common.ProductException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,5 +23,13 @@ public class ProductAdapter implements ProductOutPort {
         ProductEntity entity = productMapper.from(productForCreate, brandId);
 
         return productMapper.toDomain(productRepository.save(entity));
+    }
+
+    @Override
+    public Product findOne(Long productId) {
+        ProductEntity entity = productRepository.findById(productId)
+            .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+
+        return productMapper.toDomain(entity);
     }
 }
