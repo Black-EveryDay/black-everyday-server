@@ -2,6 +2,7 @@ package com.ed.eventservice.coupon.adapter.out.persistence.entity;
 
 import com.ed.eventservice.coupon.domain.enums.CouponIssuanceType;
 import com.ed.eventservice.coupon.domain.enums.CouponIssuerType;
+import com.ed.eventservice.coupon.domain.vo.CouponIssueInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -37,8 +38,28 @@ public class CouponIssueInfoJpaEntity {
       UUID couponIssuerId, Boolean isIssuable, Integer maxIssuance) {
     this.couponIssuanceType = couponIssuanceType;
     this.couponIssuerType = couponIssuerType;
-    this.couponIssuerId = couponIssuerId.toString();
+    this.couponIssuerId = couponIssuerId == null ? null : couponIssuerId.toString();
     this.isIssuable = isIssuable;
     this.maxIssuance = maxIssuance;
+  }
+
+  public static CouponIssueInfoJpaEntity from(CouponIssueInfo couponIssueInfo) {
+    return CouponIssueInfoJpaEntity.builder()
+        .couponIssuanceType(couponIssueInfo.getCouponIssuanceType())
+        .couponIssuerType(couponIssueInfo.getCouponIssuerType())
+        .couponIssuerId(couponIssueInfo.getCouponIssuerId())
+        .isIssuable(couponIssueInfo.getIsIssuable())
+        .maxIssuance(couponIssueInfo.getMaxIssuance())
+        .build();
+  }
+
+  public CouponIssueInfo toCouponIssueInfo() {
+    return CouponIssueInfo.builder()
+        .couponIssuanceType(couponIssuanceType)
+        .couponIssuerType(couponIssuerType)
+        .couponIssuerId(couponIssuerId == null ? null : UUID.fromString(couponIssuerId))
+        .isIssuable(isIssuable)
+        .maxIssuance(maxIssuance)
+        .build();
   }
 }
