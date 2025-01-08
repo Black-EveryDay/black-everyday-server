@@ -7,10 +7,18 @@ Authorization: "Bearer {{jwttoken}}"
   "couponName": "string",
   "couponIssuanceType": "MANUAL",
   "couponIssuerType": "SERVICE",
-  "maxIssuance": 0,
   "couponUsageTargetType": "ALL",
   "discountType": "PERCENTAGE",
   "discountValue": 10.5,
   "expirationDays": 1,
   "expirationDate": "2021-08-31T14:00:00.000Z"
+}
+
+### 쿠폰 발급 API
+@couponPublicId =bb40929d-0836-42dd-8433-36878b2a23bf
+POST http://localhost:19096/api/v1/coupon-templates/{{couponPublicId}}/coupons
+Content-Type: application/json
+
+{
+  "quantity": 10
 }
