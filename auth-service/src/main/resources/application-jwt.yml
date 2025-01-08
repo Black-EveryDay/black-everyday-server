@@ -1,0 +1,4 @@
+jwt:
+  issuer: auth-service
+  secretKey: ${JWT_SECRET_KEY}
+  duration: ${JWT_DURATION}

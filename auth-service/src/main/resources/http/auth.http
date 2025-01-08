@@ -1,0 +1,17 @@
+### 회원가입 API
+POST http://localhost:19091/api/v1/auth/sign-up
+Content-Type: application/json
+
+{
+  "username": "saaddsddee",
+  "password": "Paaasdasdad!!@1"
+}
+
+### 로그인 API
+POST http://localhost:19091/api/v1/auth/sign-in
+Content-Type: application/json
+
+{
+  "username": "saaddsddee",
+  "password": "Paaasdasdad!!@1"
+}
