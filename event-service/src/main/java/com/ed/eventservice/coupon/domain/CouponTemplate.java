@@ -43,6 +43,7 @@ public class CouponTemplate {
   private void validityCheck() {
     checkCouponIssuerTypeIsBrandAndIssuerIdIsNotNull();
     checkCouponUsageTargetTypeIsNotAllAndUsageTargetIdIsNotNull();
+    checkMaxIssuanceIsNullOrGreaterThanZero();
   }
 
   private void checkCouponIssuerTypeIsBrandAndIssuerIdIsNotNull() {
@@ -60,5 +61,37 @@ public class CouponTemplate {
       throw new IllegalArgumentException(
           "Coupon usage target id must not be null when coupon usage target type is not all");
     }
+  }
+
+  private void checkMaxIssuanceIsNullOrGreaterThanZero() {
+    if (this.couponIssueInfo.getMaxIssuance() != null
+        && this.couponIssueInfo.getMaxIssuance() <= 0) {
+      throw new IllegalArgumentException("Max issuance must be greater than 0");
+    }
+  }
+
+  public void createCoupon(Integer quantity) {
+    if (quantity <= 0) {
+      throw new IllegalArgumentException("Quantity must be greater than 0");
+    }
+    if (this.couponIssueInfo.getMaxIssuance() != null
+        && this.couponIssueInfo.getMaxIssuance()
+        < coupons.size() + quantity) {
+      throw new IllegalArgumentException("Quantity must be less than or equal to max issuance");
+    }
+
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime expirationDate = this.couponExpirationInfo.getExpirationDays() == null ? null
+        : now.plusDays(this.couponExpirationInfo.getExpirationDays().toDays());
+
+    this.coupons.addAll(
+        IntStream.range(0, quantity)
+            .mapToObj(i -> Coupon.builder()
+                .couponTemplateId(this.publicId)
+                .issuedAt(now)
+                .expirationDate(expirationDate)
+                .build())
+            .toList()
+    );
   }
 }
