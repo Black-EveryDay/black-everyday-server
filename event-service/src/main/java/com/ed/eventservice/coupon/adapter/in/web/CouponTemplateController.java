@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/coupons")
+@RequestMapping("/api/v1/coupon-templates")
 @RequiredArgsConstructor
-public class CouponController {
+public class CouponTemplateController {
 
   private final CouponUseCase couponUseCase;
 
-  @PostMapping("/templates")
+  @PostMapping
   public ResponseEntity<CreateCouponTemplateResponse> createCouponTemplate(
       @Valid @RequestBody CreateCouponTemplateRequest createCouponTemplateRequest) {
     return created(couponUseCase.createCouponTemplate(createCouponTemplateRequest.toCommand()));

@@ -1,5 +1,5 @@
 @jwttoken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhdXRoLXNlcnZpY2UiLCJpYXQiOjE3MzYyNDM0OTQsImV4cCI6MTgyMjY0MzQ5NCwidXNlcklkIjoiZDFhMzU0ZDMtMWQ1Yi00YzE3LWI3MjctOGIzNTFjOWRhZTYzIiwidXNlclJvbGUiOiJERUZBVUxUX0NVU1RPTUVSIn0.VViuBe3YMyCg5asIPec2jc-Nd6Wkd9Co-25XFEI-NbYiJKEZK5UH8kCb1phPvBZptpGCXzkYV7ZGYCmPcYS7vw"
-POST http://localhost:19096/api/v1/coupons/templates
+POST http://localhost:19096/api/v1/coupon-templates
 Content-Type: application/json
 Authorization: "Bearer {{jwttoken}}"
 
