@@ -1,6 +1,7 @@
 package com.ed.productservice.infrastructure.persistence.entity;
 
 import com.ed.productservice.domain.vo.ProductCategory;
+import com.ed.productservice.domain.vo.StockDecreaseHistoryStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -30,12 +31,20 @@ public class StockDecreaseHistoryEntity extends BaseEntity{
 
     private String transactionId;
 
+    @Enumerated(EnumType.STRING)
+    private StockDecreaseHistoryStatus status;
+
     public StockDecreaseHistoryEntity(Long productId, Integer quantity, String size,
-        ProductCategory productCategory, String transactionId) {
+        ProductCategory productCategory, String transactionId, StockDecreaseHistoryStatus status) {
         this.productId = productId;
         this.quantity = quantity;
         this.size = size;
         this.productCategory = productCategory;
         this.transactionId = transactionId;
+        this.status = status;
+    }
+
+    public void setStatus(StockDecreaseHistoryStatus status) {
+        this.status = status;
     }
 }
