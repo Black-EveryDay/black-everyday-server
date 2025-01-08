@@ -61,6 +61,9 @@ public class TopSizeStockEntity extends BaseEntity {
     }
 
     public void decreaseStock(int quantity) {
+        if (this.quantity < quantity) {
+            throw new ProductException(INSUFFICIENT_PRODUCT_STOCK);
+        }
         this.quantity -= quantity;
     }
 
