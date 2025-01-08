@@ -6,4 +6,6 @@ public interface CouponUseCase {
 
   CreateCouponTemplateResponse createCouponTemplate(
       CreateCouponTemplateCommand createCouponTemplateCommand);
+
+  void createCoupon(CreateCouponCommand command);
 }

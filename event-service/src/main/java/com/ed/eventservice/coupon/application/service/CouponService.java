@@ -1,6 +1,7 @@
 package com.ed.eventservice.coupon.application.service;
 
 import com.ed.eventservice.coupon.application.port.in.CouponUseCase;
+import com.ed.eventservice.coupon.application.port.in.CreateCouponCommand;
 import com.ed.eventservice.coupon.application.port.in.CreateCouponTemplateCommand;
 import com.ed.eventservice.coupon.application.port.out.CouponTemplatePersistencePort;
 import com.ed.eventservice.coupon.application.port.out.dto.CreateCouponTemplateResponse;
@@ -25,5 +26,16 @@ public class CouponService implements CouponUseCase {
         createCouponTemplateCommand);
     return couponTemplateMapper.domainToResponse(
         couponTemplatePersistencePort.saveCouponTemplate(couponTemplate));
+  }
+
+  @Override
+  public void createCoupon(CreateCouponCommand command) {
+    CouponTemplate couponTemplate = couponTemplatePersistencePort.getCouponTemplateByPublicId(
+        command.getCouponTemplateId()
+    );
+
+    couponTemplate.createCoupon(command.getQuantity());
+
+    couponTemplatePersistencePort.updateCoupon(couponTemplate);
   }
 }
