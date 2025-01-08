@@ -6,7 +6,10 @@ import com.ed.eventservice.coupon.domain.vo.CouponDiscountInfo;
 import com.ed.eventservice.coupon.domain.vo.CouponExpirationInfo;
 import com.ed.eventservice.coupon.domain.vo.CouponIssueInfo;
 import com.ed.eventservice.coupon.domain.vo.CouponUsageTargetInfo;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -20,11 +23,12 @@ public class CouponTemplate {
   private final CouponUsageTargetInfo couponUsageTargetInfo;
   private final CouponDiscountInfo couponDiscountInfo;
   private final CouponExpirationInfo couponExpirationInfo;
+  private final List<Coupon> coupons;
 
   @Builder
   private CouponTemplate(Long id, UUID publicId, String couponName, CouponIssueInfo couponIssueInfo,
       CouponUsageTargetInfo couponUsageTargetInfo, CouponDiscountInfo couponDiscountInfo,
-      CouponExpirationInfo couponExpirationInfo) {
+      CouponExpirationInfo couponExpirationInfo, List<Coupon> coupons) {
     this.id = id;
     this.publicId = publicId;
     this.couponName = couponName;
@@ -32,7 +36,7 @@ public class CouponTemplate {
     this.couponUsageTargetInfo = couponUsageTargetInfo;
     this.couponDiscountInfo = couponDiscountInfo;
     this.couponExpirationInfo = couponExpirationInfo;
-
+    this.coupons = coupons == null ? List.of() : coupons;
     validityCheck();
   }
 
