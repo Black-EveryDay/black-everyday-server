@@ -5,7 +5,7 @@ import com.ed.productservice.domain.vo.Brand;
 import com.ed.productservice.infrastructure.persistence.adapter.mapper.BrandMapper;
 import com.ed.productservice.infrastructure.persistence.entity.BrandEntity;
 import com.ed.productservice.infrastructure.persistence.repository.BrandRepository;
-import com.ed.productservice.libs.common.BrandNotFoundException;
+import com.ed.productservice.libs.common.BrandException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ public class BrandAdapter implements BrandOutPort {
 
     @Override
     public Brand findOne(Long brandId) {
-        BrandEntity entity = brandRepository.findById(brandId).orElseThrow(() -> new BrandNotFoundException(BRAND_NOT_FOUND));
+        BrandEntity entity = brandRepository.findById(brandId).orElseThrow(() -> new BrandException(BRAND_NOT_FOUND));
 
         return brandMapper.toDomain(entity);
     }

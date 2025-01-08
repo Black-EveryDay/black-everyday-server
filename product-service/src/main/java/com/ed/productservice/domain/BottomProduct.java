@@ -24,13 +24,16 @@ public class BottomProduct {
         private BigDecimal hipWidth;
         private BigDecimal thighWidth;
         private BigDecimal bottomTotalLength;
+        private Integer quantity;
 
-        public BottomSize(String bottomSize, BigDecimal waistWidth, BigDecimal hipWidth, BigDecimal thighWidth, BigDecimal bottomTotalLength) {
+        public BottomSize(String bottomSize, BigDecimal waistWidth, BigDecimal hipWidth,
+            BigDecimal thighWidth, BigDecimal bottomTotalLength, Integer quantity) {
             this.bottomSize = bottomSize;
             this.waistWidth = waistWidth;
             this.hipWidth = hipWidth;
             this.thighWidth = thighWidth;
             this.bottomTotalLength = bottomTotalLength;
+            this.quantity = quantity;
         }
     }
 }

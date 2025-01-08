@@ -6,4 +6,6 @@ import com.ed.productservice.domain.vo.Product;
 public interface ProductOutPort {
 
     Product createProduct(ProductForCreate productForCreate, Long brandId);
+
+    Product findOne(Long productId);
 }

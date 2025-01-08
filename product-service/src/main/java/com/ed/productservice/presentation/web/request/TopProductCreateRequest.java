@@ -21,13 +21,16 @@ public record TopProductCreateRequest(
         private BigDecimal shoulderWidth;
         private BigDecimal chestWidth;
         private BigDecimal sleeveLength;
+        private Integer quantity;
 
-        public TopSizeRequest(String topSize, BigDecimal totalLength, BigDecimal shoulderWidth, BigDecimal chestWidth, BigDecimal sleeveLength) {
+        public TopSizeRequest(String topSize, BigDecimal totalLength, BigDecimal shoulderWidth,
+            BigDecimal chestWidth, BigDecimal sleeveLength, Integer quantity) {
             this.topSize = topSize;
             this.totalLength = totalLength;
             this.shoulderWidth = shoulderWidth;
             this.chestWidth = chestWidth;
             this.sleeveLength = sleeveLength;
+            this.quantity = quantity;
         }
     }
 
@@ -45,7 +48,8 @@ public record TopProductCreateRequest(
                         request.totalLength,
                         request.shoulderWidth,
                         request.chestWidth,
-                        request.sleeveLength
+                        request.sleeveLength,
+                        request.quantity
                 ))
                 .collect(Collectors.toList());
     }

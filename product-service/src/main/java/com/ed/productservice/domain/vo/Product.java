@@ -19,7 +19,6 @@ public class Product {
     private int price;
     private String description;
     private String color;
-    private Integer quantity;
     private String image;
     private ProductStatus status;
     private ProductCategory category;
