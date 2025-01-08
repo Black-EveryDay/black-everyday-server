@@ -1,6 +1,8 @@
 package com.ed.productservice.infrastructure.persistence.repository;
 
+import com.ed.productservice.domain.vo.StockDecreaseHistoryStatus;
 import com.ed.productservice.infrastructure.persistence.entity.StockDecreaseHistoryEntity;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +17,11 @@ public interface StockDecreaseHistoryRepository extends
     @Query("select s from StockDecreaseHistoryEntity s where s.transactionId = :transactionId and s.productId = :productId and s.size =:size")
     List<StockDecreaseHistoryEntity> findByProductIdAndSizeAndTransactionId(@Param("productId") Long productId, @Param("size") String size,
         @Param("transactionId") String transactionId);
+
+    @Query("SELECT s FROM StockDecreaseHistoryEntity s " +
+        "WHERE s.status = :status " +
+        "AND s.isDeleted = false " +
+        "AND s.createdAt < :timeLimit")
+    List<StockDecreaseHistoryEntity> findUncommittedStocks(@Param("timeLimit") LocalDateTime timeLimit,
+        @Param("status") StockDecreaseHistoryStatus status);
 }

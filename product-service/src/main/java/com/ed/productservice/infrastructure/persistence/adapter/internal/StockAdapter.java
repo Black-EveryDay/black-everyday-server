@@ -3,6 +3,7 @@ package com.ed.productservice.infrastructure.persistence.adapter.internal;
 import static com.ed.productservice.libs.common.ErrorCode.*;
 
 import com.ed.productservice.domain.vo.ProductReservationInfoDomain;
+import com.ed.productservice.domain.vo.StockDecreaseHistoryStatus;
 import com.ed.productservice.infrastructure.persistence.entity.BaseEntity;
 import com.ed.productservice.infrastructure.persistence.entity.StockDecreaseHistoryEntity;
 import com.ed.productservice.infrastructure.persistence.repository.StockDecreaseHistoryRepository;
@@ -24,7 +25,8 @@ public class StockAdapter {
                 productReservationInfo.getQuantity(),
                 productReservationInfo.getSize(),
                 productReservationInfo.getProductCategory(),
-                transactionId));
+                transactionId,
+                StockDecreaseHistoryStatus.DECREASED));
     }
 
     public List<ProductReservationInfoDomain> findAllByTransactionId(String transactionId) {
@@ -38,7 +40,10 @@ public class StockAdapter {
 
     public void deleteStockHistory(String transactionId) {
         stockDecreaseHistoryRepository.findAllByTransactionId(
-            transactionId).forEach(BaseEntity::deletedFrom);
+            transactionId).forEach(history -> {
+            history.deletedFrom();
+            history.setStatus(StockDecreaseHistoryStatus.ROLLBACK);
+        });
     }
 
     public void isDuplicateStockDecrease(ProductReservationInfoDomain productReservationInfo, String transactionId) {
