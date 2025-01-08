@@ -31,6 +31,7 @@ public class CreateCouponTemplateRequest {
   @NotNull
   private CouponIssuerType couponIssuerType;
   private UUID couponIssuerId;
+  @Min(1)
   private Integer maxIssuance;
   @NotNull
   private CouponUsageTargetType couponUsageTargetType;
