@@ -1,9 +1,10 @@
 package com.ed.productservice.presentation.web.internal;
 
 import com.ed.productservice.application.service.internal.ProductInternalService;
-import com.ed.productservice.presentation.web.request.InventoryReservationRequest;
+import com.ed.productservice.domain.vo.ProductReservationInfoDomain;
+import com.ed.productservice.presentation.web.request.StockPrepareRequest;
 import com.ed.productservice.presentation.web.response.ProductReservationResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,26 +19,19 @@ public class ProductInternalController {
 
     private final ProductInternalService productInternalService;
 
-    @PostMapping("/inventory/reservations")
-    public ProductReservationResponse reservationStock(
-        @RequestBody InventoryReservationRequest request
-    ) {
-        String reservationId = productInternalService.reservation(request);
+    @PostMapping("/prepare")
+    public ProductReservationResponse prepareStock(@RequestBody StockPrepareRequest request) {
+        List<ProductReservationInfoDomain> domain = request.toDomain();
 
-        return ProductReservationResponse.from(reservationId);
+        String transactionId = productInternalService.decreaseStock(domain);
+
+        return ProductReservationResponse.from(transactionId);
     }
 
-    @PostMapping("/inventory/reservations/{reservationId}/decrease")
-    public ProductReservationResponse decreaseStock(@PathVariable("reservationId") String reservationId)
-        throws JsonProcessingException {
-
-        return ProductReservationResponse.from(productInternalService.decreaseStock(reservationId));
-    }
-
-    @PostMapping("/inventory/reservations/{reservationId}/increase")
+    @PostMapping("/rollback/{transactionId}")
     public ProductReservationResponse rollbackStock(
-        @PathVariable("reservationId") String reservationId) {
+        @PathVariable("transactionId") String transactionId) {
 
-        return ProductReservationResponse.from(productInternalService.increaseStock(reservationId));
+        return ProductReservationResponse.from(productInternalService.increaseStock(transactionId));
     }
 }
