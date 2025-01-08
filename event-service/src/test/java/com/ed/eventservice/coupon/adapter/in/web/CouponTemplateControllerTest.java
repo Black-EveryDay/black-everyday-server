@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.ed.eventservice.coupon.adapter.in.web.dto.CreateCouponRequest;
 import com.ed.eventservice.coupon.adapter.in.web.dto.CreateCouponTemplateRequest;
 import com.ed.eventservice.coupon.application.port.in.CouponUseCase;
 import com.ed.eventservice.coupon.application.port.in.CreateCouponTemplateCommand;
@@ -155,4 +156,32 @@ class CouponTemplateControllerTest {
           .andExpect(jsonPath("$.success").value(false));
     }
   }
+
+  @Nested
+  @DisplayName("CreateCouponTest")
+  class createCouponTest {
+
+    private final String couponTemplateId = UUID.randomUUID().toString();
+    private final String uri = "/api/v1/coupon-templates/" + couponTemplateId + "/coupons";
+
+    @Test
+    @DisplayName("Should create coupon success")
+    void shouldCreateCouponSuccess() throws Exception {
+      //given
+      CreateCouponRequest createCouponRequest = CreateCouponRequest.builder()
+          .quantity(10)
+          .build();
+
+      //when
+      ResultActions resultActions = mockMvc.perform(post(uri)
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(objectMapper.writeValueAsString(createCouponRequest)));
+
+      //then
+      resultActions.andExpect(status().isCreated())
+          .andExpect(jsonPath("$.success").value(true));
+    }
+
+  }
+
 }

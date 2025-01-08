@@ -31,11 +31,12 @@ public class CouponTemplateController {
   }
 
   @PostMapping("{couponTemplateId}/coupons")
-  public void createCoupon(@PathVariable UUID couponTemplateId,
+  public ResponseEntity<String> createCoupon(@PathVariable UUID couponTemplateId,
       @Valid @RequestBody CreateCouponRequest createCouponRequest) {
     couponUseCase.createCoupon(CreateCouponCommand.builder()
         .couponTemplateId(couponTemplateId)
         .quantity(createCouponRequest.getQuantity())
         .build());
+    return created(null);
   }
 }
