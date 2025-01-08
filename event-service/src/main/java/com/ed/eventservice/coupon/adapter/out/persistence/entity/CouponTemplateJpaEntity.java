@@ -23,7 +23,7 @@ public class CouponTemplateJpaEntity extends BaseJpaEntity {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @Column(unique = true, nullable = false, length = 36)
+  @Column(unique = true, updatable = false, nullable = false, length = 36)
   private String publicId = UUID.randomUUID().toString();
 
   @Column(nullable = false)
