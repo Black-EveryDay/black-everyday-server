@@ -26,10 +26,28 @@ public class ProductAdapter implements ProductOutPort {
     }
 
     @Override
-    public Product findOne(Long productId) {
-        ProductEntity entity = productRepository.findById(productId)
+    public Product findOne(String productPublicId) {
+        ProductEntity entity = productRepository.findByProductPublicId(productPublicId)
             .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
 
         return productMapper.toDomain(entity);
+    }
+
+    @Override
+    public Product update(Product product) {
+        ProductEntity entity = productRepository.findById(product.getProductId())
+            .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+
+        entity.update(product);
+
+        return productMapper.toDomain(entity);
+    }
+
+    @Override
+    public void deleteOne(String productPublicId) {
+        ProductEntity entity = productRepository.findByProductPublicId(productPublicId)
+            .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+
+        entity.deletedFrom();
     }
 }
