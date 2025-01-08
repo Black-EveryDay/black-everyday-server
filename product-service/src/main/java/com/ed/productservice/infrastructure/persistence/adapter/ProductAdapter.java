@@ -26,8 +26,8 @@ public class ProductAdapter implements ProductOutPort {
     }
 
     @Override
-    public Product findOne(Long productId) {
-        ProductEntity entity = productRepository.findById(productId)
+    public Product findOne(String productPublicId) {
+        ProductEntity entity = productRepository.findByProductPublicId(productPublicId)
             .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
 
         return productMapper.toDomain(entity);

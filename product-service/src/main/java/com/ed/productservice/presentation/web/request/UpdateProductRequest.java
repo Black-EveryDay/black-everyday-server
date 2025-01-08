@@ -5,7 +5,7 @@ import com.ed.productservice.domain.vo.ProductForUpdate;
 import com.ed.productservice.domain.vo.ProductStatus;
 
 public record UpdateProductRequest(
-    Long productId,
+    String productPublicId,
     Long brandId,
     String name,
     int quantity,
@@ -19,7 +19,7 @@ public record UpdateProductRequest(
 
     public ProductForUpdate toDomain() {
         return new ProductForUpdate(
-            productId,
+            productPublicId,
             brandId,
             name,
             quantity,

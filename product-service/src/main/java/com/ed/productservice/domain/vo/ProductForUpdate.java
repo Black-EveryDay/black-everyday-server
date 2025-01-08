@@ -2,7 +2,7 @@ package com.ed.productservice.domain.vo;
 
 
 public record ProductForUpdate(
-     Long productId,
+     String productPublicId,
      Long brandId,
      String name,
      int quantity,

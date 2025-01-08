@@ -7,7 +7,7 @@ public interface ProductOutPort {
 
     Product createProduct(ProductForCreate productForCreate, Long brandId);
 
-    Product findOne(Long productId);
+    Product findOne(String productPublicId);
 
     Product update(Product product);
 

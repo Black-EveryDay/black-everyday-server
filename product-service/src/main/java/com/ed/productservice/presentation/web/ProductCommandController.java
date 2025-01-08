@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/products")
 @RestController
 public class ProductCommandController {
+
     private final ProductUseCase productUseCase;
 
     @PostMapping("/top")
@@ -35,7 +36,8 @@ public class ProductCommandController {
     }
 
     @PostMapping("/bottom")
-    public ProductCreateResponse createApparelBottom(@RequestBody BottomProductCreateRequest request) {
+    public ProductCreateResponse createApparelBottom(
+        @RequestBody BottomProductCreateRequest request) {
         BottomProduct bottomProduct = request.toDomain();
 
         Product product = productUseCase.createApparelBottom(bottomProduct);
@@ -43,8 +45,9 @@ public class ProductCommandController {
         return ProductCreateResponse.from(product);
     }
 
-    @PatchMapping
-    public ProductUpdateResponse updateProduct(@RequestBody UpdateProductRequest request) {
+    @PatchMapping("/{productPublicId}")
+    public ProductUpdateResponse updateProduct(@PathVariable("productPublicId") String productPublicId,
+        @RequestBody UpdateProductRequest request) {
         ProductForUpdate productForUpdate = request.toDomain();
 
         Product product = productUseCase.updateProduct(productForUpdate);
