@@ -1,6 +1,5 @@
 package com.ed.eventservice.coupon.adapter.out.persistence.entity;
 
-import com.ed.eventservice.coupon.domain.vo.CouponExpirationInfo;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -27,19 +26,5 @@ public class CouponExpirationInfoJpaEntity {
       LocalDateTime fixedExpirationDate) {
     this.expirationDays = expirationDays;
     this.fixedExpirationDate = fixedExpirationDate;
-  }
-
-  public static CouponExpirationInfoJpaEntity from(CouponExpirationInfo couponExpirationInfo) {
-    return CouponExpirationInfoJpaEntity.builder()
-        .expirationDays(couponExpirationInfo.getExpirationDays())
-        .fixedExpirationDate(couponExpirationInfo.getFixedExpirationDate())
-        .build();
-  }
-
-  public CouponExpirationInfo toCouponExpirationInfo() {
-    return CouponExpirationInfo.builder()
-        .expirationDays(expirationDays)
-        .fixedExpirationDate(fixedExpirationDate)
-        .build();
   }
 }
