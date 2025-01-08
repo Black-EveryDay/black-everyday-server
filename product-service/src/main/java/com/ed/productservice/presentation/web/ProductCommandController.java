@@ -10,6 +10,7 @@ import com.ed.productservice.presentation.web.request.TopProductCreateRequest;
 import com.ed.productservice.presentation.web.request.UpdateProductRequest;
 import com.ed.productservice.presentation.web.response.ProductCreateResponse;
 import com.ed.productservice.presentation.web.response.ProductUpdateResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -47,7 +48,7 @@ public class ProductCommandController {
 
     @PatchMapping("/{productPublicId}")
     public ProductUpdateResponse updateProduct(@PathVariable("productPublicId") String productPublicId,
-        @RequestBody UpdateProductRequest request) {
+        @Valid @RequestBody UpdateProductRequest request) {
         ProductForUpdate productForUpdate = request.toDomain();
 
         Product product = productUseCase.updateProduct(productForUpdate);
