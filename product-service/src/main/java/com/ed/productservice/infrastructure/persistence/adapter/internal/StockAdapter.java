@@ -17,33 +17,33 @@ public class StockAdapter {
 
     private final StockDecreaseHistoryRepository stockDecreaseHistoryRepository;
 
-    public void save(ProductReservationInfoDomain productReservationInfo, String reservationId) {
+    public void save(ProductReservationInfoDomain productReservationInfo, String transactionId) {
         stockDecreaseHistoryRepository.save(
             new StockDecreaseHistoryEntity(
                 productReservationInfo.getProductId(),
                 productReservationInfo.getQuantity(),
                 productReservationInfo.getSize(),
                 productReservationInfo.getProductCategory(),
-                reservationId));
+                transactionId));
     }
 
-    public List<ProductReservationInfoDomain> findAllByReservationId(String reservationId) {
-        List<StockDecreaseHistoryEntity> entityList = stockDecreaseHistoryRepository.findAllByReservationId(
-            reservationId);
+    public List<ProductReservationInfoDomain> findAllByTransactionId(String transactionId) {
+        List<StockDecreaseHistoryEntity> entityList = stockDecreaseHistoryRepository.findAllByTransactionId(
+            transactionId);
 
         return entityList.stream()
             .map(ProductReservationInfoDomain::from)
             .toList();
     }
 
-    public void deleteStockHistory(String reservationId) {
-        stockDecreaseHistoryRepository.findAllByReservationId(
-            reservationId).forEach(BaseEntity::deletedFrom);
+    public void deleteStockHistory(String transactionId) {
+        stockDecreaseHistoryRepository.findAllByTransactionId(
+            transactionId).forEach(BaseEntity::deletedFrom);
     }
 
-    public void isDuplicateStockDecrease(ProductReservationInfoDomain productReservationInfo, String reservationId) {
-        if (!stockDecreaseHistoryRepository.findByProductIdAndSizeAndReservationId(
-                productReservationInfo.getProductId(), productReservationInfo.getSize(), reservationId)
+    public void isDuplicateStockDecrease(ProductReservationInfoDomain productReservationInfo, String transactionId) {
+        if (!stockDecreaseHistoryRepository.findByProductIdAndSizeAndTransactionId(
+                productReservationInfo.getProductId(), productReservationInfo.getSize(), transactionId)
             .isEmpty()) {
 
             throw new ProductException(INVENTORY_ALREADY_DECREASE);

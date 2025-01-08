@@ -5,10 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
+import lombok.NoArgsConstructor.AnyAnnotation;
 
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ApiResponse<T> {
 	private Boolean success;
 	private T body;

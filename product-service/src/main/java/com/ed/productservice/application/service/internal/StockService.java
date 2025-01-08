@@ -8,7 +8,6 @@ import com.ed.productservice.infrastructure.persistence.adapter.internal.BottomS
 import com.ed.productservice.infrastructure.persistence.adapter.internal.TopSizeStockAdapter;
 import com.ed.productservice.infrastructure.persistence.adapter.internal.StockAdapter;
 import com.ed.productservice.libs.common.ProductException;
-import com.ed.productservice.presentation.web.request.InventoryReservationRequest.ProductReservationInfo;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,20 +20,9 @@ public class StockService {
     private final BottomSizeStockAdapter bottomSizeStockAdapter;
     private final StockAdapter stockAdapter;
 
-
-    public void stockReservation(ProductReservationInfo item, ProductCategory category) {
-        if (category.equals(ProductCategory.BOTTOM)) {
-            bottomSizeStockAdapter.bottomPrepare(item);
-        }
-
-        if (category.equals(ProductCategory.TOP)) {
-            topSizeStockAdapter.topProductPrepare(item);
-        }
-    }
-
     public void decreaseStockReservation(ProductReservationInfoDomain productReservationInfo,
-        String reservationId) {
-        stockAdapter.isDuplicateStockDecrease(productReservationInfo, reservationId);
+        String transactionId) {
+        stockAdapter.isDuplicateStockDecrease(productReservationInfo, transactionId);
 
         ProductCategory category = productReservationInfo.getProductCategory();
         if (category.equals(ProductCategory.TOP)) {
@@ -45,12 +33,12 @@ public class StockService {
             bottomSizeStockAdapter.bottomDecreaseStock(productReservationInfo);
         }
 
-        stockAdapter.save(productReservationInfo, reservationId);
+        stockAdapter.save(productReservationInfo, transactionId);
     }
 
-    public void increaseStock(String reservationId) {
-        List<ProductReservationInfoDomain> itemList = stockAdapter.findAllByReservationId(
-            reservationId);
+    public void increaseStock(String transactionId) {
+        List<ProductReservationInfoDomain> itemList = stockAdapter.findAllByTransactionId(
+            transactionId);
 
         if (itemList.isEmpty()) {
             throw new ProductException(STOCK_RESERVATION_NOT_FOUND);
@@ -65,7 +53,7 @@ public class StockService {
                 bottomSizeStockAdapter.bottomIncrease(item);
             }
 
-            stockAdapter.deleteStockHistory(reservationId);
+            stockAdapter.deleteStockHistory(transactionId);
         }
     }
 }
