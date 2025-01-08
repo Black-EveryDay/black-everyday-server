@@ -11,4 +11,6 @@ public interface ProductUseCase {
     Product createApparelBottom(BottomProduct bottomProduct);
 
     Product updateProduct(ProductForUpdate request);
+
+    void deleteProduct(String productPublicId);
 }

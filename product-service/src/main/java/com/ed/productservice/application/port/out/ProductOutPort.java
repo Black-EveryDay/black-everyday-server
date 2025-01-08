@@ -10,4 +10,6 @@ public interface ProductOutPort {
     Product findOne(Long productId);
 
     Product update(Product product);
+
+    void deleteOne(String productPublicId);
 }

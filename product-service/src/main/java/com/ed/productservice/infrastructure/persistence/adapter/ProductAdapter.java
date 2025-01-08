@@ -42,4 +42,12 @@ public class ProductAdapter implements ProductOutPort {
 
         return productMapper.toDomain(entity);
     }
+
+    @Override
+    public void deleteOne(String productPublicId) {
+        ProductEntity entity = productRepository.findByProductPublicId(productPublicId)
+            .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+
+        entity.deletedFrom();
+    }
 }

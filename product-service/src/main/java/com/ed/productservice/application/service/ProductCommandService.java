@@ -52,4 +52,9 @@ public class ProductCommandService implements ProductUseCase {
 
         return productOutPort.update(product.update(request));
     }
+
+    @Override
+    public void deleteProduct(String productPublicId) {
+        productOutPort.deleteOne(productPublicId);
+    }
 }
