@@ -89,10 +89,9 @@ public class ProductInternalService {
         ProductCategory category)
         throws JsonProcessingException {
         String key = STOCK_RESERVATION + reservationId;
+        String hashKey = item.productId() + ":" + item.size();
 
-        redisTemplate.opsForHash()
-            .put(key, item.productId().toString(),
-                objectMapper.writeValueAsString(ProductReservationInfoDomain.of(item, category)));
+        redisTemplate.opsForHash().put(key, hashKey, objectMapper.writeValueAsString(ProductReservationInfoDomain.of(item, category)));
 
         redisTemplate.expire(key, Duration.ofHours(1));
     }
