@@ -28,14 +28,14 @@ public class StockDecreaseHistoryEntity extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private ProductCategory productCategory;
 
-    private String reservationId;
+    private String transactionId;
 
     public StockDecreaseHistoryEntity(Long productId, Integer quantity, String size,
-        ProductCategory productCategory, String reservationId) {
+        ProductCategory productCategory, String transactionId) {
         this.productId = productId;
         this.quantity = quantity;
         this.size = size;
         this.productCategory = productCategory;
-        this.reservationId = reservationId;
+        this.transactionId = transactionId;
     }
 }

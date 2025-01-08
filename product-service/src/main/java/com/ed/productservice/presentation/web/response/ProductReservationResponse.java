@@ -1,10 +1,10 @@
 package com.ed.productservice.presentation.web.response;
 
 public record ProductReservationResponse(
-    String reservationId
+    String transactionId
 ) {
 
-    public static ProductReservationResponse from(String reservationId) {
-        return new ProductReservationResponse(reservationId);
+    public static ProductReservationResponse from(String transactionId) {
+        return new ProductReservationResponse(transactionId);
     }
 }
