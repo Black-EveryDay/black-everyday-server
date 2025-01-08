@@ -7,7 +7,8 @@ import com.ed.productservice.domain.BottomProduct;
 import com.ed.productservice.domain.TopProduct;
 import com.ed.productservice.domain.vo.Brand;
 import com.ed.productservice.domain.vo.Product;
-import com.ed.productservice.presentation.port.in.ProductCreateUseCase;
+import com.ed.productservice.domain.vo.ProductForUpdate;
+import com.ed.productservice.presentation.port.in.ProductUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ProductCommandService implements ProductCreateUseCase {
+public class ProductCommandService implements ProductUseCase {
+
     private final ProductOutPort productOutPort;
     private final BrandOutPort brandOutPort;
     private final ProductDetailPort productDetailPort;
@@ -23,7 +25,8 @@ public class ProductCommandService implements ProductCreateUseCase {
     public Product createApparelTop(TopProduct topProduct) {
         Brand brand = brandOutPort.findOne(topProduct.getProductForCreate().getBrandId());
 
-        Product product = productOutPort.createProduct(topProduct.getProductForCreate(), brand.getBrandId());
+        Product product = productOutPort.createProduct(topProduct.getProductForCreate(),
+            brand.getBrandId());
 
         productDetailPort.saveTopSize(product.getProductId(), topProduct);
 
@@ -34,10 +37,19 @@ public class ProductCommandService implements ProductCreateUseCase {
     public Product createApparelBottom(BottomProduct bottomProduct) {
         Brand brand = brandOutPort.findOne(bottomProduct.getProductForCreate().getBrandId());
 
-        Product product = productOutPort.createProduct(bottomProduct.getProductForCreate(), brand.getBrandId());
+        Product product = productOutPort.createProduct(bottomProduct.getProductForCreate(),
+            brand.getBrandId());
 
         productDetailPort.saveBottomSize(product.getProductId(), bottomProduct);
 
         return product;
+    }
+
+    @Override
+    public Product updateProduct(ProductForUpdate request) {
+        Product product = productOutPort.findOne(request.productId());
+        brandOutPort.findOne(request.brandId());
+
+        return productOutPort.update(product.update(request));
     }
 }

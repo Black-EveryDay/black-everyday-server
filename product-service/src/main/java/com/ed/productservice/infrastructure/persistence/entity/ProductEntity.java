@@ -1,5 +1,6 @@
 package com.ed.productservice.infrastructure.persistence.entity;
 
+import com.ed.productservice.domain.vo.Product;
 import com.ed.productservice.domain.vo.ProductCategory;
 import com.ed.productservice.domain.vo.ProductStatus;
 import jakarta.persistence.Entity;
@@ -49,5 +50,16 @@ public class ProductEntity extends BaseEntity {
         this.image = image;
         this.status = status;
         this.category = category;
+    }
+
+    public void update(Product product) {
+        this.brandId = product.getProductId();
+        this.name = product.getName();
+        this.price = product.getPrice();
+        this.description = product.getDescription();
+        this.color = product.getColor();
+        this.image = product.getImage();
+        this.status = product.getStatus();
+        this.category = product.getCategory();
     }
 }

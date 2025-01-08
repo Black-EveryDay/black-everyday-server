@@ -32,4 +32,14 @@ public class ProductAdapter implements ProductOutPort {
 
         return productMapper.toDomain(entity);
     }
+
+    @Override
+    public Product update(Product product) {
+        ProductEntity entity = productRepository.findById(product.getProductId())
+            .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+
+        entity.update(product);
+
+        return productMapper.toDomain(entity);
+    }
 }
