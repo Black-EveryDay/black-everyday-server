@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 @Slf4j
-class ProductCreateUseCaseTest {
+class ProductUseCaseTest {
     @Mock
     private ProductOutPort productOutPort;
     @Mock

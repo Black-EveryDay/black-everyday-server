@@ -5,7 +5,7 @@ import com.ed.productservice.domain.TopProduct;
 import com.ed.productservice.domain.vo.Product;
 import com.ed.productservice.domain.vo.ProductCategory;
 import com.ed.productservice.domain.vo.ProductStatus;
-import com.ed.productservice.presentation.port.in.ProductCreateUseCase;
+import com.ed.productservice.presentation.port.in.ProductUseCase;
 import com.ed.productservice.presentation.web.request.BottomProductCreateRequest;
 import com.ed.productservice.presentation.web.request.ProductCommonInfo;
 import com.ed.productservice.presentation.web.request.TopProductCreateRequest;
@@ -42,7 +42,7 @@ class ProductCommandControllerWebMvcTest {
     @Autowired
     private ObjectMapper objectMapper;
     @MockitoBean
-    private ProductCreateUseCase productCreateUseCase;
+    private ProductUseCase productUseCase;
 
     @DisplayName("상의 상품 등록 성공하면 true, productPublicId, timestamp 반환")
     @Test
@@ -66,7 +66,7 @@ class ProductCommandControllerWebMvcTest {
                 createdTime
         );
 
-        when(productCreateUseCase.createApparelTop(any(TopProduct.class))).thenReturn(mockProduct);
+        when(productUseCase.createApparelTop(any(TopProduct.class))).thenReturn(mockProduct);
 
         String requestBody = objectMapper.writerWithDefaultPrettyPrinter()
                 .writeValueAsString(topProductRequest);
@@ -79,7 +79,7 @@ class ProductCommandControllerWebMvcTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andDo(print());
 
-        verify(productCreateUseCase).createApparelTop(any(TopProduct.class));
+        verify(productUseCase).createApparelTop(any(TopProduct.class));
     }
 
     @DisplayName("하의 상품 등록 성공하면 true, productPublicId, timestamp 반환")
@@ -104,7 +104,7 @@ class ProductCommandControllerWebMvcTest {
                 createdTime
         );
 
-        when(productCreateUseCase.createApparelBottom(any(BottomProduct.class))).thenReturn(mockProduct);
+        when(productUseCase.createApparelBottom(any(BottomProduct.class))).thenReturn(mockProduct);
 
         String requestBody = objectMapper.writerWithDefaultPrettyPrinter()
                 .writeValueAsString(bottomProductRequest);
@@ -119,7 +119,7 @@ class ProductCommandControllerWebMvcTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andDo(print());
 
-        verify(productCreateUseCase).createApparelBottom(any(BottomProduct.class));
+        verify(productUseCase).createApparelBottom(any(BottomProduct.class));
     }
 
     private BottomProductCreateRequest createBottomProductRequest() {
