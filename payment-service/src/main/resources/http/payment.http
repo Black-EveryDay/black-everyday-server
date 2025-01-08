@@ -1,0 +1,2 @@
+// 결제 요청
+GET http://localhost:8080/payments/widget?userId=0f568795-0678-41f0-a385-11d6e4a077b3&amount=10000&orderId=0a666666-0678-41f0-a385-11d6e4a077b1&orderName=피자맛호빵

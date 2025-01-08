@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <link rel="icon"
+        href="https://static.toss.im/icons/png/4x/icon-toss-logo.png"/>
+  <link rel="stylesheet" type="text/css" href="../style.css"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Black EveryDay</title>
+  <script src="https://js.tosspayments.com/v2/standard"></script>
+</head>
+
+<body>
+<div class="wrapper">
+  <div class="box_section"
+       style="padding: 40px 30px 50px 30px; margin-top: 30px; margin-bottom: 50px">
+    <div id="payment-method"></div>
+    <div id="agreement"></div>
+    <div class="result wrapper">
+      <button class="button" id="payment-button" style="margin-top: 30px">
+        결제하기
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  main();
+
+  async function main() {
+    const queryStrings = new URLSearchParams(window.location.search);
+    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+    const tossPayments = TossPayments(clientKey);
+    const customerKey = queryStrings.get("userId")
+    console.log(customerKey)
+    const widgets = tossPayments.widgets({
+      customerKey
+    });
+
+    const amount = {
+      currency: "KRW",
+      value: Number(queryStrings.get("amount"))
+    };
+    await widgets.setAmount(amount);
+
+    await widgets.renderPaymentMethods({
+      selector: "#payment-method",
+      variantKey: "DEFAULT"
+    });
+
+    await widgets.renderAgreement(
+        {selector: "#agreement", variantKey: "AGREEMENT"});
+
+    const button = document.getElementById("payment-button");
+    const orderId = queryStrings.get("orderId");
+    const orderName = queryStrings.get("orderName");
+    button.addEventListener("click", async function () {
+
+      await widgets.requestPayment({
+        orderId: orderId,
+        orderName: orderName,
+        successUrl: window.location.origin + "/api/v1/payments/success",
+        failUrl: window.location.origin + "/api/v1/payments/fail"
+      });
+    });
+  }
+</script>
+</body>
+</html>
