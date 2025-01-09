@@ -19,7 +19,8 @@ public class CouponService implements CouponUseCase {
   public void useCoupon(CouponUseCommand command) {
     Coupon coupon = couponPersistencePort.getCouponByPublicId(command.getCouponId());
 
-    coupon.useCoupon(command.getUserId(), command.getBrandId(), command.getProductId());
+    coupon.useCoupon(command.getUserId(), command.getBrandId(), command.getProductId(),
+        command.getOrderId());
 
     couponPersistencePort.updateCouponStatus(coupon);
   }
