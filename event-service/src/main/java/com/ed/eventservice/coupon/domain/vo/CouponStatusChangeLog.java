@@ -11,6 +11,7 @@ import lombok.Getter;
 @Getter
 public class CouponStatusChangeLog {
 
+  private final Long id;
   private final CouponState before;
   private final CouponState after;
   private final CouponStatusChangeReason reason;
