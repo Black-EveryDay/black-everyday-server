@@ -1,6 +1,6 @@
 package com.ed.eventservice.coupon.application.service;
 
-import com.ed.eventservice.coupon.application.port.in.CouponUseCase;
+import com.ed.eventservice.coupon.application.port.in.CouponTemplateUseCase;
 import com.ed.eventservice.coupon.application.port.in.CreateCouponCommand;
 import com.ed.eventservice.coupon.application.port.in.CreateCouponTemplateCommand;
 import com.ed.eventservice.coupon.application.port.out.CouponTemplatePersistencePort;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CouponService implements CouponUseCase {
+public class CouponTemplateService implements CouponTemplateUseCase {
 
   private final CouponTemplatePersistencePort couponTemplatePersistencePort;
   private final CouponTemplateMapper couponTemplateMapper;
