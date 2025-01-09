@@ -5,7 +5,7 @@ import com.ed.productservice.domain.vo.ProductInfoDto;
 
 
 public record ProductDetailResponse(
-    Long productId,
+    String productPublicId,
     String color,
     String image,
     ProductCategory category,
@@ -17,7 +17,7 @@ public record ProductDetailResponse(
 
     public static ProductDetailResponse from(ProductInfoDto dto) {
         return new ProductDetailResponse(
-            dto.productId(),
+            dto.productPublicId(),
             dto.color(),
             dto.image(),
             dto.category(),

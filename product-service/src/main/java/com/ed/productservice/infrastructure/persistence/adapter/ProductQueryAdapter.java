@@ -21,9 +21,9 @@ public class ProductQueryAdapter {
 
     private final ProductRepository productRepository;
     private final ProductQueryDslRepository productQueryDslRepository;
-    public ProductInfoDto findById(Long productId) {
+    public ProductInfoDto findById(String productPublicId) {
 
-        return productRepository.findByProductInfo(productId)
+        return productRepository.findByProductInfo(productPublicId)
             .orElseThrow(() -> new ProductException(
                 ErrorCode.PRODUCT_NOT_FOUND));
     }
