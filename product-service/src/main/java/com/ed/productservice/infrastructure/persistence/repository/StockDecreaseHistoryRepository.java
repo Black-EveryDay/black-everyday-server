@@ -14,8 +14,8 @@ public interface StockDecreaseHistoryRepository extends
     @Query("SELECT s FROM StockDecreaseHistoryEntity s WHERE s.transactionId = :transactionId AND s.isDeleted = false")
     List<StockDecreaseHistoryEntity> findAllByTransactionId(@Param("transactionId") String transactionId);
 
-    @Query("select s from StockDecreaseHistoryEntity s where s.transactionId = :transactionId and s.productId = :productId and s.size =:size")
-    List<StockDecreaseHistoryEntity> findByProductIdAndSizeAndTransactionId(@Param("productId") Long productId, @Param("size") String size,
+    @Query("select s from StockDecreaseHistoryEntity s where s.transactionId = :transactionId and s.productPublicId = :productPublicId and s.size =:size")
+    List<StockDecreaseHistoryEntity> findByProductIdAndSizeAndTransactionId(@Param("productPublicId") String productPublicId, @Param("size") String size,
         @Param("transactionId") String transactionId);
 
     @Query("SELECT s FROM StockDecreaseHistoryEntity s " +

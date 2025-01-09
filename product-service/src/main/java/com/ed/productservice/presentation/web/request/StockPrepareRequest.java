@@ -9,7 +9,7 @@ public record StockPrepareRequest(
 ) {
 
     public record ProductReservationInfo(
-        Long productId,
+        String productPublicId,
         int quantity,
         String size,
         ProductCategory productCategory
@@ -19,7 +19,7 @@ public record StockPrepareRequest(
     public List<ProductReservationInfoDomain> toDomain() {
         return items.stream()
             .map(productReservationInfo -> new ProductReservationInfoDomain(
-                productReservationInfo.productId,
+                productReservationInfo.productPublicId,
                 productReservationInfo.quantity,
                 productReservationInfo.size,
                 productReservationInfo.productCategory

@@ -7,14 +7,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ProductReservationInfoDomain {
-    private Long productId;
+    private String productPublicId;
     private int quantity;
     private String size;
     private ProductCategory productCategory;
 
-    public ProductReservationInfoDomain(Long productId, int quantity, String size,
+    public ProductReservationInfoDomain(String productPublicId, int quantity, String size,
         ProductCategory productCategory) {
-        this.productId = productId;
+        this.productPublicId = productPublicId;
         this.quantity = quantity;
         this.size = size;
         this.productCategory = productCategory;
@@ -22,7 +22,7 @@ public class ProductReservationInfoDomain {
 
     public static ProductReservationInfoDomain from(StockDecreaseHistoryEntity entity) {
         return new ProductReservationInfoDomain(
-            entity.getProductId(),
+            entity.getProductPublicId(),
             entity.getQuantity(),
             entity.getSize(),
             entity.getProductCategory(

@@ -12,17 +12,17 @@ public class BottomSizeStockAdapter {
 
     private final BottomSizeStockRepository bottomSizeStockRepository;
 
-    public void bottomDecreaseStock(ProductReservationInfoDomain reservationInfo) {
+    public void bottomDecreaseStock(ProductReservationInfoDomain reservationInfo, Long productId) {
         BottomSizeStockEntity bottomSizeStockEntity = bottomSizeStockRepository.findByProductIdAndBottomSize(
-            reservationInfo.getProductId(),
+            productId,
             reservationInfo.getSize());
 
         bottomSizeStockEntity.decrease(reservationInfo.getQuantity());
     }
 
-    public void bottomIncrease(ProductReservationInfoDomain item) {
+    public void bottomIncrease(ProductReservationInfoDomain item, Long productId) {
         BottomSizeStockEntity entity = bottomSizeStockRepository.findByProductIdAndBottomSize(
-            item.getProductId(),
+            productId,
             item.getSize());
 
         entity.increaseStock(item.getQuantity());
