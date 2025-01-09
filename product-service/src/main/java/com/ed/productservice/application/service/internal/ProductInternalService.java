@@ -3,6 +3,7 @@ package com.ed.productservice.application.service.internal;
 import com.ed.productservice.application.port.out.BrandOutPort;
 import com.ed.productservice.application.port.out.ProductOutPort;
 import com.ed.productservice.domain.DecreaseStockResponse;
+import com.ed.productservice.domain.DecreaseStockResponse.ProductBrandInfo;
 import com.ed.productservice.domain.vo.Brand;
 import com.ed.productservice.domain.vo.Product;
 import com.ed.productservice.domain.vo.ProductReservationInfoDomain;
@@ -23,23 +24,24 @@ public class ProductInternalService {
     @Transactional
     public DecreaseStockResponse decreaseStock(List<ProductReservationInfoDomain> request) {
         String transactionId = UUID.randomUUID().toString();
-        List<Long> brandIdList = new ArrayList<>();
+        List<ProductBrandInfo> productBrandInfoList = new ArrayList<>();
 
 
         for (ProductReservationInfoDomain item : request) {
             Product product = productOutPort.findOne(item.getProductPublicId());
             stockService.decreaseStockReservation(item, transactionId, product.getProductId());
 
-            getBrandIdList(item, brandIdList);
+            getBrandIdList(item, productBrandInfoList);
         }
 
-        return new DecreaseStockResponse(transactionId, brandIdList);
+        return new DecreaseStockResponse(transactionId, productBrandInfoList);
     }
 
-    private void getBrandIdList(ProductReservationInfoDomain item, List<Long> brandIdList) {
+    private void getBrandIdList(ProductReservationInfoDomain item, List<ProductBrandInfo> productBrandInfoList) {
         Product product = productOutPort.findOne(item.getProductPublicId());
         Brand brand = brandOutPort.findOne(product.getBrandId());
-        brandIdList.add(brand.getBrandId());
+
+        productBrandInfoList.add(new ProductBrandInfo(brand.getBrandId(), product.getProductId()));
     }
 
     @Transactional
