@@ -1,9 +1,10 @@
 package com.ed.payment.infrastructure.out.persistence;
 
-import static com.ed.payment.infrastructure.out.persistence.PaymentStatus.READY;
+import static com.ed.payment.domain.PaymentStatus.READY;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.ed.payment.domain.PaymentStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -49,6 +50,9 @@ public class PaymentJpaEntity {
   @Column(nullable = false)
   private int amount;
 
+  @Column(nullable = false)
+  private int balance;
+
   public static PaymentJpaEntity initPayment(
       String userPublicId, String orderPublicId, String orderName, int amount) {
     return PaymentJpaEntity.builder()
@@ -57,6 +61,7 @@ public class PaymentJpaEntity {
         .orderPublicId(orderPublicId)
         .orderName(orderName)
         .amount(amount)
+        .balance(amount)
         .build();
   }
 

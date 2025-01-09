@@ -1,6 +1,6 @@
 package com.ed.payment.application.port.out.persistence;
 
-import com.ed.payment.infrastructure.out.persistence.PaymentStatus;
+import com.ed.payment.domain.PaymentStatus;
 
 public interface UpdatePaymentPort {
   void updatePaymentStatus(Long paymentId, PaymentStatus paymentStatus);

@@ -1,6 +1,7 @@
 package com.ed.payment.infrastructure.out.persistence;
 
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
+import com.ed.payment.domain.PaymentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

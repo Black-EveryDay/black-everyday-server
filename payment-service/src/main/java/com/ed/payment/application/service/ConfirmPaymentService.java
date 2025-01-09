@@ -1,9 +1,9 @@
 package com.ed.payment.application.service;
 
-import static com.ed.payment.infrastructure.out.persistence.PaymentStatus.ABORTED;
-import static com.ed.payment.infrastructure.out.persistence.PaymentStatus.DONE;
-import static com.ed.payment.infrastructure.out.persistence.PaymentStatus.VERIFY_FAILED;
-import static com.ed.payment.libs.common.ErrorCode.PAYMENT_AMOUNT_MISMATCH;
+import static com.ed.payment.domain.PaymentStatus.ABORTED;
+import static com.ed.payment.domain.PaymentStatus.DONE;
+import static com.ed.payment.domain.PaymentStatus.VERIFY_FAILED;
+import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_AMOUNT_MISMATCH;
 
 import com.ed.payment.application.port.in.ConfirmPaymentCommand;
 import com.ed.payment.application.port.in.ConfirmPaymentUseCase;
@@ -13,9 +13,9 @@ import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.application.port.out.pg.ConfirmPaymentPort;
 import com.ed.payment.application.port.out.pg.PaymentDone;
 import com.ed.payment.domain.Payment;
-import com.ed.payment.infrastructure.out.persistence.PaymentStatus;
-import com.ed.payment.libs.common.CustomException;
-import com.ed.payment.libs.common.TransactionHelper;
+import com.ed.payment.domain.PaymentStatus;
+import com.ed.payment.libs.common.exception.CustomException;
+import com.ed.payment.libs.common.helper.TransactionHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,12 +34,11 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
 
   @Transactional
   @Override
-  public void confirmPayment(ConfirmPaymentCommand command) {
+  public PaymentDone confirmPayment(ConfirmPaymentCommand command) {
     Payment payment = readPaymentPort.findPayment(command.getOrderId());
     verifyRequest(payment, command);
 
-    PaymentDone paymentDone = confirmPaymentPort.confirmPayment(
-        payment, command.getPaymentKey());
+    PaymentDone paymentDone = confirmPaymentPort.confirmPayment(payment, command.getPaymentKey());
     PaymentStatus paymentStatus = getPaymentStatus(paymentDone.getStatus());
     updatePaymentAndPaymentHistory(command, payment, paymentStatus);
 
@@ -49,6 +48,7 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
     //            => 하나의 주문에 대해서 언제까지 결제를 해야하는지 고객한테 알려줘서
     // scheduler  => 상태 전이 + publish(정책) => @Scheduler 를 통해서
 
+    return paymentDone;
   }
 
   private void verifyRequest(Payment payment, ConfirmPaymentCommand command) {

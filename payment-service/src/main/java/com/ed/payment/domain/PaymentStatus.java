@@ -1,4 +1,4 @@
-package com.ed.payment.infrastructure.out.persistence;
+package com.ed.payment.domain;
 
 public enum PaymentStatus {
   READY,

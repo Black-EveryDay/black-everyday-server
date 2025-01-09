@@ -1,15 +1,16 @@
 package com.ed.payment.application.service;
 
-import static com.ed.payment.infrastructure.out.persistence.PaymentStatus.ABORTED;
-import static com.ed.payment.libs.common.ErrorCode.DUPLICATED_ORDER_REQUEST;
+import static com.ed.payment.domain.PaymentStatus.ABORTED;
+import static com.ed.payment.libs.common.exception.ErrorCode.DUPLICATED_ORDER_REQUEST;
 
 import com.ed.payment.application.port.in.HandleFailPaymentCommand;
 import com.ed.payment.application.port.in.HandleFailPaymentUseCase;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.ReadPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
+import com.ed.payment.application.port.out.pg.PaymentFail;
 import com.ed.payment.domain.Payment;
-import com.ed.payment.libs.common.CustomException;
+import com.ed.payment.libs.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class HandlerFailPaymentService implements HandleFailPaymentUseCase {
 
   @Transactional
   @Override
-  public void handleFailPayment(HandleFailPaymentCommand command) {
+  public PaymentFail handleFailPayment(HandleFailPaymentCommand command) {
 
     if (DUPLICATED_ORDER_ERROR.equalsIgnoreCase(command.getCode())) {
       throw new CustomException(DUPLICATED_ORDER_REQUEST);
@@ -36,12 +37,11 @@ public class HandlerFailPaymentService implements HandleFailPaymentUseCase {
 
     Payment payment = readPaymentPort.findPayment(command.getOrderId());
     updatePaymentPort.updatePaymentStatus(payment.getPaymentId(), ABORTED);
-    createPaymentHistoryPort.createPaymentHistory(
-        payment.getPaymentId(), payment.getAmount(), ABORTED);
+    createPaymentHistoryPort.createPaymentHistory(payment.getPaymentId(), payment.getAmount(), ABORTED);
 
     // todo
     // kafka producer 로 값 넣어주기 ==> success 여부 정도 예상된다.
-    
 
+    return PaymentFail.of(command.getCode(), command.getMessage(), command.getOrderId());
   }
 }

@@ -1,9 +1,10 @@
 package com.ed.payment.infrastructure.out.persistence;
 
-import static com.ed.payment.infrastructure.out.persistence.PaymentStatus.READY;
+import static com.ed.payment.domain.PaymentStatus.READY;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.ed.payment.domain.PaymentStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

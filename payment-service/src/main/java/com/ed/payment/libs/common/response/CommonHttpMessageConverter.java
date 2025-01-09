@@ -1,4 +1,4 @@
-package com.ed.payment.libs.common;
+package com.ed.payment.libs.common.response;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

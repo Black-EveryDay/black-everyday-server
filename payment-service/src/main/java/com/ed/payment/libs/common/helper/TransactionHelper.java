@@ -1,4 +1,4 @@
-package com.ed.payment.libs.common;
+package com.ed.payment.libs.common.helper;
 
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
