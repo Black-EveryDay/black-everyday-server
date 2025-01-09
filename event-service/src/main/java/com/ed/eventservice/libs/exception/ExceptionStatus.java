@@ -5,7 +5,11 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ExceptionStatus {
+  // CouponTemplate
   COUPON_TEMPLATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "t001", "Coupon template not found"),
+
+  // Coupon
+  USER_NOT_OWNER_OF_COUPON(HttpStatus.FORBIDDEN, "c001", "User is not the owner of the coupon"),
   ;
 
   private final HttpStatus status;
