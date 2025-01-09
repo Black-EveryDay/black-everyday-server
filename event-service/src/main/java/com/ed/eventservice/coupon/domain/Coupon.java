@@ -1,7 +1,9 @@
 package com.ed.eventservice.coupon.domain;
 
 import com.ed.eventservice.coupon.domain.enums.CouponState;
+import com.ed.eventservice.coupon.domain.vo.CouponStatusChangeLog;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,4 +19,6 @@ public class Coupon {
   private CouponState state;
   private LocalDateTime expirationDate;
   private LocalDateTime issuedAt;
+  private List<CouponStatusChangeLog> couponStatusChangelogs;
+
 }
