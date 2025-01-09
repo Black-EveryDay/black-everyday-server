@@ -10,6 +10,10 @@ public enum ExceptionStatus {
 
   // Coupon
   USER_NOT_OWNER_OF_COUPON(HttpStatus.FORBIDDEN, "c001", "User is not the owner of the coupon"),
+  COUPON_USAGE_TARGET_NOT_MATCHED(HttpStatus.BAD_REQUEST, "c002",
+      "Coupon usage target not matched"),
+  COUPON_USAGE_TARGET_TYPE_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "c003",
+      "Coupon usage target type not supported"),
   ;
 
   private final HttpStatus status;
