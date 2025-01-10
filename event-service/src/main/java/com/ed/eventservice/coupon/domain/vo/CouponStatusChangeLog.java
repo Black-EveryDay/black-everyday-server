@@ -12,8 +12,8 @@ import lombok.Getter;
 public class CouponStatusChangeLog {
 
   private final Long id;
-  private final CouponState before;
-  private final CouponState after;
+  private final CouponState beforeStatus;
+  private final CouponState afterStatus;
   private final CouponStatusChangeReason reason;
   private final LocalDateTime changedAt;
   private final UUID orderId;

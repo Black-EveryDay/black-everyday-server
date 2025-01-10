@@ -26,14 +26,17 @@ public class CouponTemplateController {
 
   @PostMapping
   public ResponseEntity<CreateCouponTemplateResponse> createCouponTemplate(
-      @Valid @RequestBody CreateCouponTemplateRequest createCouponTemplateRequest) {
+      @Valid @RequestBody CreateCouponTemplateRequest createCouponTemplateRequest
+  ) {
     return created(
         couponTemplateUseCase.createCouponTemplate(createCouponTemplateRequest.toCommand()));
   }
 
   @PostMapping("{couponTemplateId}/coupons")
-  public ResponseEntity<String> createCoupon(@PathVariable UUID couponTemplateId,
-      @Valid @RequestBody CreateCouponRequest createCouponRequest) {
+  public ResponseEntity<String> createCoupon(
+      @PathVariable UUID couponTemplateId,
+      @Valid @RequestBody CreateCouponRequest createCouponRequest
+  ) {
     couponTemplateUseCase.createCoupon(CreateCouponCommand.builder()
         .couponTemplateId(couponTemplateId)
         .quantity(createCouponRequest.getQuantity())

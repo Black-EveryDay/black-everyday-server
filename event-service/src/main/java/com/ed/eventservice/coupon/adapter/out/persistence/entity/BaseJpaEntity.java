@@ -47,6 +47,7 @@ public abstract class BaseJpaEntity {
   private String deletedBy;
 
   public void delete(UUID reqUserId) {
+    
     this.deletedAt = LocalDateTime.now();
     this.deletedBy = reqUserId.toString();
     this.isDeleted = true;

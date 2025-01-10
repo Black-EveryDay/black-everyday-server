@@ -17,6 +17,7 @@ public class CouponService implements CouponUseCase {
   @Override
   @Transactional
   public void useCoupon(CouponUseCommand command) {
+
     Coupon coupon = couponPersistencePort.getCouponByPublicId(command.getCouponId());
 
     coupon.useCoupon(command.getUserId(), command.getBrandId(), command.getProductId(),

@@ -12,10 +12,11 @@ public class CouponUsageTargetInfo {
   private final UUID couponUsageTargetId;
 
   @Builder
-  private CouponUsageTargetInfo(CouponUsageTargetType couponUsageTargetType,
-      UUID couponUsageTargetId) {
+  private CouponUsageTargetInfo(
+      CouponUsageTargetType couponUsageTargetType,
+      UUID couponUsageTargetId
+  ) {
     this.couponUsageTargetType = couponUsageTargetType;
     this.couponUsageTargetId = couponUsageTargetId;
   }
-
 }

@@ -25,18 +25,23 @@ public class CouponTemplateService implements CouponTemplateUseCase {
   @Override
   @Transactional
   public CreateCouponTemplateResponse createCouponTemplate(
-      CreateCouponTemplateCommand createCouponTemplateCommand) {
-    CouponTemplate couponTemplate = couponTemplateMapper.commandToDomain(
-        createCouponTemplateCommand);
-    return couponTemplateMapper.domainToResponse(
-        couponTemplatePersistencePort.saveCouponTemplate(couponTemplate));
+      CreateCouponTemplateCommand createCouponTemplateCommand
+  ) {
+
+    CouponTemplate newCouponTemplate =
+        couponTemplateMapper.commandToDomain(createCouponTemplateCommand);
+
+    CouponTemplate savedCouponTemplate =
+        couponTemplatePersistencePort.saveCouponTemplate(newCouponTemplate);
+
+    return couponTemplateMapper.domainToResponse(savedCouponTemplate);
   }
 
   @Override
   public void createCoupon(CreateCouponCommand command) {
-    CouponTemplate couponTemplate = couponTemplatePersistencePort.getCouponTemplateByPublicId(
-        command.getCouponTemplateId()
-    );
+
+    CouponTemplate couponTemplate =
+        couponTemplatePersistencePort.getCouponTemplateByPublicId(command.getCouponTemplateId());
 
     List<Coupon> newCoupons = couponTemplate.createCoupon(command.getQuantity());
 

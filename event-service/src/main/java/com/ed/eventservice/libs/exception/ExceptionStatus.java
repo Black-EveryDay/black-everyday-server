@@ -7,6 +7,11 @@ import org.springframework.http.HttpStatus;
 public enum ExceptionStatus {
   // CouponTemplate
   COUPON_TEMPLATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "t001", "Coupon template not found"),
+  INVALID_BRAND_ID(HttpStatus.BAD_REQUEST, "t002", "Invalid brand id"),
+  INVALID_USAGE_TARGET_ID(HttpStatus.BAD_REQUEST, "t003", "Invalid usage target id"),
+  INVALID_MAX_ISSUANCE(HttpStatus.BAD_REQUEST, "t004", "Invalid max issuance"),
+  INVALID_QUANTITY(HttpStatus.BAD_REQUEST, "t005", "Invalid quantity"),
+  MAX_ISSUANCE_EXCEEDED(HttpStatus.BAD_REQUEST, "t006", "Max issuance exceeded"),
 
   // Coupon
   USER_NOT_OWNER_OF_COUPON(HttpStatus.FORBIDDEN, "c001", "User is not the owner of the coupon"),

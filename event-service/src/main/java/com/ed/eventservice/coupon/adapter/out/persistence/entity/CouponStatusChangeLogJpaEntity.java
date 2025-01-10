@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "coupon_status_change_logs")
+@Table(name = "ED_COUPON_STATUS_CHANGE_LOG")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -34,11 +34,11 @@ public class CouponStatusChangeLogJpaEntity extends BaseJpaEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, updatable = false)
-  private CouponState before;
+  private CouponState beforeStatus;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, updatable = false)
-  private CouponState after;
+  private CouponState afterStatus;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, updatable = false)

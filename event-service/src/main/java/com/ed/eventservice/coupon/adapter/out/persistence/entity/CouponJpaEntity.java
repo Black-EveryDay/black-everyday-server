@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "ed_issued_coupon")
+@Table(name = "ED_COUPON")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CouponJpaEntity extends BaseJpaEntity {
 
@@ -43,9 +43,14 @@ public class CouponJpaEntity extends BaseJpaEntity {
   private LocalDateTime issuedAt;
 
   @Builder
-  private CouponJpaEntity(Long id, String publicId, String couponTemplateId,
+  private CouponJpaEntity(
+      Long id,
+      String publicId,
+      String couponTemplateId,
       String userId,
-      LocalDateTime expirationDate) {
+      LocalDateTime expirationDate
+  ) {
+    
     this.id = id;
     this.publicId = publicId == null ? UUID.randomUUID().toString() : publicId;
     this.couponTemplateId = couponTemplateId;

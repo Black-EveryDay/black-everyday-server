@@ -1,5 +1,6 @@
 package com.ed.eventservice.coupon.adapter.in.internal;
 
+import com.ed.eventservice.coupon.adapter.in.internal.dto.UseCouponRequest;
 import com.ed.eventservice.coupon.application.port.in.CouponUseCase;
 import com.ed.eventservice.coupon.application.port.in.CouponUseCommand;
 import java.util.UUID;
@@ -18,8 +19,17 @@ public class CouponInternalController {
   private final CouponUseCase couponUseCase;
 
   @PostMapping("/{couponPublicId}/orderInfo")
-  public void useCoupon(@PathVariable UUID couponPublicId,
-      @RequestBody CouponUseCommand couponUseCommand) {
-    couponUseCase.useCoupon(couponUseCommand);
+  public void useCoupon(
+      @PathVariable UUID couponPublicId,
+      @RequestBody UseCouponRequest useCouponRequest
+  ) {
+
+    couponUseCase.useCoupon(CouponUseCommand.builder()
+        .couponId(couponPublicId)
+        .userId(useCouponRequest.getUserId())
+        .brandId(useCouponRequest.getBrandId())
+        .productId(useCouponRequest.getProductId())
+        .orderId(useCouponRequest.getOrderId())
+        .build());
   }
 }
