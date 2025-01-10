@@ -38,7 +38,7 @@ public class ProductQueryDslRepository {
     ) {
         JPAQuery<ProductInfoDto> query = queryFactory
             .select(Projections.constructor(ProductInfoDto.class,
-                productEntity.productId,
+                productEntity.productPublicId,
                 productEntity.color,
                 productEntity.image,
                 productEntity.category,

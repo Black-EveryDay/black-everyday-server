@@ -2,8 +2,10 @@ package com.ed.productservice.application.service.internal;
 
 import static com.ed.productservice.libs.common.ErrorCode.STOCK_RESERVATION_NOT_FOUND;
 
+import com.ed.productservice.domain.vo.Product;
 import com.ed.productservice.domain.vo.ProductCategory;
 import com.ed.productservice.domain.vo.ProductReservationInfoDomain;
+import com.ed.productservice.infrastructure.persistence.adapter.ProductAdapter;
 import com.ed.productservice.infrastructure.persistence.adapter.internal.BottomSizeStockAdapter;
 import com.ed.productservice.infrastructure.persistence.adapter.internal.TopSizeStockAdapter;
 import com.ed.productservice.infrastructure.persistence.adapter.internal.StockAdapter;
@@ -19,18 +21,19 @@ public class StockService {
     private final TopSizeStockAdapter topSizeStockAdapter;
     private final BottomSizeStockAdapter bottomSizeStockAdapter;
     private final StockAdapter stockAdapter;
+    private final ProductAdapter productAdapter;
 
     public void decreaseStockReservation(ProductReservationInfoDomain productReservationInfo,
-        String transactionId) {
+        String transactionId, Long productId) {
         stockAdapter.isDuplicateStockDecrease(productReservationInfo, transactionId);
 
         ProductCategory category = productReservationInfo.getProductCategory();
         if (category.equals(ProductCategory.TOP)) {
-            topSizeStockAdapter.topDecreaseStock(productReservationInfo);
+            topSizeStockAdapter.topDecreaseStock(productReservationInfo, productId);
         }
 
         if (category.equals(ProductCategory.BOTTOM)) {
-            bottomSizeStockAdapter.bottomDecreaseStock(productReservationInfo);
+            bottomSizeStockAdapter.bottomDecreaseStock(productReservationInfo, productId);
         }
 
         stockAdapter.save(productReservationInfo, transactionId);
@@ -45,12 +48,13 @@ public class StockService {
         }
 
         for (ProductReservationInfoDomain item : itemList) {
+            Product product = productAdapter.findOne(item.getProductPublicId());
             if (item.getProductCategory().equals(ProductCategory.TOP)) {
-                topSizeStockAdapter.topIncrease(item);
+                topSizeStockAdapter.topIncrease(item, product.getProductId());
             }
 
             if (item.getProductCategory().equals(ProductCategory.BOTTOM)) {
-                bottomSizeStockAdapter.bottomIncrease(item);
+                bottomSizeStockAdapter.bottomIncrease(item, product.getProductId());
             }
 
             stockAdapter.deleteStockHistory(transactionId);

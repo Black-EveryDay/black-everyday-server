@@ -21,9 +21,9 @@ public class ProductQueryController {
 
     private final ProductQueryAdapter productQueryAdapter;
 
-    @GetMapping("/{productId}")
-    public ProductDetailResponse findOne(@PathVariable("productId") Long productId) {
-        ProductInfoDto dto = productQueryAdapter.findById(productId);
+    @GetMapping("/{productPublicId}")
+    public ProductDetailResponse findOne(@PathVariable("productPublicId") String productPublicId) {
+        ProductInfoDto dto = productQueryAdapter.findById(productPublicId);
 
         return ProductDetailResponse.from(dto);
 

@@ -21,7 +21,7 @@ public class StockAdapter {
     public void save(ProductReservationInfoDomain productReservationInfo, String transactionId) {
         stockDecreaseHistoryRepository.save(
             new StockDecreaseHistoryEntity(
-                productReservationInfo.getProductId(),
+                productReservationInfo.getProductPublicId(),
                 productReservationInfo.getQuantity(),
                 productReservationInfo.getSize(),
                 productReservationInfo.getProductCategory(),
@@ -48,7 +48,7 @@ public class StockAdapter {
 
     public void isDuplicateStockDecrease(ProductReservationInfoDomain productReservationInfo, String transactionId) {
         if (!stockDecreaseHistoryRepository.findByProductIdAndSizeAndTransactionId(
-                productReservationInfo.getProductId(), productReservationInfo.getSize(), transactionId)
+                productReservationInfo.getProductPublicId(), productReservationInfo.getSize(), transactionId)
             .isEmpty()) {
 
             throw new ProductException(INVENTORY_ALREADY_DECREASE);

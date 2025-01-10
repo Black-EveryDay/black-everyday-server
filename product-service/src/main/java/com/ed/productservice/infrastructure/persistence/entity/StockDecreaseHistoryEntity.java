@@ -22,7 +22,7 @@ public class StockDecreaseHistoryEntity extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long productId;
+    private String productPublicId;
     private Integer quantity;
     private String size;
 
@@ -34,9 +34,9 @@ public class StockDecreaseHistoryEntity extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private StockDecreaseHistoryStatus status;
 
-    public StockDecreaseHistoryEntity(Long productId, Integer quantity, String size,
+    public StockDecreaseHistoryEntity(String productPublicId, Integer quantity, String size,
         ProductCategory productCategory, String transactionId, StockDecreaseHistoryStatus status) {
-        this.productId = productId;
+        this.productPublicId = productPublicId;
         this.quantity = quantity;
         this.size = size;
         this.productCategory = productCategory;
