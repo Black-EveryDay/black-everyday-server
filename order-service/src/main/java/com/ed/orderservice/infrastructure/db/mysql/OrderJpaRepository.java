@@ -8,5 +8,4 @@ import com.ed.orderservice.infrastructure.entity.OrderEntity;
 @Repository
 public interface OrderJpaRepository
 	extends JpaRepository<OrderEntity, Long> {
-
 }

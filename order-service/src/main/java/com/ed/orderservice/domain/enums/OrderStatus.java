@@ -9,7 +9,10 @@ public enum OrderStatus {
   PAYMENT_WAITING("03", "결제 대기"),
   PAYMENT_CHECKING("04", "입금 확인 중"),
   PAYMENT_FAILED("05", "결제 실패"),
-  PAYMENT_COMPLETED("06", "결제 완료");
+  PAYMENT_COMPLETED("06", "결제 완료"),
+  SHIPPING_REQUEST("07", "배송 요청"),
+  PAY_CANCEL_REQUEST("08", "결제 취소 예정"),
+  PAY_CANCEL_COMPLETE("09", "결제 취소 완료");
 
   private final String code;
   private final String description;

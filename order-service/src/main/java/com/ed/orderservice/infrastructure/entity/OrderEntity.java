@@ -1,6 +1,11 @@
 package com.ed.orderservice.infrastructure.entity;
 
 import com.ed.orderservice.domain.enums.OrderStatus;
+import com.ed.orderservice.domain.vo.order.OrderDelivery;
+import com.ed.orderservice.domain.vo.order.OrderItem;
+
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +21,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Table(name = "ED_ORDERS")
+@NoArgsConstructor
 @AllArgsConstructor
 public class OrderEntity {
 
@@ -29,26 +37,85 @@ public class OrderEntity {
 	@Column(name = "ORDER_ID")
 	private Long orderId;
 
-	@Column(name = "ORDER_PUBLIC_Id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
+	@Column(name = "ORDER_PUBLIC_Id", updatable = false, nullable = false)
 	private String orderPublicId;
 
+	@Column(name = "ORDER_NAME", nullable = false)
+	private String orderName;
+
+	@Column(name = "PHONE_NUMBER", nullable = false)
+	private String phoneNumber;
+
 	@Enumerated(EnumType.STRING)
-	@Column(name = "ORDER_STATE", nullable = false)
-	private OrderStatus orderState;
+	@Column(name = "ORDER_STATUS", nullable = false)
+	private OrderStatus orderStatus;
 
 	@Column(name = "ORDER_DATE", nullable = false)
 	private LocalDateTime orderDate;
 
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<OrderItemEntity> orderItemEntity = new ArrayList<>();
+	@OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<OrderItemEntity> orderItemEntitys = new ArrayList<>();
 
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<OrderStateHistoryEntity> orderStateHistoryEntity = new ArrayList<>();
+	@OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<OrderStatusHistoryEntity> orderStatusHistoryEntity = new ArrayList<>();
+
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "orderEntity")
+	@JoinColumn(name = "order_delivery_id")
+	private OrderDeliveryEntity orderDeliveryEntity;
 
 	@Column(name = "TOTAL_AMOUNT", nullable = false)
 	private Long totalAmount;
 
 	@Column(name = "TOTAL_QUANTITY", nullable = false)
 	private Long totalQuantity;
+
+	@Column(name = "PAUMENT_ID", nullable = true)
+	private String paymentId = null;
+	@Column(name = "PAID_AT", nullable = true)
+	private LocalDateTime paidAt = null;
+
+	@Builder
+	public OrderEntity(String orderPublicId, String orderName, String phoneNumber,
+			OrderStatus orderStatus, LocalDateTime orderDate,
+			Long totalAmount, Long totalQuantity, String paymentId, LocalDateTime paidAt) {
+		this.orderPublicId = orderPublicId;
+		this.orderName = orderName;
+		this.phoneNumber = phoneNumber;
+		this.orderStatus = orderStatus;
+		this.orderDate = orderDate;
+		this.totalAmount = totalAmount;
+		this.totalQuantity = totalQuantity;
+		this.paymentId = paymentId;
+		this.paidAt = paidAt;
+	}
+
+	public void addOrderItems(List<OrderItem> items) {
+		for (OrderItem item : items) {
+			addOrderItem(item);
+		}
+	}
+
+	private void addOrderItem(OrderItem orderItem) {
+		OrderItemEntity orderItemEntity = OrderItem.fromOrderItem(orderItem);
+		this.orderItemEntitys.add(orderItemEntity);
+		orderItemEntity.updateOrder(this);
+	}
+
+	public void addOrderStatuesHistory(OrderStatus orderStatus) {
+		OrderStatusHistoryEntity history =
+				OrderStatusHistoryEntity.builder()
+						.orderStatus(orderStatus)
+						.build();
+
+		this.orderStatusHistoryEntity = orderStatusHistoryEntity;
+		history.updateOrder(this);
+		this.orderStatusHistoryEntity.add(history);
+	}
+
+	public void addOrderDeliveryEntity(OrderDelivery orderDelivery) {
+		OrderDeliveryEntity orderDeliveryEntity = OrderDelivery.fromOrderDelivery(orderDelivery);
+		this.orderDeliveryEntity = orderDeliveryEntity;
+		orderDeliveryEntity.updateOrder(this);
+	}
 
 }

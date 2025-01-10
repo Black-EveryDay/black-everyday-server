@@ -1,0 +1,40 @@
+### Create a new order
+POST http://localhost:19095/api/v1/orders
+Content-Type: application/json
+
+{
+  "orderer": {
+    "name": "홍길동",
+    "phoneNumber": "010-1234-5678"
+  },
+  "orderItemDtos": [
+    {
+      "brandId": "나이키",
+      "productId": "SHIRT001",
+      "productName": "클래식 화이트 셔츠",
+      "quantity": 2,
+      "unitPrice": 59000,
+      "size": "M",
+      "productCategory": "상의"
+    },
+    {
+      "brandId": "아디다스",
+      "productId": "JEANS002",
+      "productName": "슬림핏 데님 진",
+      "quantity": 1,
+      "unitPrice": 79000,
+      "size": "32",
+      "productCategory": "하의"
+    }
+  ],
+  "orderDeliveryRequest": {
+    "receiverName": "김철수",
+    "receiverAddress": "서울시 강남구 테헤란 123",
+    "receiverPhoneNumber": "02-907-6543",
+    "receiverMobileNumber": "010-9076-5432",
+    "zipcode": "06234",
+    "roadZipCode": "06234",
+    "requirement": "부재시 경비실에 맡겨주세요"
+  }
+}
+
