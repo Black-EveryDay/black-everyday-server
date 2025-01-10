@@ -28,11 +28,11 @@ public class StockService {
     stockAdapter.isDuplicateStockDecrease(productReservationInfo, transactionId);
 
     ProductCategory category = productReservationInfo.getProductCategory();
-    if (category.equals(ProductCategory.TOP)) {
+    if (category == (ProductCategory.TOP)) {
       topSizeStockAdapter.topDecreaseStock(productReservationInfo, productId);
     }
 
-    if (category.equals(ProductCategory.BOTTOM)) {
+    if (category == (ProductCategory.BOTTOM)) {
       bottomSizeStockAdapter.bottomDecreaseStock(productReservationInfo, productId);
     }
 
@@ -49,11 +49,11 @@ public class StockService {
 
     for (ProductReservationInfoDomain item : itemList) {
       Product product = productAdapter.findOne(item.getProductPublicId());
-      if (item.getProductCategory().equals(ProductCategory.TOP)) {
+      if (item.getProductCategory() == (ProductCategory.TOP)) {
         topSizeStockAdapter.topIncrease(item, product.getProductId());
       }
 
-      if (item.getProductCategory().equals(ProductCategory.BOTTOM)) {
+      if (item.getProductCategory() == (ProductCategory.BOTTOM)) {
         bottomSizeStockAdapter.bottomIncrease(item, product.getProductId());
       }
 
