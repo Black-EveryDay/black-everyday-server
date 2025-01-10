@@ -1,9 +1,10 @@
-package com.ed.payment.infrastructure.out.persistence;
+package com.ed.payment.infrastructure.out.persistence.entity;
 
-import static com.ed.payment.infrastructure.out.persistence.PaymentStatus.READY;
+import static com.ed.payment.domain.PaymentStatus.READY;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.ed.payment.domain.PaymentStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -37,40 +38,53 @@ public class PaymentHistoryJpaEntity {
   @Column(nullable = false)
   private Long paymentId;
 
+  @Column
+  private String lastTransactionKey;
+
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private PaymentStatus paymentStatus;
 
   @Column
-  private int totalAmount;
+  private Long totalAmount;
 
   @Column
-  private int balanceAmount;
+  private Long balanceAmount;
 
   @Column
-  private int cancelAmount;
+  private Long cancelAmount;
 
   public static PaymentHistoryJpaEntity initPaymentHistory(
-      Long paymentId, int amount) {
+      Long paymentId, Long amount) {
     return PaymentHistoryJpaEntity.builder()
         .paymentHistoryPublicId(generatePublicId())
         .paymentId(paymentId)
         .paymentStatus(READY)
         .totalAmount(amount)
         .balanceAmount(amount)
-        .cancelAmount(0)
         .build();
   }
 
-  public static PaymentHistoryJpaEntity createPaymentHistory(
-      Long paymentId, int amount, PaymentStatus paymentStatus) {
+  public static PaymentHistoryJpaEntity createConfirmSuccessPaymentHistory(
+      Long paymentId, String lastTransactionKey, PaymentStatus paymentStatus,
+      Long totalAmount, Long balanceAmount) {
     return PaymentHistoryJpaEntity.builder()
         .paymentHistoryPublicId(generatePublicId())
         .paymentId(paymentId)
+        .lastTransactionKey(lastTransactionKey)
         .paymentStatus(paymentStatus)
-        .totalAmount(amount)
-        .balanceAmount(amount)
-        .cancelAmount(0)
+        .totalAmount(totalAmount)
+        .balanceAmount(balanceAmount)
+        .build();
+  }
+
+  public static PaymentHistoryJpaEntity createFailPaymentHistory(
+      Long paymentId, String lastTransactionKey, PaymentStatus paymentStatus) {
+    return PaymentHistoryJpaEntity.builder()
+        .paymentHistoryPublicId(generatePublicId())
+        .paymentId(paymentId)
+        .lastTransactionKey(lastTransactionKey)
+        .paymentStatus(paymentStatus)
         .build();
   }
 
