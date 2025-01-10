@@ -14,14 +14,16 @@ public class CouponIssueInfo {
   private final UUID couponIssuerId;
   private final Boolean isIssuable;
   private final Integer maxIssuance;
+  private final Integer issuedCount;
 
   @Builder
   private CouponIssueInfo(CouponIssuanceType couponIssuanceType, CouponIssuerType couponIssuerType,
-      UUID couponIssuerId, Boolean isIssuable, Integer maxIssuance) {
+      UUID couponIssuerId, Boolean isIssuable, Integer maxIssuance, Integer issuedCount) {
     this.couponIssuanceType = couponIssuanceType;
     this.couponIssuerType = couponIssuerType;
     this.couponIssuerId = couponIssuerId;
     this.isIssuable = isIssuable;
     this.maxIssuance = maxIssuance;
+    this.issuedCount = issuedCount;
   }
 }
