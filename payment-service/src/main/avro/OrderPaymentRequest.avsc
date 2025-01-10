@@ -1,0 +1,37 @@
+{
+  "namespace": "com.ed.payment.infrastructure.out.mq.record",
+  "type": "record",
+  "name": "OrderPaymentRequest",
+  "fields": [
+    {
+      "name": "userPublicId",
+      "type": "string"
+    },
+    {
+      "name": "orderPublicId",
+      "type": "string"
+    },
+    {
+      "name": "orderName",
+      "type": "string"
+    },
+    {
+      "name": "paymentDeadline",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
+    },
+    {
+      "name": "requestDateTime",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
+    },
+    {
+      "name": "totalAmount",
+      "type": "long"
+    }
+  ]
+}

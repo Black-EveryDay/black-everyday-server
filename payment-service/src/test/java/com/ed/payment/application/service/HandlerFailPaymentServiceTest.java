@@ -3,7 +3,6 @@ package com.ed.payment.application.service;
 import static com.ed.payment.libs.common.exception.ErrorCode.DUPLICATED_ORDER_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -18,6 +17,8 @@ import com.ed.payment.application.port.out.persistence.ReadPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
+import com.ed.payment.infrastructure.out.mq.OrderPaymentProducer;
+import com.ed.payment.infrastructure.out.mq.record.OrderPaymentResponse;
 import com.ed.payment.libs.common.exception.CustomException;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,10 +42,13 @@ class HandlerFailPaymentServiceTest {
   @Mock
   private CreatePaymentHistoryPort createPaymentHistoryPort;
 
+  @Mock
+  private OrderPaymentProducer<OrderPaymentResponse> producer;
+
   @BeforeEach
   void setUp() {
     handlerFailPaymentService = new HandlerFailPaymentService(
-        readPaymentPort, updatePaymentPort, createPaymentHistoryPort);
+        readPaymentPort, updatePaymentPort, createPaymentHistoryPort, producer);
   }
 
   @Test
@@ -67,17 +71,15 @@ class HandlerFailPaymentServiceTest {
 
     doNothing()
         .when(createPaymentHistoryPort)
-        .createPaymentHistory(anyLong(), anyInt(), any((PaymentStatus.class)));
+        .createFailPaymentHistory(anyLong(), any((PaymentStatus.class)));
 
     // when
     handlerFailPaymentService.handleFailPayment(request);
 
     // then
     verify(readPaymentPort).findPayment(anyString());
-    verify(updatePaymentPort).updatePaymentStatus(anyLong(),
-        any(PaymentStatus.class));
-    verify(createPaymentHistoryPort).createPaymentHistory(anyLong(), anyInt(),
-        any(PaymentStatus.class));
+    verify(updatePaymentPort).updatePaymentStatus(anyLong(), any(PaymentStatus.class));
+    verify(createPaymentHistoryPort).createFailPaymentHistory(anyLong(), any(PaymentStatus.class));
   }
 
   @Test
@@ -96,6 +98,6 @@ class HandlerFailPaymentServiceTest {
 
     verify(readPaymentPort, never()).findPayment(anyString());
     verify(updatePaymentPort, never()).updatePaymentStatus(anyLong(), any(PaymentStatus.class));
-    verify(createPaymentHistoryPort, never()).createPaymentHistory(anyLong(),anyInt(), any(PaymentStatus.class));
+    verify(createPaymentHistoryPort, never()).createFailPaymentHistory(anyLong(), any(PaymentStatus.class));
   }
 }

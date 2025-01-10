@@ -1,7 +1,6 @@
 package com.ed.eventservice.coupon.adapter.out.persistence.entity;
 
 import com.ed.eventservice.coupon.domain.enums.CouponUsageTargetType;
-import com.ed.eventservice.coupon.domain.vo.CouponUsageTargetInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -28,20 +27,5 @@ public class CouponUsageTargetInfoJpaEntity {
       UUID couponUsageTargetId) {
     this.couponUsageTargetType = couponUsageTargetType;
     this.couponUsageTargetId = couponUsageTargetId == null ? null : couponUsageTargetId.toString();
-  }
-
-  public static CouponUsageTargetInfoJpaEntity from(CouponUsageTargetInfo couponUsageTargetInfo) {
-    return CouponUsageTargetInfoJpaEntity.builder()
-        .couponUsageTargetType(couponUsageTargetInfo.getCouponUsageTargetType())
-        .couponUsageTargetId(couponUsageTargetInfo.getCouponUsageTargetId())
-        .build();
-  }
-
-  public CouponUsageTargetInfo toCouponUsageTargetInfo() {
-    return CouponUsageTargetInfo.builder()
-        .couponUsageTargetType(couponUsageTargetType)
-        .couponUsageTargetId(
-            couponUsageTargetId == null ? null : UUID.fromString(couponUsageTargetId))
-        .build();
   }
 }

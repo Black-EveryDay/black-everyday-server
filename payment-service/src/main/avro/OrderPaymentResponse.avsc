@@ -1,0 +1,26 @@
+{
+  "namespace": "com.ed.payment.infrastructure.out.mq.record",
+  "type": "record",
+  "name": "OrderPaymentResponse",
+  "fields": [
+    {
+      "name": "isSuccess",
+      "type": "boolean"
+    },
+    {
+      "name": "orderPublicId",
+      "type": "string"
+    },
+    {
+      "name": "paymentPublicId",
+      "type": ["null", "string"]
+    },
+    {
+      "name": "messageTimestamp",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
+    }
+  ]
+}

@@ -19,6 +19,9 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_SERVERS}
+    schema-registry-url: ${SCHEMA_REGISTRY_URL}
+    consumer:
+      group-id: ${CONSUMER_GROUP_ID}
 
 pg:
   tosspayments:

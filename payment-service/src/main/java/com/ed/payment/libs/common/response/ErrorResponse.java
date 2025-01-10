@@ -1,10 +1,8 @@
 package com.ed.payment.libs.common.response;
 
 import java.util.List;
-
-import org.springframework.http.HttpStatus;
-
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public class ErrorResponse {

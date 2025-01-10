@@ -29,13 +29,15 @@ class RestTemplateTossConfirmPaymentTest {
   void confirmPayment() {
     // given
     final Long paymentId = 1L;
+    final String idempotencyKey = UUID.randomUUID().toString();
     final String orderId = UUID.randomUUID().toString();
     final String orderName = "피자맛 호빵";
-    final int amount = 10000;
-    Payment paymentBeforeVerifying = new Payment(paymentId, null, orderId, orderName, amount);
+    final Long amount = 10000L;
+    Payment paymentBeforeVerifying = new Payment(paymentId, null, idempotencyKey, orderId, orderName, amount);
 
     final String paymentKey = "tgen_20250107154634hYNt7";
-    PaymentDone response = PaymentDone.of(paymentKey, orderId, amount, amount, DONE.name());
+    final String lastTransactionKey = "9C62B18EEF0DE3EB7F4422EB6D14BC6E";
+    PaymentDone response = PaymentDone.of(paymentKey, orderId, amount, amount, DONE.name(), lastTransactionKey);
 
     // stubbing
     when(mockRestTemplateTossConfirmPayment.confirmPayment(paymentBeforeVerifying, paymentKey))

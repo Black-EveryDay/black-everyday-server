@@ -14,10 +14,10 @@ public class ConfirmPaymentCommand {
   private String paymentType;
   private String paymentKey;
   private String orderId;
-  private int amount;
+  private Long amount;
 
   public static ConfirmPaymentCommand of(
-      String paymentType, String paymentKey, String orderId, int amount) {
+      String paymentType, String paymentKey, String orderId, Long amount) {
     return ConfirmPaymentCommand.builder()
         .paymentType(paymentType)
         .paymentKey(paymentKey)

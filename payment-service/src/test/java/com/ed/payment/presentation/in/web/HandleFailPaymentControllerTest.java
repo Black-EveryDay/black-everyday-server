@@ -58,5 +58,4 @@ class HandleFailPaymentControllerTest {
         .andExpect(jsonPath("$.body.orderId").value(response.getOrderId()))
         .andExpect(jsonPath("$.timestamp").exists());
   }
-
 }

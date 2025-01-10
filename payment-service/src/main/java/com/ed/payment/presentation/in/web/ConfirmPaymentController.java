@@ -22,7 +22,7 @@ public class ConfirmPaymentController {
   @GetMapping("/api/v1/payments/success")
   public ResponseEntity<PaymentDone> requestPaymentSuccess(
       @RequestParam String paymentType, @RequestParam String paymentKey,
-      @RequestParam String orderId, @RequestParam int amount) {
+      @RequestParam String orderId, @RequestParam Long amount) {
 
     log.info("Received Request Param: paymentType={}, paymentKey={}, orderId={}, amount={}"
         , paymentType, paymentKey, orderId, amount);

@@ -33,7 +33,7 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
     RestTemplate restTemplate = new RestTemplate();
 
     URI url = URI.create(baseUrl + "/confirm");
-    HttpHeaders headers = generateHeaders();
+    HttpHeaders headers = generateHeaders(payment.getIdempotencyKey());
     Map<String, Object> body = generateBody(paymentKey, payment.getOrderId(), payment.getAmount());
 
     HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, headers);
@@ -46,7 +46,7 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
   }
 
   private Map<String, Object> generateBody(
-      String paymentKey, String orderId, int amount) {
+      String paymentKey, String orderId, Long amount) {
     Map<String, Object> body = new HashMap<>();
     body.put("orderId", orderId);
     body.put("amount", amount);
@@ -54,7 +54,7 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
     return body;
   }
 
-  private HttpHeaders generateHeaders() {
+  private HttpHeaders generateHeaders(String idempotencyKey) {
     HttpHeaders headers = new HttpHeaders();
 
     byte[] encodedBytes = Base64.getEncoder()
@@ -64,6 +64,7 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
 
     headers.add(AUTHORIZATION, authorizations);
     headers.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
+    headers.add("Idempotency-Key", idempotencyKey);
     return headers;
   }
 }
