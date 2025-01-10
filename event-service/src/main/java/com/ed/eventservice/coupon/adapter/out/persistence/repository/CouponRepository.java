@@ -1,10 +1,13 @@
 package com.ed.eventservice.coupon.adapter.out.persistence.repository;
 
 import com.ed.eventservice.coupon.adapter.out.persistence.entity.CouponJpaEntity;
+import com.ed.eventservice.coupon.adapter.out.persistence.entity.CouponStatusChangeLogJpaEntity;
 import com.ed.eventservice.coupon.adapter.out.persistence.entity.CouponTemplateJpaEntity;
 import com.ed.eventservice.coupon.application.port.out.CouponPersistencePort;
 import com.ed.eventservice.coupon.domain.Coupon;
 import com.ed.eventservice.coupon.domain.mapper.CouponMapper;
+import com.ed.eventservice.coupon.domain.mapper.CouponStatusChangeLogMapper;
+import com.ed.eventservice.coupon.domain.vo.CouponStatusChangeLog;
 import com.ed.eventservice.libs.exception.AdapterException;
 import com.ed.eventservice.libs.exception.ExceptionStatus;
 import java.util.List;
@@ -17,8 +20,10 @@ import org.springframework.stereotype.Repository;
 public class CouponRepository implements CouponPersistencePort {
 
   private final CouponMapper couponMapper;
+  private final CouponStatusChangeLogMapper couponStatusChangeLogMapper;
   private final CouponJpaRepository couponJpaRepository;
   private final CouponTemplateJpaRepository couponTemplateJpaRepository;
+  private final CouponStatusChangeLogJpaRepository couponStatusChangeLogJpaRepository;
 
   @Override
   public Coupon getCouponByPublicId(UUID couponPublicId) {
@@ -29,7 +34,11 @@ public class CouponRepository implements CouponPersistencePort {
             couponJpaEntity.getCouponTemplateId())
         .orElseThrow(() -> new AdapterException(ExceptionStatus.COUPON_TEMPLATE_NOT_FOUND));
 
-    return couponMapper.jpaEntityToDomain(couponJpaEntity, couponTemplateJpaEntity);
+    List<CouponStatusChangeLogJpaEntity> couponStatusChangeLogJpaEntity = couponStatusChangeLogJpaRepository
+        .findByCouponId(couponJpaEntity.getId());
+
+    return couponMapper.jpaEntityToDomain(couponJpaEntity, couponTemplateJpaEntity,
+        couponStatusChangeLogJpaEntity);
   }
 
   @Override
@@ -45,6 +54,12 @@ public class CouponRepository implements CouponPersistencePort {
   public void updateCouponStatus(Coupon coupon) {
     CouponJpaEntity couponJpaEntity = couponMapper.domainToJpaEntity(coupon);
 
+    List<CouponStatusChangeLog> couponStatusChangeLogs = coupon.getCouponStatusChangelogs();
+    List<CouponStatusChangeLogJpaEntity> newCouponStatusChangeLogJpaEntities = couponStatusChangeLogs
+        .stream().filter(couponStatusChangeLog -> couponStatusChangeLog.getId() == null)
+        .map(couponStatusChangeLogMapper::domainToJpaEntity).toList();
+
+    couponStatusChangeLogJpaRepository.saveAll(newCouponStatusChangeLogJpaEntities);
     couponJpaRepository.save(couponJpaEntity);
   }
 }
