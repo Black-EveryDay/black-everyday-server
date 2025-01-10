@@ -15,12 +15,16 @@ import jakarta.persistence.TemporalType;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Table(name = "coupon_status_change_logs")
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CouponStatusChangeLogJpaEntity extends BaseJpaEntity {
 
