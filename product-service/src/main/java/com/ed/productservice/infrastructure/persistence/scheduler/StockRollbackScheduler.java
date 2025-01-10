@@ -24,7 +24,6 @@ public class StockRollbackScheduler {
     private final StockDecreaseHistoryRepository stockDecreaseHistoryRepository;
     private final ProductInternalService productInternalService;
 
-    // 초 분 시 일 월 요일
     @Scheduled(cron = "30 * * * * *")
     @Transactional
     public void rollbackUncommittedStock() {
