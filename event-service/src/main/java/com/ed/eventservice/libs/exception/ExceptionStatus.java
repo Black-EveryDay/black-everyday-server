@@ -14,6 +14,7 @@ public enum ExceptionStatus {
       "Coupon usage target not matched"),
   COUPON_USAGE_TARGET_TYPE_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "c003",
       "Coupon usage target type not supported"),
+  COUPON_NOT_FOUND(HttpStatus.NOT_FOUND, "c004", "Coupon not found"),
   ;
 
   private final HttpStatus status;
