@@ -35,7 +35,10 @@ dependencies {
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
     testImplementation 'com.h2database:h2'
     testImplementation 'org.mockito:mockito-core'
+
+    // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.19.0'
 
     // QueryDsl
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
