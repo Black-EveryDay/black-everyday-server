@@ -1,9 +1,9 @@
-package com.ed.payment.infrastructure.out.persistence;
+package com.ed.payment.infrastructure.out.persistence.repository;
 
+import com.ed.payment.infrastructure.out.persistence.entity.PaymentJpaEntity;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 interface SpringDataPaymentRepository extends JpaRepository<PaymentJpaEntity, Long> {
   Optional<PaymentJpaEntity> findByOrderPublicId(String orderPublicId);
-  boolean existsByOrderPublicId(String orderPublicId);
 }

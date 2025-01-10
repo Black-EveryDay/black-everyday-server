@@ -1,6 +1,6 @@
 package com.ed.payment.infrastructure.out.pg.toss;
 
-import static com.ed.payment.infrastructure.out.persistence.PaymentStatus.DONE;
+import static com.ed.payment.domain.PaymentStatus.DONE;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
 public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
 
   private static final String AUTHENTICATION_SCHEME = "Basic ";
-  
+
   @Value("${pg.tosspayments.secret-key}")
   private String secretKey;
   @Value("${pg.tosspayments.base-url}")
@@ -32,8 +32,8 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
   public PaymentDone confirmPayment(Payment payment, String paymentKey) {
     RestTemplate restTemplate = new RestTemplate();
 
-    URI url = URI.create(baseUrl.concat("/confirm"));
-    HttpHeaders headers = generateHeaders();
+    URI url = URI.create(baseUrl + "/confirm");
+    HttpHeaders headers = generateHeaders(payment.getIdempotencyKey());
     Map<String, Object> body = generateBody(paymentKey, payment.getOrderId(), payment.getAmount());
 
     HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, headers);
@@ -46,7 +46,7 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
   }
 
   private Map<String, Object> generateBody(
-      String paymentKey, String orderId, int amount) {
+      String paymentKey, String orderId, Long amount) {
     Map<String, Object> body = new HashMap<>();
     body.put("orderId", orderId);
     body.put("amount", amount);
@@ -54,16 +54,17 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
     return body;
   }
 
-  private HttpHeaders generateHeaders() {
+  private HttpHeaders generateHeaders(String idempotencyKey) {
     HttpHeaders headers = new HttpHeaders();
 
     byte[] encodedBytes = Base64.getEncoder()
         .encode((secretKey + ":")
-        .getBytes(StandardCharsets.UTF_8));
+            .getBytes(StandardCharsets.UTF_8));
     String authorizations = AUTHENTICATION_SCHEME.concat(new String(encodedBytes));
 
     headers.add(AUTHORIZATION, authorizations);
     headers.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
+    headers.add("Idempotency-Key", idempotencyKey);
     return headers;
   }
 }
