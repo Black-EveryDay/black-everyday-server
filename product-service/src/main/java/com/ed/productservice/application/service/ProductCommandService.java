@@ -24,7 +24,7 @@ public class ProductCommandService implements ProductUseCase {
 
   @Override
   public Product createApparelTop(TopProduct topProduct) {
-    Brand brand = brandOutPort.findOne(topProduct.getProductForCreate().getBrandId());
+    Brand brand = getBrandForCreate(topProduct.getProductForCreate().getBrandId());
 
     Product product = productOutPort.createProduct(topProduct.getProductForCreate(),
         brand.getBrandId());
@@ -36,7 +36,7 @@ public class ProductCommandService implements ProductUseCase {
 
   @Override
   public Product createApparelBottom(BottomProduct bottomProduct) {
-    Brand brand = brandOutPort.findOne(bottomProduct.getProductForCreate().getBrandId());
+    Brand brand = getBrandForCreate(bottomProduct.getProductForCreate().getBrandId());
 
     Product product = productOutPort.createProduct(bottomProduct.getProductForCreate(),
         brand.getBrandId());
@@ -57,5 +57,9 @@ public class ProductCommandService implements ProductUseCase {
   @Override
   public void deleteProduct(String productPublicId) {
     productOutPort.deleteOne(productPublicId);
+  }
+
+  private Brand getBrandForCreate(Long bottomProduct) {
+    return brandOutPort.findOne(bottomProduct);
   }
 }
