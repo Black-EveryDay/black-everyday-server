@@ -22,6 +22,7 @@ public class ProductCommandService implements ProductUseCase {
   private final BrandOutPort brandOutPort;
   private final ProductDetailPort productDetailPort;
 
+  @Override
   public Product createApparelTop(TopProduct topProduct) {
     Brand brand = brandOutPort.findOne(topProduct.getProductForCreate().getBrandId());
 
