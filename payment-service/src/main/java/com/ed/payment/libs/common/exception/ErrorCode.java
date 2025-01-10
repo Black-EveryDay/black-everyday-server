@@ -1,4 +1,4 @@
-package com.ed.payment.libs.common;
+package com.ed.payment.libs.common.exception;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     // Common
+    COMMON_BAD_REQUEST(BAD_REQUEST, 0, "잘못된 요청입니다."),
 
     // Payment
     PAYMENT_NOT_FOUND(NOT_FOUND, 1000, "존재하지 않는 결제 정보입니다."),

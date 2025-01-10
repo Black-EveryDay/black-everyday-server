@@ -1,5 +1,6 @@
-package com.ed.payment.libs.common;
+package com.ed.payment.libs.common.exception;
 
+import com.ed.payment.libs.common.response.ErrorResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;

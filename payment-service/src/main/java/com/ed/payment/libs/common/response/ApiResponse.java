@@ -1,4 +1,4 @@
-package com.ed.payment.libs.common;
+package com.ed.payment.libs.common.response;
 
 import java.time.LocalDateTime;
 
