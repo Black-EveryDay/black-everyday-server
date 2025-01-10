@@ -23,6 +23,7 @@ public class StockRollbackScheduler {
 
     private final StockDecreaseHistoryRepository stockDecreaseHistoryRepository;
     private final ProductInternalService productInternalService;
+    private final SchedulerUtil schedulerUtil;
 
     @Scheduled(cron = "30 * * * * *")
     @Transactional
@@ -32,7 +33,7 @@ public class StockRollbackScheduler {
             return;
         }
 
-        Set<String> transactionIdSet = convertSet(uncommittedStocks);
+        Set<String> transactionIdSet = schedulerUtil.convertSet(uncommittedStocks);
 
         stockRollback(transactionIdSet);
 
@@ -60,12 +61,5 @@ public class StockRollbackScheduler {
 
         return stockDecreaseHistoryRepository
             .findUncommittedStocks(timeLimit, StockDecreaseHistoryStatus.DECREASED);
-    }
-
-    private static Set<String> convertSet(List<StockDecreaseHistoryEntity> uncommittedStocks) {
-
-        return uncommittedStocks.stream().map(
-                StockDecreaseHistoryEntity::getTransactionId)
-            .collect(Collectors.toSet());
     }
 }
