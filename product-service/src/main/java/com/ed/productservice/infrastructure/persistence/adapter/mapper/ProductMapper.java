@@ -9,37 +9,38 @@ import java.util.UUID;
 
 @Component
 public class ProductMapper {
-    public ProductEntity from(ProductForCreate productForCreate, Long brandId) {
-        return ProductEntity.builder().
-                productPublicId(createPublicId())
-                .brandId(brandId)
-                .name(productForCreate.getName())
-                .price(productForCreate.getPrice())
-                .description(productForCreate.getDescription())
-                .color(productForCreate.getColor())
-                .image(productForCreate.getImage())
-                .status(productForCreate.getStatus())
-                .category(productForCreate.getCategory())
-                .build();
-    }
 
-    private static String createPublicId() {
-        return UUID.randomUUID().toString();
-    }
+  public ProductEntity from(ProductForCreate productForCreate, Long brandId) {
+    return ProductEntity.builder().
+        productPublicId(createPublicId())
+        .brandId(brandId)
+        .name(productForCreate.getName())
+        .price(productForCreate.getPrice())
+        .description(productForCreate.getDescription())
+        .color(productForCreate.getColor())
+        .image(productForCreate.getImage())
+        .status(productForCreate.getStatus())
+        .category(productForCreate.getCategory())
+        .build();
+  }
 
-    public Product toDomain(ProductEntity entity) {
-        return new Product(
-                entity.getProductId(),
-                entity.getProductPublicId(),
-                entity.getBrandId(),
-                entity.getName(),
-                entity.getPrice(),
-                entity.getDescription(),
-                entity.getColor(),
-                entity.getImage(),
-                entity.getStatus(),
-                entity.getCategory(),
-                entity.getCreatedAt()
-        );
-    }
+  private static String createPublicId() {
+    return UUID.randomUUID().toString();
+  }
+
+  public Product toDomain(ProductEntity entity) {
+    return new Product(
+        entity.getProductId(),
+        entity.getProductPublicId(),
+        entity.getBrandId(),
+        entity.getName(),
+        entity.getPrice(),
+        entity.getDescription(),
+        entity.getColor(),
+        entity.getImage(),
+        entity.getStatus(),
+        entity.getCategory(),
+        entity.getCreatedAt()
+    );
+  }
 }

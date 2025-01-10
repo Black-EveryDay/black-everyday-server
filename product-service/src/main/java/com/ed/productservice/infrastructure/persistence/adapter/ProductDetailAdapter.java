@@ -13,21 +13,23 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ProductDetailAdapter implements ProductDetailPort {
-    private final TopSizeStockRepository topSizeStockRepository;
-    private final BottomSizeStockRepository bottomSizeStockRepository;
-    private final TopSizeMapper topSizeMapper;
-    private final BottomSizeMapper bottomSizeMapper;
 
-    @Override
-    public void saveTopSize(Long productId, TopProduct topProduct) {
-        topProduct.getTopSizeList()
-                .forEach(topSize -> topSizeStockRepository.save(topSizeMapper.from(productId, topSize)));
-    }
+  private final TopSizeStockRepository topSizeStockRepository;
+  private final BottomSizeStockRepository bottomSizeStockRepository;
+  private final TopSizeMapper topSizeMapper;
+  private final BottomSizeMapper bottomSizeMapper;
 
-    @Override
-    public void saveBottomSize(Long productId, BottomProduct bottomProduct) {
-        bottomProduct.getBottomSizeList()
-                .forEach(bottomSize -> bottomSizeStockRepository.save(bottomSizeMapper.from(productId, bottomSize)));
-    }
+  @Override
+  public void saveTopSize(Long productId, TopProduct topProduct) {
+    topProduct.getTopSizeList()
+        .forEach(topSize -> topSizeStockRepository.save(topSizeMapper.from(productId, topSize)));
+  }
+
+  @Override
+  public void saveBottomSize(Long productId, BottomProduct bottomProduct) {
+    bottomProduct.getBottomSizeList()
+        .forEach(bottomSize -> bottomSizeStockRepository.save(
+            bottomSizeMapper.from(productId, bottomSize)));
+  }
 }
 

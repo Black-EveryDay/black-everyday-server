@@ -17,37 +17,38 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 public class ProductInternalService {
-    private final StockService stockService;
-    private final BrandOutPort brandOutPort;
-    private final ProductOutPort productOutPort;
 
-    @Transactional
-    public DecreaseStockResponse decreaseStock(List<ProductReservationInfoDomain> request) {
-        String transactionId = UUID.randomUUID().toString();
-        List<ProductBrandInfo> productBrandInfoList = new ArrayList<>();
+  private final StockService stockService;
+  private final BrandOutPort brandOutPort;
+  private final ProductOutPort productOutPort;
 
+  @Transactional
+  public DecreaseStockResponse decreaseStock(List<ProductReservationInfoDomain> request) {
+    String transactionId = UUID.randomUUID().toString();
+    List<ProductBrandInfo> productBrandInfoList = new ArrayList<>();
 
-        for (ProductReservationInfoDomain item : request) {
-            Product product = productOutPort.findOne(item.getProductPublicId());
-            stockService.decreaseStockReservation(item, transactionId, product.getProductId());
+    for (ProductReservationInfoDomain item : request) {
+      Product product = productOutPort.findOne(item.getProductPublicId());
+      stockService.decreaseStockReservation(item, transactionId, product.getProductId());
 
-            getBrandIdList(item, productBrandInfoList);
-        }
-
-        return new DecreaseStockResponse(transactionId, productBrandInfoList);
+      getBrandIdList(item, productBrandInfoList);
     }
 
-    private void getBrandIdList(ProductReservationInfoDomain item, List<ProductBrandInfo> productBrandInfoList) {
-        Product product = productOutPort.findOne(item.getProductPublicId());
-        Brand brand = brandOutPort.findOne(product.getBrandId());
+    return new DecreaseStockResponse(transactionId, productBrandInfoList);
+  }
 
-        productBrandInfoList.add(new ProductBrandInfo(brand.getBrandId(), product.getProductId()));
-    }
+  private void getBrandIdList(ProductReservationInfoDomain item,
+      List<ProductBrandInfo> productBrandInfoList) {
+    Product product = productOutPort.findOne(item.getProductPublicId());
+    Brand brand = brandOutPort.findOne(product.getBrandId());
 
-    @Transactional
-    public String increaseStock(String transactionId) {
-        stockService.increaseStock(transactionId);
+    productBrandInfoList.add(new ProductBrandInfo(brand.getBrandId(), product.getProductId()));
+  }
 
-        return transactionId;
-    }
+  @Transactional
+  public String increaseStock(String transactionId) {
+    stockService.increaseStock(transactionId);
+
+    return transactionId;
+  }
 }

@@ -40,154 +40,154 @@ import org.springframework.test.web.servlet.MvcResult;
 @Slf4j
 class ProductInternalControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private BrandRepository brandRepository;
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private TopSizeStockRepository topSizeStockRepository;
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private ObjectMapper objectMapper;
+  @Autowired
+  private BrandRepository brandRepository;
+  @Autowired
+  private JdbcTemplate jdbcTemplate;
+  @Autowired
+  private ProductRepository productRepository;
+  @Autowired
+  private TopSizeStockRepository topSizeStockRepository;
 
-    @BeforeEach
-    void setUp() {
-        jdbcTemplate.execute("TRUNCATE TABLE ed_brands");
-        jdbcTemplate.execute("TRUNCATE TABLE ed_product");
-        jdbcTemplate.execute("TRUNCATE TABLE ed_top_size_stock");
+  @BeforeEach
+  void setUp() {
+    jdbcTemplate.execute("TRUNCATE TABLE ed_brands");
+    jdbcTemplate.execute("TRUNCATE TABLE ed_product");
+    jdbcTemplate.execute("TRUNCATE TABLE ed_top_size_stock");
 
-        createTestData();
-    }
-
-
-    @Test
-    @DisplayName("재고 차감 요청 시 transactionId 반환")
-    void t1() throws Exception {
-        StockPrepareRequest request = new StockPrepareRequest(
-            List.of(
-                new StockPrepareRequest.ProductReservationInfo(1L, 2, "M", ProductCategory.TOP),
-                new StockPrepareRequest.ProductReservationInfo(2L, 3, "L", ProductCategory.TOP)
-            )
-        );
-
-        String content = objectMapper.writeValueAsString(request);
-
-        mockMvc.perform(
-                post("/api/v1/products/internal/prepare")
-                    .contentType(MediaType.APPLICATION_JSON).content(content))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.body.transactionId").exists())
-            .andDo(print());
-    }
-
-    @Test
-    @DisplayName("재고보다 많은 수량을 예약 요청시 실패한다")
-    void t2() throws Exception {
-        StockPrepareRequest request = new StockPrepareRequest(
-            List.of(
-                new StockPrepareRequest.ProductReservationInfo(1L, 1000, "M", ProductCategory.TOP)
-            )
-        );
-
-        String content = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
-
-        mockMvc.perform(post("/api/v1/products/internal/prepare")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
-            .andExpect(status().isConflict())
-            .andExpect(jsonPath("$.success").value(false))
-            .andExpect(jsonPath("$.body.message").exists())
-            .andExpect(jsonPath("$.body.status").value("CONFLICT"))
-            .andDo(print());
-    }
+    createTestData();
+  }
 
 
-    @Test
-    @DisplayName("재고 롤백 요청 후 transactionId 반환")
-    void t3() throws Exception {
-        StockPrepareRequest request = new StockPrepareRequest(
-            List.of(
-                new StockPrepareRequest.ProductReservationInfo(1L, 2, "M", ProductCategory.TOP)
-            )
-        );
+  @Test
+  @DisplayName("재고 차감 요청 시 transactionId 반환")
+  void t1() throws Exception {
+    StockPrepareRequest request = new StockPrepareRequest(
+        List.of(
+            new StockPrepareRequest.ProductReservationInfo(1L, 2, "M", ProductCategory.TOP),
+            new StockPrepareRequest.ProductReservationInfo(2L, 3, "L", ProductCategory.TOP)
+        )
+    );
 
-        String content = objectMapper.writeValueAsString(request);
+    String content = objectMapper.writeValueAsString(request);
 
-        MvcResult result = mockMvc.perform(
-                post("/api/v1/products/internal/prepare")
-                    .contentType(MediaType.APPLICATION_JSON).content(content))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.body.transactionId").exists())
-            .andDo(print()).andReturn();
+    mockMvc.perform(
+            post("/api/v1/products/internal/prepare")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.body.transactionId").exists())
+        .andDo(print());
+  }
 
-        String responseBody = result.getResponse().getContentAsString();
+  @Test
+  @DisplayName("재고보다 많은 수량을 예약 요청시 실패한다")
+  void t2() throws Exception {
+    StockPrepareRequest request = new StockPrepareRequest(
+        List.of(
+            new StockPrepareRequest.ProductReservationInfo(1L, 1000, "M", ProductCategory.TOP)
+        )
+    );
 
-        ApiResponse response = objectMapper.readValue(responseBody, ApiResponse.class);
-        String transactionId = ((Map) response.getBody()).get("transactionId").toString();
+    String content = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
 
-        mockMvc.perform(
-                post("/api/v1/products/internal/rollback/{transactionId}", transactionId)
-                    .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.body.transactionId").value(transactionId))
-            .andDo(print());
-    }
+    mockMvc.perform(post("/api/v1/products/internal/prepare")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.success").value(false))
+        .andExpect(jsonPath("$.body.message").exists())
+        .andExpect(jsonPath("$.body.status").value("CONFLICT"))
+        .andDo(print());
+  }
 
-    @Test
-    @DisplayName("재고 차감 롤백 요청 시 history 테이블에 이력 존재하지 않으면 404 반환")
-    void t4() throws Exception {
-        String transactionId = "testId";
 
-        mockMvc.perform(
-                post("/api/v1/products/internal/rollback/{transactionId}", transactionId)
-                    .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNotFound())
-            .andExpect(jsonPath("$.success").value(false))
-            .andExpect(jsonPath("$.body.status").value("NOT_FOUND"))
-            .andDo(print());
-    }
+  @Test
+  @DisplayName("재고 롤백 요청 후 transactionId 반환")
+  void t3() throws Exception {
+    StockPrepareRequest request = new StockPrepareRequest(
+        List.of(
+            new StockPrepareRequest.ProductReservationInfo(1L, 2, "M", ProductCategory.TOP)
+        )
+    );
 
-    private void createTestData() {
-        BrandEntity brand = brandRepository.save(
-            new BrandEntity("테스트 브랜드", BrandType.CASUAL, "서울특별시"));
+    String content = objectMapper.writeValueAsString(request);
 
-        ProductEntity product = productRepository.save(
-            createProduct(brand.getBrandId(), "맨투맨", "M"));
-        ProductEntity product2 = productRepository.save(
-            createProduct(brand.getBrandId(), "후드티", "L"));
-        topSizeStockRepository.save(createTopSizeStock(product.getProductId(), "M"));
-        topSizeStockRepository.save(createTopSizeStock(product2.getProductId(), "L"));
-    }
+    MvcResult result = mockMvc.perform(
+            post("/api/v1/products/internal/prepare")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.body.transactionId").exists())
+        .andDo(print()).andReturn();
 
-    private TopSizeStockEntity createTopSizeStock(Long productId, String size) {
-        return new TopSizeStockEntity(
-            productId,
-            size,
-            new BigDecimal("65.0"),
-            new BigDecimal("45.0"),
-            new BigDecimal("50.0"),
-            new BigDecimal("60.0"),
-            100
-        );
-    }
+    String responseBody = result.getResponse().getContentAsString();
 
-    private ProductEntity createProduct(Long brandId, String name, String size) {
-        return new ProductEntity(
-            UUID.randomUUID().toString(),
-            brandId,
-            name,
-            30000,
-            "테스트 상품입니다",
-            "BLACK",
-            "test-image.jpg",
-            ProductStatus.ACTIVE,
-            ProductCategory.TOP
-        );
-    }
+    ApiResponse response = objectMapper.readValue(responseBody, ApiResponse.class);
+    String transactionId = ((Map) response.getBody()).get("transactionId").toString();
+
+    mockMvc.perform(
+            post("/api/v1/products/internal/rollback/{transactionId}", transactionId)
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.body.transactionId").value(transactionId))
+        .andDo(print());
+  }
+
+  @Test
+  @DisplayName("재고 차감 롤백 요청 시 history 테이블에 이력 존재하지 않으면 404 반환")
+  void t4() throws Exception {
+    String transactionId = "testId";
+
+    mockMvc.perform(
+            post("/api/v1/products/internal/rollback/{transactionId}", transactionId)
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.success").value(false))
+        .andExpect(jsonPath("$.body.status").value("NOT_FOUND"))
+        .andDo(print());
+  }
+
+  private void createTestData() {
+    BrandEntity brand = brandRepository.save(
+        new BrandEntity("테스트 브랜드", BrandType.CASUAL, "서울특별시"));
+
+    ProductEntity product = productRepository.save(
+        createProduct(brand.getBrandId(), "맨투맨", "M"));
+    ProductEntity product2 = productRepository.save(
+        createProduct(brand.getBrandId(), "후드티", "L"));
+    topSizeStockRepository.save(createTopSizeStock(product.getProductId(), "M"));
+    topSizeStockRepository.save(createTopSizeStock(product2.getProductId(), "L"));
+  }
+
+  private TopSizeStockEntity createTopSizeStock(Long productId, String size) {
+    return new TopSizeStockEntity(
+        productId,
+        size,
+        new BigDecimal("65.0"),
+        new BigDecimal("45.0"),
+        new BigDecimal("50.0"),
+        new BigDecimal("60.0"),
+        100
+    );
+  }
+
+  private ProductEntity createProduct(Long brandId, String name, String size) {
+    return new ProductEntity(
+        UUID.randomUUID().toString(),
+        brandId,
+        name,
+        30000,
+        "테스트 상품입니다",
+        "BLACK",
+        "test-image.jpg",
+        ProductStatus.ACTIVE,
+        ProductCategory.TOP
+    );
+  }
 }

@@ -10,21 +10,21 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class BottomSizeStockAdapter {
 
-    private final BottomSizeStockRepository bottomSizeStockRepository;
+  private final BottomSizeStockRepository bottomSizeStockRepository;
 
-    public void bottomDecreaseStock(ProductReservationInfoDomain reservationInfo, Long productId) {
-        BottomSizeStockEntity bottomSizeStockEntity = bottomSizeStockRepository.findByProductIdAndBottomSize(
-            productId,
-            reservationInfo.getSize());
+  public void bottomDecreaseStock(ProductReservationInfoDomain reservationInfo, Long productId) {
+    BottomSizeStockEntity bottomSizeStockEntity = bottomSizeStockRepository.findByProductIdAndBottomSize(
+        productId,
+        reservationInfo.getSize());
 
-        bottomSizeStockEntity.decrease(reservationInfo.getQuantity());
-    }
+    bottomSizeStockEntity.decrease(reservationInfo.getQuantity());
+  }
 
-    public void bottomIncrease(ProductReservationInfoDomain item, Long productId) {
-        BottomSizeStockEntity entity = bottomSizeStockRepository.findByProductIdAndBottomSize(
-            productId,
-            item.getSize());
+  public void bottomIncrease(ProductReservationInfoDomain item, Long productId) {
+    BottomSizeStockEntity entity = bottomSizeStockRepository.findByProductIdAndBottomSize(
+        productId,
+        item.getSize());
 
-        entity.increaseStock(item.getQuantity());
-    }
+    entity.increaseStock(item.getQuantity());
+  }
 }

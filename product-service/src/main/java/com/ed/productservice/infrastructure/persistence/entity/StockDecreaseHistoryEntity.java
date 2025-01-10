@@ -16,35 +16,35 @@ import lombok.NoArgsConstructor;
 @Table(name = "ed_stock_decrease_history")
 @Entity
 @NoArgsConstructor
-public class StockDecreaseHistoryEntity extends BaseEntity{
+public class StockDecreaseHistoryEntity extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String productPublicId;
-    private Integer quantity;
-    private String size;
+  private String productPublicId;
+  private Integer quantity;
+  private String size;
 
-    @Enumerated(EnumType.STRING)
-    private ProductCategory productCategory;
+  @Enumerated(EnumType.STRING)
+  private ProductCategory productCategory;
 
-    private String transactionId;
+  private String transactionId;
 
-    @Enumerated(EnumType.STRING)
-    private StockDecreaseHistoryStatus status;
+  @Enumerated(EnumType.STRING)
+  private StockDecreaseHistoryStatus status;
 
-    public StockDecreaseHistoryEntity(String productPublicId, Integer quantity, String size,
-        ProductCategory productCategory, String transactionId, StockDecreaseHistoryStatus status) {
-        this.productPublicId = productPublicId;
-        this.quantity = quantity;
-        this.size = size;
-        this.productCategory = productCategory;
-        this.transactionId = transactionId;
-        this.status = status;
-    }
+  public StockDecreaseHistoryEntity(String productPublicId, Integer quantity, String size,
+      ProductCategory productCategory, String transactionId, StockDecreaseHistoryStatus status) {
+    this.productPublicId = productPublicId;
+    this.quantity = quantity;
+    this.size = size;
+    this.productCategory = productCategory;
+    this.transactionId = transactionId;
+    this.status = status;
+  }
 
-    public void setStatus(StockDecreaseHistoryStatus status) {
-        this.status = status;
-    }
+  public void setStatus(StockDecreaseHistoryStatus status) {
+    this.status = status;
+  }
 }

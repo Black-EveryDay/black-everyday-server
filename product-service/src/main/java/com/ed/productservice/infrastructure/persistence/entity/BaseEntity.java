@@ -17,33 +17,33 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
 
-    @CreatedDate
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-    private Long createdBy;
+  @CreatedDate
+  @Column(nullable = false)
+  private LocalDateTime createdAt;
+  private Long createdBy;
 
-    @LastModifiedDate
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-    private Long updatedBy;
+  @LastModifiedDate
+  @Column(nullable = false)
+  private LocalDateTime updatedAt;
+  private Long updatedBy;
 
-    private LocalDateTime deletedAt;
-    private Long deletedBy;
+  private LocalDateTime deletedAt;
+  private Long deletedBy;
 
-    @Column(nullable = false)
-    private boolean isDeleted = false;
+  @Column(nullable = false)
+  private boolean isDeleted = false;
 
-    protected void createdFrom(Long createdBy) {
-        this.createdBy = createdBy;
-        this.updatedBy = createdBy;
-    }
+  protected void createdFrom(Long createdBy) {
+    this.createdBy = createdBy;
+    this.updatedBy = createdBy;
+  }
 
-    protected void updatedFrom(Long updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  protected void updatedFrom(Long updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 
-    public void deletedFrom() {
-        this.deletedAt = LocalDateTime.now();
-        this.isDeleted = true;
-    }
+  public void deletedFrom() {
+    this.deletedAt = LocalDateTime.now();
+    this.isDeleted = true;
+  }
 }

@@ -8,13 +8,13 @@ import org.springframework.http.ResponseEntity;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ApiResponseUtils {
 
-	public static <T> ResponseEntity<T> created(T response) {
-		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(response);
-	}
+  public static <T> ResponseEntity<T> created(T response) {
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(response);
+  }
 
-	public static <T> ResponseEntity<T> noContent() {
-		return ResponseEntity.noContent().build();
-	}
+  public static <T> ResponseEntity<T> noContent() {
+    return ResponseEntity.noContent().build();
+  }
 
 }

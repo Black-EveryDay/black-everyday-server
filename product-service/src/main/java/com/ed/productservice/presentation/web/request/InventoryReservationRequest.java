@@ -6,10 +6,11 @@ public record InventoryReservationRequest(
     List<ProductReservationInfo> items
 ) {
 
-    public record ProductReservationInfo(
-        Long productId,
-        int quantity,
-        String size
-    ) {
-    }
+  public record ProductReservationInfo(
+      Long productId,
+      int quantity,
+      String size
+  ) {
+
+  }
 }

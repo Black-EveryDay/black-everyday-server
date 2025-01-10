@@ -31,141 +31,139 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 @Slf4j
 class ProductUseCaseTest {
-    @Mock
-    private ProductOutPort productOutPort;
-    @Mock
-    private BrandOutPort brandOutPort;
-    @Mock
-    private ProductDetailPort productDetailPort;
-    @InjectMocks
-    private ProductCommandService productCommandService;
 
-    @Test
-    @DisplayName("상품 생성 성공 후 Product 반환")
-    void t1() {
-        ProductForCreate productForCreate = new ProductForCreate(
-                1L,
-                "베이직 긴팔 티셔츠",
-                29900,
-                "편안한 착용감의 데일리 티셔츠",
-                ProductStatus.ACTIVE,
-                ProductCategory.TOP,
-                "BLACK",
-                100,
-                "top_image_url.jpg"
-        );
+  @Mock
+  private ProductOutPort productOutPort;
+  @Mock
+  private BrandOutPort brandOutPort;
+  @Mock
+  private ProductDetailPort productDetailPort;
+  @InjectMocks
+  private ProductCommandService productCommandService;
 
-        List<TopProduct.TopSize> topSizeList = List.of(
-                new TopProduct.TopSize(
-                        "S",
-                        new BigDecimal("65.0"),
-                        new BigDecimal("42.0"),
-                        new BigDecimal("48.0"),
-                        new BigDecimal("61.0"),
-                    100
-                )
-        );
+  @Test
+  @DisplayName("상품 생성 성공 후 Product 반환")
+  void t1() {
+    ProductForCreate productForCreate = new ProductForCreate(
+        1L,
+        "베이직 긴팔 티셔츠",
+        29900,
+        "편안한 착용감의 데일리 티셔츠",
+        ProductStatus.ACTIVE,
+        ProductCategory.TOP,
+        "BLACK",
+        100,
+        "top_image_url.jpg"
+    );
 
-        TopProduct topProduct = new TopProduct(productForCreate, topSizeList);
+    List<TopProduct.TopSize> topSizeList = List.of(
+        new TopProduct.TopSize(
+            "S",
+            new BigDecimal("65.0"),
+            new BigDecimal("42.0"),
+            new BigDecimal("48.0"),
+            new BigDecimal("61.0"),
+            100
+        )
+    );
 
-        Brand mockBrand = new Brand(1L, "테스트 브랜드", BrandType.CASUAL, "서울특별시");
+    TopProduct topProduct = new TopProduct(productForCreate, topSizeList);
 
-        Product mockProduct = new Product(
-                1L,
-                UUID.randomUUID().toString(),
-                1L,
-                "베이직 긴팔 티셔츠",
-                29900,
-                "편안한 착용감의 데일리 티셔츠",
-                "BLACK",
-                "top_image_url.jpg",
-                ProductStatus.ACTIVE,
-                ProductCategory.TOP,
-                LocalDateTime.now()
-        );
+    Brand mockBrand = new Brand(1L, "테스트 브랜드", BrandType.CASUAL, "서울특별시");
 
+    Product mockProduct = new Product(
+        1L,
+        UUID.randomUUID().toString(),
+        1L,
+        "베이직 긴팔 티셔츠",
+        29900,
+        "편안한 착용감의 데일리 티셔츠",
+        "BLACK",
+        "top_image_url.jpg",
+        ProductStatus.ACTIVE,
+        ProductCategory.TOP,
+        LocalDateTime.now()
+    );
 
-        when(brandOutPort.findOne(1L)).thenReturn(mockBrand);
-        when(productOutPort.createProduct(any(ProductForCreate.class), eq(1L))).thenReturn(mockProduct);
-        doNothing().when(productDetailPort).saveTopSize(eq(1L), any(TopProduct.class));
+    when(brandOutPort.findOne(1L)).thenReturn(mockBrand);
+    when(productOutPort.createProduct(any(ProductForCreate.class), eq(1L))).thenReturn(mockProduct);
+    doNothing().when(productDetailPort).saveTopSize(eq(1L), any(TopProduct.class));
 
-        Product result = productCommandService.createApparelTop(topProduct);
+    Product result = productCommandService.createApparelTop(topProduct);
 
+    assertAll(
+        () -> assertThat(result).isNotNull(),
+        () -> assertThat(result.getProductId()).isEqualTo(1L),
+        () -> assertThat(result.getBrandId()).isEqualTo(1L),
+        () -> assertThat(result.getName()).isEqualTo("베이직 긴팔 티셔츠")
+    );
 
-        assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.getProductId()).isEqualTo(1L),
-                () -> assertThat(result.getBrandId()).isEqualTo(1L),
-                () -> assertThat(result.getName()).isEqualTo("베이직 긴팔 티셔츠")
-        );
+    verify(brandOutPort).findOne(1L);
+    verify(productOutPort).createProduct(any(ProductForCreate.class), eq(1L));
+    verify(productDetailPort).saveTopSize(eq(1L), any(TopProduct.class));
+  }
 
+  @Test
+  @DisplayName("바지 상품 생성 성공 후 Product 반환")
+  void createApparelBottom_Success() {
+    // Given
+    ProductForCreate productForCreate = new ProductForCreate(
+        1L,
+        "스웻 팬츠",
+        29900,
+        "편안한 착용감의 데일리 팬츠",
+        ProductStatus.ACTIVE,
+        ProductCategory.BOTTOM,
+        "BLACK",
+        100,
+        "bottom_image_url.jpg"
+    );
 
-        verify(brandOutPort).findOne(1L);
-        verify(productOutPort).createProduct(any(ProductForCreate.class), eq(1L));
-        verify(productDetailPort).saveTopSize(eq(1L), any(TopProduct.class));
-    }
+    List<BottomProduct.BottomSize> bottomSizeList = List.of(
+        new BottomProduct.BottomSize(
+            "S",
+            new BigDecimal("32.0"),
+            new BigDecimal("44.0"),
+            new BigDecimal("28.0"),
+            new BigDecimal("98.0"),
+            10
+        )
+    );
 
-    @Test
-    @DisplayName("바지 상품 생성 성공 후 Product 반환")
-    void createApparelBottom_Success() {
-        // Given
-        ProductForCreate productForCreate = new ProductForCreate(
-                1L,
-                "스웻 팬츠",
-                29900,
-                "편안한 착용감의 데일리 팬츠",
-                ProductStatus.ACTIVE,
-                ProductCategory.BOTTOM,
-                "BLACK",
-                100,
-                "bottom_image_url.jpg"
-        );
+    BottomProduct bottomProduct = new BottomProduct(productForCreate, bottomSizeList);
 
-        List<BottomProduct.BottomSize> bottomSizeList = List.of(
-                new BottomProduct.BottomSize(
-                        "S",
-                        new BigDecimal("32.0"),
-                        new BigDecimal("44.0"),
-                        new BigDecimal("28.0"),
-                        new BigDecimal("98.0"),
-                        10
-                )
-        );
+    Brand mockBrand = new Brand(1L, "테스트 브랜드", BrandType.CASUAL, "서울특별시");
 
-        BottomProduct bottomProduct = new BottomProduct(productForCreate, bottomSizeList);
+    Product mockProduct = new Product(
+        1L,
+        UUID.randomUUID().toString(),
+        1L,
+        "스웻 팬츠",
+        29900,
+        "편안한 착용감의 데일리 팬츠",
+        "BLACK",
+        "bottom_image_url.jpg",
+        ProductStatus.ACTIVE,
+        ProductCategory.BOTTOM,
+        LocalDateTime.now()
+    );
 
-        Brand mockBrand = new Brand(1L, "테스트 브랜드", BrandType.CASUAL, "서울특별시");
+    when(brandOutPort.findOne(1L)).thenReturn(mockBrand);
+    when(productOutPort.createProduct(any(ProductForCreate.class), eq(1L))).thenReturn(mockProduct);
+    doNothing().when(productDetailPort).saveBottomSize(eq(1L), any(BottomProduct.class));
 
-        Product mockProduct = new Product(
-                1L,
-                UUID.randomUUID().toString(),
-                1L,
-                "스웻 팬츠",
-                29900,
-                "편안한 착용감의 데일리 팬츠",
-                "BLACK",
-                "bottom_image_url.jpg",
-                ProductStatus.ACTIVE,
-                ProductCategory.BOTTOM,
-                LocalDateTime.now()
-        );
+    Product result = productCommandService.createApparelBottom(bottomProduct);
 
-        when(brandOutPort.findOne(1L)).thenReturn(mockBrand);
-        when(productOutPort.createProduct(any(ProductForCreate.class), eq(1L))).thenReturn(mockProduct);
-        doNothing().when(productDetailPort).saveBottomSize(eq(1L), any(BottomProduct.class));
+    assertAll(
+        () -> assertThat(result).isNotNull(),
+        () -> assertThat(result.getProductId()).isEqualTo(1L),
+        () -> assertThat(result.getBrandId()).isEqualTo(1L),
+        () -> assertThat(result.getName()).isEqualTo("스웻 팬츠"),
+        () -> assertThat(result.getCategory()).isEqualTo(ProductCategory.BOTTOM)
+    );
 
-        Product result = productCommandService.createApparelBottom(bottomProduct);
-
-        assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.getProductId()).isEqualTo(1L),
-                () -> assertThat(result.getBrandId()).isEqualTo(1L),
-                () -> assertThat(result.getName()).isEqualTo("스웻 팬츠"),
-                () -> assertThat(result.getCategory()).isEqualTo(ProductCategory.BOTTOM)
-        );
-
-        verify(brandOutPort).findOne(1L);
-        verify(productOutPort).createProduct(any(ProductForCreate.class), eq(1L));
-        verify(productDetailPort).saveBottomSize(eq(1L), any(BottomProduct.class));
-    }
+    verify(brandOutPort).findOne(1L);
+    verify(productOutPort).createProduct(any(ProductForCreate.class), eq(1L));
+    verify(productDetailPort).saveBottomSize(eq(1L), any(BottomProduct.class));
+  }
 }

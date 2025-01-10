@@ -14,13 +14,15 @@ import static com.ed.productservice.libs.common.ErrorCode.BRAND_NOT_FOUND;
 @Component
 @RequiredArgsConstructor
 public class BrandAdapter implements BrandOutPort {
-    private final BrandRepository brandRepository;
-    private final BrandMapper brandMapper;
 
-    @Override
-    public Brand findOne(Long brandId) {
-        BrandEntity entity = brandRepository.findById(brandId).orElseThrow(() -> new BrandException(BRAND_NOT_FOUND));
+  private final BrandRepository brandRepository;
+  private final BrandMapper brandMapper;
 
-        return brandMapper.toDomain(entity);
-    }
+  @Override
+  public Brand findOne(Long brandId) {
+    BrandEntity entity = brandRepository.findById(brandId)
+        .orElseThrow(() -> new BrandException(BRAND_NOT_FOUND));
+
+    return brandMapper.toDomain(entity);
+  }
 }

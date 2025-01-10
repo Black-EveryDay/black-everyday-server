@@ -15,16 +15,16 @@ public record ProductDetailResponse(
     String brandName
 ) {
 
-    public static ProductDetailResponse from(ProductInfoDto dto) {
-        return new ProductDetailResponse(
-            dto.productPublicId(),
-            dto.color(),
-            dto.image(),
-            dto.category(),
-            dto.description(),
-            dto.name(),
-            dto.price(),
-            dto.brandName()
-        );
-    }
+  public static ProductDetailResponse from(ProductInfoDto dto) {
+    return new ProductDetailResponse(
+        dto.productPublicId(),
+        dto.color(),
+        dto.image(),
+        dto.category(),
+        dto.description(),
+        dto.name(),
+        dto.price(),
+        dto.brandName()
+    );
+  }
 }

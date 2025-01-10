@@ -18,43 +18,43 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProductCommandService implements ProductUseCase {
 
-    private final ProductOutPort productOutPort;
-    private final BrandOutPort brandOutPort;
-    private final ProductDetailPort productDetailPort;
+  private final ProductOutPort productOutPort;
+  private final BrandOutPort brandOutPort;
+  private final ProductDetailPort productDetailPort;
 
-    public Product createApparelTop(TopProduct topProduct) {
-        Brand brand = brandOutPort.findOne(topProduct.getProductForCreate().getBrandId());
+  public Product createApparelTop(TopProduct topProduct) {
+    Brand brand = brandOutPort.findOne(topProduct.getProductForCreate().getBrandId());
 
-        Product product = productOutPort.createProduct(topProduct.getProductForCreate(),
-            brand.getBrandId());
+    Product product = productOutPort.createProduct(topProduct.getProductForCreate(),
+        brand.getBrandId());
 
-        productDetailPort.saveTopSize(product.getProductId(), topProduct);
+    productDetailPort.saveTopSize(product.getProductId(), topProduct);
 
-        return product;
-    }
+    return product;
+  }
 
-    @Override
-    public Product createApparelBottom(BottomProduct bottomProduct) {
-        Brand brand = brandOutPort.findOne(bottomProduct.getProductForCreate().getBrandId());
+  @Override
+  public Product createApparelBottom(BottomProduct bottomProduct) {
+    Brand brand = brandOutPort.findOne(bottomProduct.getProductForCreate().getBrandId());
 
-        Product product = productOutPort.createProduct(bottomProduct.getProductForCreate(),
-            brand.getBrandId());
+    Product product = productOutPort.createProduct(bottomProduct.getProductForCreate(),
+        brand.getBrandId());
 
-        productDetailPort.saveBottomSize(product.getProductId(), bottomProduct);
+    productDetailPort.saveBottomSize(product.getProductId(), bottomProduct);
 
-        return product;
-    }
+    return product;
+  }
 
-    @Override
-    public Product updateProduct(ProductForUpdate request) {
-        Product product = productOutPort.findOne(request.productPublicId());
-        brandOutPort.findOne(request.brandId());
+  @Override
+  public Product updateProduct(ProductForUpdate request) {
+    Product product = productOutPort.findOne(request.productPublicId());
+    brandOutPort.findOne(request.brandId());
 
-        return productOutPort.update(product.update(request));
-    }
+    return productOutPort.update(product.update(request));
+  }
 
-    @Override
-    public void deleteProduct(String productPublicId) {
-        productOutPort.deleteOne(productPublicId);
-    }
+  @Override
+  public void deleteProduct(String productPublicId) {
+    productOutPort.deleteOne(productPublicId);
+  }
 }

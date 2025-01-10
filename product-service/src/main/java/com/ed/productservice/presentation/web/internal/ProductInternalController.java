@@ -20,21 +20,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ProductInternalController {
 
-    private final ProductInternalService productInternalService;
+  private final ProductInternalService productInternalService;
 
-    @PostMapping("/prepare")
-    public StockDecreaseResponse prepareStock(@RequestBody StockPrepareRequest request) {
-        List<ProductReservationInfoDomain> domain = request.toDomain();
+  @PostMapping("/prepare")
+  public StockDecreaseResponse prepareStock(@RequestBody StockPrepareRequest request) {
+    List<ProductReservationInfoDomain> domain = request.toDomain();
 
-        DecreaseStockResponse decreaseStockResponse = productInternalService.decreaseStock(domain);
+    DecreaseStockResponse decreaseStockResponse = productInternalService.decreaseStock(domain);
 
-        return StockDecreaseResponse.from(decreaseStockResponse);
-    }
+    return StockDecreaseResponse.from(decreaseStockResponse);
+  }
 
-    @PostMapping("/rollback/{transactionId}")
-    public StockIncreaseResponse rollbackStock(
-        @PathVariable("transactionId") String transactionId) {
+  @PostMapping("/rollback/{transactionId}")
+  public StockIncreaseResponse rollbackStock(
+      @PathVariable("transactionId") String transactionId) {
 
-        return StockIncreaseResponse.from(productInternalService.increaseStock(transactionId));
-    }
+    return StockIncreaseResponse.from(productInternalService.increaseStock(transactionId));
+  }
 }

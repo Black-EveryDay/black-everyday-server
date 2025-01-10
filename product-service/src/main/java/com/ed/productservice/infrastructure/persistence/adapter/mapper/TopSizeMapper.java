@@ -6,15 +6,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TopSizeMapper {
-    public TopSizeStockEntity from(Long productId, TopProduct.TopSize topSize) {
-        return new TopSizeStockEntity(
-                productId,
-                topSize.getTopSize(),
-                topSize.getTotalLength(),
-                topSize.getShoulderWidth(),
-                topSize.getChestWidth(),
-                topSize.getSleeveLength(),
-                topSize.getQuantity()
-        );
-    }
+
+  public TopSizeStockEntity from(Long productId, TopProduct.TopSize topSize) {
+    return new TopSizeStockEntity(
+        productId,
+        topSize.getTopSize(),
+        topSize.getTotalLength(),
+        topSize.getShoulderWidth(),
+        topSize.getChestWidth(),
+        topSize.getSleeveLength(),
+        topSize.getQuantity()
+    );
+  }
 }

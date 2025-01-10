@@ -14,15 +14,15 @@ public record ProductUpdateResponse(
     Integer price
 ) {
 
-    public static ProductUpdateResponse from(Product product) {
-        return new ProductUpdateResponse(
-            product.getProductId(),
-            product.getColor(),
-            product.getImage(),
-            product.getCategory(),
-            product.getDescription(),
-            product.getName(),
-            product.getPrice()
-        );
-    }
+  public static ProductUpdateResponse from(Product product) {
+    return new ProductUpdateResponse(
+        product.getProductId(),
+        product.getColor(),
+        product.getImage(),
+        product.getCategory(),
+        product.getDescription(),
+        product.getName(),
+        product.getPrice()
+    );
+  }
 }

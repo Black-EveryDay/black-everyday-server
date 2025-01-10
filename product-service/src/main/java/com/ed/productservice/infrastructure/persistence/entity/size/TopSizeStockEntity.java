@@ -16,58 +16,59 @@ import java.math.BigDecimal;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TopSizeStockEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "top_size_id")
-    private Long topSizeId;
 
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "top_size_id")
+  private Long topSizeId;
 
-    @Column(name = "top_size", nullable = false)
-    private String topSize;
+  @Column(name = "product_id", nullable = false)
+  private Long productId;
 
-    @Column(name = "total_length", nullable = false)
-    private BigDecimal totalLength;
+  @Column(name = "top_size", nullable = false)
+  private String topSize;
 
-    @Column(name = "shoulder_width", nullable = false)
-    private BigDecimal shoulderWidth;
+  @Column(name = "total_length", nullable = false)
+  private BigDecimal totalLength;
 
-    @Column(name = "chest_width", nullable = false)
-    private BigDecimal chestWidth;
+  @Column(name = "shoulder_width", nullable = false)
+  private BigDecimal shoulderWidth;
 
-    @Column(name = "sleeve_length", nullable = false)
-    private BigDecimal sleeveLength;
+  @Column(name = "chest_width", nullable = false)
+  private BigDecimal chestWidth;
 
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+  @Column(name = "sleeve_length", nullable = false)
+  private BigDecimal sleeveLength;
 
-    public TopSizeStockEntity(Long productId, String topSize, BigDecimal totalLength,
-        BigDecimal shoulderWidth, BigDecimal chestWidth, BigDecimal sleeveLength,
-        Integer quantity) {
-        this.productId = productId;
-        this.topSize = topSize;
-        this.totalLength = totalLength;
-        this.shoulderWidth = shoulderWidth;
-        this.chestWidth = chestWidth;
-        this.sleeveLength = sleeveLength;
-        this.quantity = quantity;
+  @Column(name = "quantity", nullable = false)
+  private Integer quantity;
+
+  public TopSizeStockEntity(Long productId, String topSize, BigDecimal totalLength,
+      BigDecimal shoulderWidth, BigDecimal chestWidth, BigDecimal sleeveLength,
+      Integer quantity) {
+    this.productId = productId;
+    this.topSize = topSize;
+    this.totalLength = totalLength;
+    this.shoulderWidth = shoulderWidth;
+    this.chestWidth = chestWidth;
+    this.sleeveLength = sleeveLength;
+    this.quantity = quantity;
+  }
+
+  public void validateStockAvailability(int requestQuantity) {
+    if (this.quantity < requestQuantity) {
+      throw new ProductException(INSUFFICIENT_PRODUCT_STOCK);
     }
+  }
 
-    public void validateStockAvailability(int requestQuantity) {
-        if (this.quantity < requestQuantity) {
-            throw new ProductException(INSUFFICIENT_PRODUCT_STOCK);
-        }
+  public void decreaseStock(int quantity) {
+    if (this.quantity < quantity) {
+      throw new ProductException(INSUFFICIENT_PRODUCT_STOCK);
     }
+    this.quantity -= quantity;
+  }
 
-    public void decreaseStock(int quantity) {
-        if (this.quantity < quantity) {
-            throw new ProductException(INSUFFICIENT_PRODUCT_STOCK);
-        }
-        this.quantity -= quantity;
-    }
-
-    public void increaseStock(int quantity) {
-        this.quantity += quantity;
-    }
+  public void increaseStock(int quantity) {
+    this.quantity += quantity;
+  }
 }

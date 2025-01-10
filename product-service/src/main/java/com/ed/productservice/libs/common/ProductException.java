@@ -3,11 +3,12 @@ package com.ed.productservice.libs.common;
 import lombok.Getter;
 
 @Getter
-public class ProductException extends RuntimeException{
-    private final ErrorCode errorCode;
+public class ProductException extends RuntimeException {
 
-    public ProductException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
-        this.errorCode = errorCode;
-    }
+  private final ErrorCode errorCode;
+
+  public ProductException(ErrorCode errorCode) {
+    super(errorCode.getMessage());
+    this.errorCode = errorCode;
+  }
 }
