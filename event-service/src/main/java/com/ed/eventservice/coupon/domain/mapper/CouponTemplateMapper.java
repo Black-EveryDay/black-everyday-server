@@ -3,10 +3,8 @@ package com.ed.eventservice.coupon.domain.mapper;
 import com.ed.eventservice.coupon.adapter.out.persistence.entity.CouponTemplateJpaEntity;
 import com.ed.eventservice.coupon.application.port.in.CreateCouponTemplateCommand;
 import com.ed.eventservice.coupon.application.port.out.dto.CreateCouponTemplateResponse;
-import com.ed.eventservice.coupon.domain.Coupon;
 import com.ed.eventservice.coupon.domain.CouponTemplate;
 import java.time.Duration;
-import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -42,9 +40,7 @@ public interface CouponTemplateMapper {
   @Mapping(target = "couponUsageTargetInfo", source = "couponTemplateJpaEntity.couponUsageTargetInfoJpaEntity")
   @Mapping(target = "couponDiscountInfo", source = "couponTemplateJpaEntity.couponDiscountInfoJpaEntity")
   @Mapping(target = "couponExpirationInfo", source = "couponTemplateJpaEntity.couponExpirationInfoJpaEntity")
-  @Mapping(target = "coupons", source = "coupons")
-  CouponTemplate jpaEntityToDomain(CouponTemplateJpaEntity couponTemplateJpaEntity,
-      List<Coupon> coupons);
+  CouponTemplate jpaEntityToDomain(CouponTemplateJpaEntity couponTemplateJpaEntity);
 
   @Mapping(target = "couponIssuanceType", source = "couponIssueInfo.couponIssuanceType")
   @Mapping(target = "couponIssuerType", source = "couponIssueInfo.couponIssuerType")

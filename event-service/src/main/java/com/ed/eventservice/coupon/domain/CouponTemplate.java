@@ -23,12 +23,11 @@ public class CouponTemplate {
   private final CouponUsageTargetInfo couponUsageTargetInfo;
   private final CouponDiscountInfo couponDiscountInfo;
   private final CouponExpirationInfo couponExpirationInfo;
-  private final List<Coupon> coupons;
 
   @Builder
   private CouponTemplate(Long id, UUID publicId, String couponName, CouponIssueInfo couponIssueInfo,
       CouponUsageTargetInfo couponUsageTargetInfo, CouponDiscountInfo couponDiscountInfo,
-      CouponExpirationInfo couponExpirationInfo, List<Coupon> coupons) {
+      CouponExpirationInfo couponExpirationInfo) {
     this.id = id;
     this.publicId = publicId;
     this.couponName = couponName;
@@ -36,7 +35,6 @@ public class CouponTemplate {
     this.couponUsageTargetInfo = couponUsageTargetInfo;
     this.couponDiscountInfo = couponDiscountInfo;
     this.couponExpirationInfo = couponExpirationInfo;
-    this.coupons = coupons == null ? List.of() : coupons;
     validityCheck();
   }
 
@@ -70,28 +68,44 @@ public class CouponTemplate {
     }
   }
 
-  public void createCoupon(Integer quantity) {
+  public List<Coupon> createCoupon(Integer quantity) {
     if (quantity <= 0) {
       throw new IllegalArgumentException("Quantity must be greater than 0");
     }
     if (this.couponIssueInfo.getMaxIssuance() != null
         && this.couponIssueInfo.getMaxIssuance()
-        < coupons.size() + quantity) {
+        < this.couponIssueInfo.getIssuedCount() + quantity) {
       throw new IllegalArgumentException("Quantity must be less than or equal to max issuance");
     }
 
     LocalDateTime now = LocalDateTime.now();
-    LocalDateTime expirationDate = this.couponExpirationInfo.getExpirationDays() == null ? null
-        : now.plusDays(this.couponExpirationInfo.getExpirationDays().toDays());
+    LocalDateTime expirationDate = computeCouponExpiryDate(now);
 
-    this.coupons.addAll(
-        IntStream.range(0, quantity)
-            .mapToObj(i -> Coupon.builder()
-                .couponTemplateId(this.publicId)
-                .issuedAt(now)
-                .expirationDate(expirationDate)
-                .build())
-            .toList()
-    );
+    return IntStream.range(0, quantity)
+        .mapToObj(i -> Coupon.builder()
+            .couponTemplate(this)
+            .issuedAt(now)
+            .expirationDate(expirationDate)
+            .build())
+        .toList();
+  }
+
+  private LocalDateTime computeCouponExpiryDate(LocalDateTime localDateTime) {
+    if (this.couponExpirationInfo.getExpirationDays() == null
+        && this.couponExpirationInfo.getFixedExpirationDate() == null) {
+      return null;
+    }
+
+    if (this.couponExpirationInfo.getExpirationDays() == null) {
+      return this.couponExpirationInfo.getFixedExpirationDate();
+    }
+
+    if (this.couponExpirationInfo.getFixedExpirationDate() == null) {
+      return localDateTime.plusDays(this.couponExpirationInfo.getExpirationDays().toDays());
+    }
+
+    return this.couponExpirationInfo.getFixedExpirationDate().isBefore(localDateTime)
+        ? this.couponExpirationInfo.getFixedExpirationDate()
+        : localDateTime.plusDays(this.couponExpirationInfo.getExpirationDays().toDays());
   }
 }

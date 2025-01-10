@@ -3,10 +3,13 @@ package com.ed.eventservice.coupon.application.service;
 import com.ed.eventservice.coupon.application.port.in.CouponTemplateUseCase;
 import com.ed.eventservice.coupon.application.port.in.CreateCouponCommand;
 import com.ed.eventservice.coupon.application.port.in.CreateCouponTemplateCommand;
+import com.ed.eventservice.coupon.application.port.out.CouponPersistencePort;
 import com.ed.eventservice.coupon.application.port.out.CouponTemplatePersistencePort;
 import com.ed.eventservice.coupon.application.port.out.dto.CreateCouponTemplateResponse;
+import com.ed.eventservice.coupon.domain.Coupon;
 import com.ed.eventservice.coupon.domain.CouponTemplate;
 import com.ed.eventservice.coupon.domain.mapper.CouponTemplateMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CouponTemplateService implements CouponTemplateUseCase {
 
   private final CouponTemplatePersistencePort couponTemplatePersistencePort;
+  private final CouponPersistencePort couponPersistencePort;
   private final CouponTemplateMapper couponTemplateMapper;
 
   @Override
@@ -34,8 +38,8 @@ public class CouponTemplateService implements CouponTemplateUseCase {
         command.getCouponTemplateId()
     );
 
-    couponTemplate.createCoupon(command.getQuantity());
+    List<Coupon> newCoupons = couponTemplate.createCoupon(command.getQuantity());
 
-    couponTemplatePersistencePort.updateCoupon(couponTemplate);
+    couponPersistencePort.saveNewCoupons(newCoupons);
   }
 }
