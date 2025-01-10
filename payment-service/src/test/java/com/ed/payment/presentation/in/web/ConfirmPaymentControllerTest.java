@@ -38,8 +38,9 @@ class ConfirmPaymentControllerTest {
     final String paymentType = "NORMAL";
     final String paymentKey = "tgen_20250107154634hYNt7";
     final String orderId = UUID.randomUUID().toString();
-    final int amount = 10000;
+    final Long amount = 10000L;
     final String paymentStatus = PaymentStatus.DONE.name();
+    final String lastTransactionKey = "9C62B18EEF0DE3EB7F4422EB6D14BC6E";
 
     MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
     queryParams.add("paymentType", paymentType);
@@ -47,7 +48,7 @@ class ConfirmPaymentControllerTest {
     queryParams.add("orderId", orderId);
     queryParams.add("amount", String.valueOf(amount));
 
-    PaymentDone response = PaymentDone.of(paymentKey, orderId, amount, amount, paymentStatus);
+    PaymentDone response = PaymentDone.of(paymentKey, orderId, amount, amount, paymentStatus, lastTransactionKey);
 
     // stubbing
     when(confirmPaymentUseCase.confirmPayment(any(ConfirmPaymentCommand.class)))

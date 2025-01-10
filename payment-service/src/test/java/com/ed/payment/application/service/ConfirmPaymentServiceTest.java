@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -20,6 +21,8 @@ import com.ed.payment.application.port.out.pg.ConfirmPaymentPort;
 import com.ed.payment.application.port.out.pg.PaymentDone;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
+import com.ed.payment.infrastructure.out.mq.OrderPaymentProducer;
+import com.ed.payment.infrastructure.out.mq.record.OrderPaymentResponse;
 import com.ed.payment.libs.common.exception.CustomException;
 import com.ed.payment.libs.common.helper.TransactionHelper;
 import java.util.UUID;
@@ -50,11 +53,14 @@ class ConfirmPaymentServiceTest {
   @Mock
   private CreatePaymentHistoryPort createPaymentHistoryPort;
 
+  @Mock
+  private OrderPaymentProducer<OrderPaymentResponse> producer;
 
   @BeforeEach
   void setUp() {
-    confirmPaymentService = new ConfirmPaymentService(transactionHelper,
-        readPaymentPort, updatePaymentPort, confirmPaymentPort, createPaymentHistoryPort);
+    confirmPaymentService = new ConfirmPaymentService(
+        transactionHelper, readPaymentPort, updatePaymentPort,
+        confirmPaymentPort, createPaymentHistoryPort, producer);
   }
 
   @Test
@@ -63,17 +69,19 @@ class ConfirmPaymentServiceTest {
     // given
     final String paymentType = "NORMAL";
     final String paymentKey = "tgen_20250107154634hYNt7";
+    final String idempotencyKey = UUID.randomUUID().toString();
     final String orderId = UUID.randomUUID().toString();
-    final int sameRequestAmount = 10000;
+    final Long sameRequestAmount = 10000L;
     ConfirmPaymentCommand request = ConfirmPaymentCommand.of(paymentType, paymentKey, orderId, sameRequestAmount);
 
     final Long paymentId = 1L;
     final String orderName = "피자맛 호빵";
-    final int originAmount = 10000;
-    Payment payment = new Payment(paymentId, null, orderId, orderName, originAmount);
+    final Long originAmount = 10000L;
+    Payment payment = new Payment(paymentId, null, idempotencyKey, orderId, orderName, originAmount);
 
     final String paymentStatus = DONE.name();
-    PaymentDone response = PaymentDone.of(paymentKey, orderId, originAmount, originAmount, paymentStatus);
+    final String lastTransactionKey = "9C62B18EEF0DE3EB7F4422EB6D14BC6E";
+    PaymentDone response = PaymentDone.of(paymentKey, orderId, originAmount, originAmount, paymentStatus, lastTransactionKey);
 
     // stubbing
     when(readPaymentPort.findPayment(orderId))
@@ -87,12 +95,13 @@ class ConfirmPaymentServiceTest {
 
     doNothing()
         .when(updatePaymentPort)
-        .updatePaymentAfterVerifying(paymentId, paymentKey,
-            getPaymentStatus(paymentStatus));
+        .updatePaymentAfterVerifying(paymentId, getPaymentStatus(paymentStatus), paymentKey);
 
     doNothing().when(createPaymentHistoryPort)
-        .createPaymentHistory(paymentId, originAmount,
-            getPaymentStatus(paymentStatus));
+        .createConfirmSuccessPaymentHistory(paymentId, lastTransactionKey, getPaymentStatus(paymentStatus), originAmount, originAmount);
+
+    when(producer.send(any(String.class), any(OrderPaymentResponse.class)))
+        .thenReturn(true);
 
     // when
     PaymentDone result = confirmPaymentService.confirmPayment(request);
@@ -102,9 +111,10 @@ class ConfirmPaymentServiceTest {
     verify(readPaymentPort).findPayment(orderId);
     verify(transactionHelper, never()).executeInNewTransaction(any());
     verify(confirmPaymentPort).confirmPayment(payment, paymentKey);
-    verify(confirmPaymentPort).isPaymentConfirmed(paymentStatus);
-    verify(updatePaymentPort).updatePaymentAfterVerifying(paymentId, paymentKey, getPaymentStatus(paymentStatus));
-    verify(createPaymentHistoryPort).createPaymentHistory(paymentId, originAmount, getPaymentStatus(paymentStatus));
+    verify(confirmPaymentPort, times(2)).isPaymentConfirmed(paymentStatus);
+    verify(updatePaymentPort).updatePaymentAfterVerifying(paymentId, getPaymentStatus(paymentStatus), paymentKey);
+    verify(createPaymentHistoryPort).createConfirmSuccessPaymentHistory(paymentId, lastTransactionKey, getPaymentStatus(paymentStatus), originAmount, originAmount);
+    verify(producer).send(any(String.class), any(OrderPaymentResponse.class));
   }
 
   @Test
@@ -113,14 +123,15 @@ class ConfirmPaymentServiceTest {
     // given
     final String paymentType = "NORMAL";
     final String paymentKey = "tgen_20250107154634hYNt7";
+    final String idempotencyKey = UUID.randomUUID().toString();
     final String orderId = UUID.randomUUID().toString();
-    final int differentRequestAmount = 1000;
+    final Long differentRequestAmount = 1000L;
     ConfirmPaymentCommand request = ConfirmPaymentCommand.of(paymentType, paymentKey, orderId, differentRequestAmount);
 
     final Long paymentId = 1L;
     final String orderName = "피자맛 호빵";
-    final int originAmount = 10000;
-    Payment payment = new Payment(paymentId, null, orderId, orderName, originAmount);
+    final Long originAmount = 10000L;
+    Payment payment = new Payment(paymentId, null, idempotencyKey, orderId, orderName, originAmount);
 
     final String paymentStatus = VERIFY_FAILED.name();
 
@@ -132,12 +143,10 @@ class ConfirmPaymentServiceTest {
         .executeInNewTransaction(any(Runnable.class));
 
     doNothing().when(updatePaymentPort)
-        .updatePaymentAfterVerifying(paymentId, paymentKey,
-            getPaymentStatus(paymentStatus));
+        .updatePaymentAfterVerifying(paymentId, getPaymentStatus(paymentStatus), paymentKey);
 
     doNothing().when(createPaymentHistoryPort)
-        .createPaymentHistory(paymentId, originAmount,
-            getPaymentStatus(paymentStatus));
+        .createFailPaymentHistory(paymentId, getPaymentStatus(paymentStatus));
 
     // expected
     assertThatThrownBy(() -> confirmPaymentService.confirmPayment(request))
@@ -148,8 +157,8 @@ class ConfirmPaymentServiceTest {
     verify(transactionHelper).executeInNewTransaction(any());
     verify(confirmPaymentPort, never()).confirmPayment(payment, paymentKey);
     verify(confirmPaymentPort, never()).isPaymentConfirmed(any());
-    verify(updatePaymentPort).updatePaymentAfterVerifying(paymentId, paymentKey, getPaymentStatus(paymentStatus));
-    verify(createPaymentHistoryPort).createPaymentHistory(paymentId, originAmount, getPaymentStatus(paymentStatus));
+    verify(updatePaymentPort).updatePaymentAfterVerifying(paymentId, getPaymentStatus(paymentStatus), paymentKey);
+    verify(createPaymentHistoryPort).createFailPaymentHistory(paymentId, getPaymentStatus(paymentStatus));
   }
 
   private PaymentStatus getPaymentStatus(String paymentStatus) {

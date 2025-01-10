@@ -33,7 +33,6 @@
     const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
     const tossPayments = TossPayments(clientKey);
     const customerKey = queryStrings.get("userId")
-    console.log(customerKey)
     const widgets = tossPayments.widgets({
       customerKey
     });

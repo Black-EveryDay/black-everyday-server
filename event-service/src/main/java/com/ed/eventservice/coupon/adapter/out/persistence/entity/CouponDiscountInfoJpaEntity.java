@@ -1,7 +1,6 @@
 package com.ed.eventservice.coupon.adapter.out.persistence.entity;
 
 import com.ed.eventservice.coupon.domain.enums.DiscountType;
-import com.ed.eventservice.coupon.domain.vo.CouponDiscountInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -27,19 +26,5 @@ public class CouponDiscountInfoJpaEntity {
   private CouponDiscountInfoJpaEntity(DiscountType discountType, BigDecimal discountValue) {
     this.discountType = discountType;
     this.discountValue = discountValue;
-  }
-
-  public static CouponDiscountInfoJpaEntity from(CouponDiscountInfo couponDiscountInfo) {
-    return CouponDiscountInfoJpaEntity.builder()
-        .discountType(couponDiscountInfo.getDiscountType())
-        .discountValue(couponDiscountInfo.getDiscountValue())
-        .build();
-  }
-
-  public CouponDiscountInfo toCouponDiscountInfo() {
-    return CouponDiscountInfo.builder()
-        .discountType(discountType)
-        .discountValue(discountValue)
-        .build();
   }
 }

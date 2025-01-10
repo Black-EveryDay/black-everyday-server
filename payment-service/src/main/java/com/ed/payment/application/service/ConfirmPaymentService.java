@@ -3,6 +3,7 @@ package com.ed.payment.application.service;
 import static com.ed.payment.domain.PaymentStatus.ABORTED;
 import static com.ed.payment.domain.PaymentStatus.DONE;
 import static com.ed.payment.domain.PaymentStatus.VERIFY_FAILED;
+import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_RESPONSE;
 import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_AMOUNT_MISMATCH;
 
 import com.ed.payment.application.port.in.ConfirmPaymentCommand;
@@ -14,8 +15,11 @@ import com.ed.payment.application.port.out.pg.ConfirmPaymentPort;
 import com.ed.payment.application.port.out.pg.PaymentDone;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
+import com.ed.payment.infrastructure.out.mq.OrderPaymentProducer;
+import com.ed.payment.infrastructure.out.mq.record.OrderPaymentResponse;
 import com.ed.payment.libs.common.exception.CustomException;
 import com.ed.payment.libs.common.helper.TransactionHelper;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,24 +35,14 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
   private final UpdatePaymentPort updatePaymentPort;
   private final ConfirmPaymentPort confirmPaymentPort;
   private final CreatePaymentHistoryPort createPaymentHistoryPort;
+  private final OrderPaymentProducer<OrderPaymentResponse> producer;
 
   @Transactional
   @Override
   public PaymentDone confirmPayment(ConfirmPaymentCommand command) {
     Payment payment = readPaymentPort.findPayment(command.getOrderId());
     verifyRequest(payment, command);
-
-    PaymentDone paymentDone = confirmPaymentPort.confirmPayment(payment, command.getPaymentKey());
-    PaymentStatus paymentStatus = getPaymentStatus(paymentDone.getStatus());
-    updatePaymentAndPaymentHistory(command, payment, paymentStatus);
-
-    // todo
-    // kafka producer 로 값 넣어주기 ==> success 여부 정도 예상된다.
-    // 결제 실패 시 => order 로 바로 쏴주면 너무 복잡해짐
-    //            => 하나의 주문에 대해서 언제까지 결제를 해야하는지 고객한테 알려줘서
-    // scheduler  => 상태 전이 + publish(정책) => @Scheduler 를 통해서
-
-    return paymentDone;
+    return confirmPayment(command, payment);
   }
 
   private void verifyRequest(Payment payment, ConfirmPaymentCommand command) {
@@ -56,9 +50,29 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
       return;
     }
 
-    transactionHelper.executeInNewTransaction(
-        () -> updatePaymentAndPaymentHistory(command, payment, VERIFY_FAILED));
+    transactionHelper.executeInNewTransaction(() -> updateAfterVerifying(payment, command));
     throw new CustomException(PAYMENT_AMOUNT_MISMATCH);
+  }
+
+  private PaymentDone confirmPayment(ConfirmPaymentCommand command, Payment payment) {
+    PaymentDone paymentDone = confirmPaymentPort.confirmPayment(payment, command.getPaymentKey());
+    PaymentStatus paymentStatus = getPaymentStatus(paymentDone.getStatus());
+    updateAfterConfirming(payment, paymentDone, command, paymentStatus);
+    sendOrderPaymentResponse(paymentDone);
+    return paymentDone;
+  }
+
+  private void updateAfterVerifying(Payment payment, ConfirmPaymentCommand command) {
+    updatePaymentPort.updatePaymentAfterVerifying(payment.getPaymentId(), VERIFY_FAILED, command.getPaymentKey());
+    createPaymentHistoryPort.createFailPaymentHistory(payment.getPaymentId(), VERIFY_FAILED);
+  }
+
+  private void updateAfterConfirming(
+      Payment payment, PaymentDone paymentDone, ConfirmPaymentCommand command, PaymentStatus paymentStatus) {
+    updatePaymentPort.updatePaymentAfterVerifying(payment.getPaymentId(), paymentStatus, command.getPaymentKey());
+    createPaymentHistoryPort.createConfirmSuccessPaymentHistory(
+        payment.getPaymentId(), paymentDone.getLastTransactionKey(), paymentStatus,
+        paymentDone.getTotalAmount(), paymentDone.getBalanceAmount());
   }
 
   private PaymentStatus getPaymentStatus(String paymentStatus) {
@@ -69,11 +83,12 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
     return confirmPaymentPort.isPaymentConfirmed(paymentStatus);
   }
 
-  private void updatePaymentAndPaymentHistory(
-      ConfirmPaymentCommand command, Payment payment, PaymentStatus paymentStatus) {
-    updatePaymentPort.updatePaymentAfterVerifying(
-        payment.getPaymentId(), command.getPaymentKey(), paymentStatus);
-    createPaymentHistoryPort.createPaymentHistory(
-        payment.getPaymentId(), payment.getAmount(), paymentStatus);
+  private void sendOrderPaymentResponse(PaymentDone paymentDone) {
+    producer.send(ORDER_PAYMENT_RESPONSE, OrderPaymentResponse.newBuilder()
+        .setIsSuccess(isPaymentConfirmed(paymentDone.getStatus()))
+        .setOrderPublicId(paymentDone.getOrderId())
+        .setPaymentPublicId(paymentDone.getPaymentKey())
+        .setMessageTimestamp(LocalDateTime.now())
+        .build());
   }
 }
