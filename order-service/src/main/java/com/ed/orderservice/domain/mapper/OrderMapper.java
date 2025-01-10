@@ -39,10 +39,10 @@ public class OrderMapper {
         .name(orderEntity.getOrderName())
         .phoneNumber(orderEntity.getPhoneNumber())
         .build();
+
     List<OrderItem> orderItems = orderEntity.getOrderItemEntitys().stream()
         .map(orderItemMapper::fromOrderItemEntity)
         .toList();
-
 
     OrderDelivery orderDelivery = OrderDelivery.
         fromOrderDeliveryEntity(orderEntity.getOrderDeliveryEntity());

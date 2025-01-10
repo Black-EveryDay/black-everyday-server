@@ -16,6 +16,7 @@ public class OrderAdapter implements OrderOutPort {
   private final OrderJpaRepository orderJpaRepository;
   private final OrderMapper orderMapper;
 
+  //TODO 상품, 쿠폰, 결제 부분 연동 예정
   @Override
   public Order save(Order newOrder) {
     OrderEntity orderEntity = orderMapper.toEntity(newOrder);
