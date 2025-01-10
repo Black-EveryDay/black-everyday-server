@@ -17,26 +17,70 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    avroTools
 }
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://packages.confluent.io/maven")
+    }
 }
 
 dependencies {
-
+    // web
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // db
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    // gson
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+    // kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    avroTools 'org.apache.avro:avro-tools:1.12.0'
+    implementation 'io.confluent:kafka-avro-serializer:7.8.0'
+
+    // lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+    // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    jvmArgs '-XX:+EnableDynamicAgentLoading'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'build/generated-src'
+        }
+    }
+}
+
+tasks.register("generateAvroJava", JavaExec) {
+    group = "build"
+    description = "Compiles Avro schemas into Java classes"
+    mainClass.set("org.apache.avro.tool.Main")
+    classpath = configurations.avroTools
+    args = [
+            "compile", "-string", "schema",
+            "src/main/avro/OrderPaymentRequest.avsc",
+            "src/main/avro/OrderPaymentResponse.avsc",
+            "build/generated-src"
+    ]
+}
+
+tasks.named("compileJava") {
+    dependsOn("generateAvroJava")
 }
