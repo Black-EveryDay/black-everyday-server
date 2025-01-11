@@ -19,8 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-@WebMvcTest(HandleFailPaymentController.class)
-class HandleFailPaymentControllerTest {
+@WebMvcTest(RequestPaymentFailController.class)
+class RequestPaymentFailControllerTest {
 
   @Autowired
   private MockMvc mockMvc;

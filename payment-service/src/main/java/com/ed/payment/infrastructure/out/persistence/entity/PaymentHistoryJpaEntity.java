@@ -5,6 +5,7 @@ import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.ed.payment.domain.PaymentStatus;
+import com.ed.payment.libs.common.entity.BaseTimeJpaEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -21,15 +22,15 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "ed_payment_histories")
+@Table(name = "ED_PAYMENT_HISTORY")
 @Builder(access = PRIVATE)
 @AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor(access = PROTECTED)
-public class PaymentHistoryJpaEntity {
+public class PaymentHistoryJpaEntity extends BaseTimeJpaEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "payment_history_id")
+  @Column(name = "PAYMENT_HISTORY_ID")
   private Long id;
 
   @Column(nullable = false, unique = true)
@@ -54,8 +55,7 @@ public class PaymentHistoryJpaEntity {
   @Column
   private Long cancelAmount;
 
-  public static PaymentHistoryJpaEntity initPaymentHistory(
-      Long paymentId, Long amount) {
+  public static PaymentHistoryJpaEntity createPaymentHistory(Long paymentId, Long amount) {
     return PaymentHistoryJpaEntity.builder()
         .paymentHistoryPublicId(generatePublicId())
         .paymentId(paymentId)
@@ -79,11 +79,10 @@ public class PaymentHistoryJpaEntity {
   }
 
   public static PaymentHistoryJpaEntity createFailPaymentHistory(
-      Long paymentId, String lastTransactionKey, PaymentStatus paymentStatus) {
+      Long paymentId, PaymentStatus paymentStatus) {
     return PaymentHistoryJpaEntity.builder()
         .paymentHistoryPublicId(generatePublicId())
         .paymentId(paymentId)
-        .lastTransactionKey(lastTransactionKey)
         .paymentStatus(paymentStatus)
         .build();
   }

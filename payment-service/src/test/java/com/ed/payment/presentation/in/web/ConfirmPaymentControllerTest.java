@@ -1,5 +1,6 @@
 package com.ed.payment.presentation.in.web;
 
+import static com.ed.payment.domain.PaymentStatus.DONE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -9,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.ed.payment.application.port.in.ConfirmPaymentCommand;
 import com.ed.payment.application.port.in.ConfirmPaymentUseCase;
 import com.ed.payment.application.port.out.pg.PaymentDone;
-import com.ed.payment.domain.PaymentStatus;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,6 @@ class ConfirmPaymentControllerTest {
     final String paymentKey = "tgen_20250107154634hYNt7";
     final String orderId = UUID.randomUUID().toString();
     final Long amount = 10000L;
-    final String paymentStatus = PaymentStatus.DONE.name();
     final String lastTransactionKey = "9C62B18EEF0DE3EB7F4422EB6D14BC6E";
 
     MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
@@ -48,7 +47,7 @@ class ConfirmPaymentControllerTest {
     queryParams.add("orderId", orderId);
     queryParams.add("amount", String.valueOf(amount));
 
-    PaymentDone response = PaymentDone.of(paymentKey, orderId, amount, amount, paymentStatus, lastTransactionKey);
+    PaymentDone response = PaymentDone.of(paymentKey, orderId, amount, amount, DONE, lastTransactionKey);
 
     // stubbing
     when(confirmPaymentUseCase.confirmPayment(any(ConfirmPaymentCommand.class)))
@@ -62,7 +61,7 @@ class ConfirmPaymentControllerTest {
         .andExpect(jsonPath("$.body.orderId").value(response.getOrderId()))
         .andExpect(jsonPath("$.body.totalAmount").value(response.getTotalAmount()))
         .andExpect(jsonPath("$.body.balanceAmount").value(response.getBalanceAmount()))
-        .andExpect(jsonPath("$.body.status").value(response.getStatus()))
+        .andExpect(jsonPath("$.body.paymentStatus").value(response.getPaymentStatus().toString()))
         .andExpect(jsonPath("$.timestamp").exists());
   }
 }

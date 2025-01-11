@@ -3,6 +3,6 @@ package com.ed.payment.application.port.out.persistence;
 import com.ed.payment.domain.PaymentStatus;
 
 public interface UpdatePaymentPort {
-  void updatePaymentStatus(Long paymentId, PaymentStatus paymentStatus);
-  void updatePaymentAfterVerifying(Long paymentId, PaymentStatus paymentStatus, String paymentKey);
+  void updatePaymentStatusById(Long paymentId, PaymentStatus paymentStatus);
+  void updatePaymentStatusAndPaymentKeyById(Long paymentId, PaymentStatus paymentStatus, String paymentKey);
 }

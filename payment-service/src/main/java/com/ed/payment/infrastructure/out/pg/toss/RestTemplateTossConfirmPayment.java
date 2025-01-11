@@ -1,6 +1,5 @@
 package com.ed.payment.infrastructure.out.pg.toss;
 
-import static com.ed.payment.domain.PaymentStatus.DONE;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -12,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,9 +19,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
+@RequiredArgsConstructor
 public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
 
   private static final String AUTHENTICATION_SCHEME = "Basic ";
+
+  private final PaymentDoneMapper paymentDoneMapper;
 
   @Value("${pg.tosspayments.secret-key}")
   private String secretKey;
@@ -37,12 +40,8 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
     Map<String, Object> body = generateBody(paymentKey, payment.getOrderId(), payment.getAmount());
 
     HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, headers);
-    return restTemplate.postForObject(url, httpEntity, PaymentDone.class);
-  }
-
-  @Override
-  public boolean isPaymentConfirmed(String paymentStatus) {
-    return DONE.name().equalsIgnoreCase(paymentStatus);
+    return paymentDoneMapper.mapToApplication(
+        restTemplate.postForObject(url, httpEntity, TossPaymentDone.class));
   }
 
   private Map<String, Object> generateBody(

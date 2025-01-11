@@ -1,19 +1,26 @@
 {
-  "namespace": "com.ed.payment.infrastructure.out.mq.record",
   "type": "record",
-  "name": "OrderPaymentRequest",
+  "name": "OrderPaymentConfirmRequest",
+  "namespace": "com.ed",
   "fields": [
     {
-      "name": "userPublicId",
+      "name": "userId",
       "type": "string"
     },
     {
-      "name": "orderPublicId",
+      "name": "orderId",
       "type": "string"
     },
     {
       "name": "orderName",
       "type": "string"
+    },
+    {
+      "name": "requestDateTime",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
     },
     {
       "name": "paymentDeadline",
@@ -23,7 +30,7 @@
       }
     },
     {
-      "name": "requestDateTime",
+      "name": "orderCancelDeadline",
       "type": {
         "type": "long",
         "logicalType": "local-timestamp-millis"

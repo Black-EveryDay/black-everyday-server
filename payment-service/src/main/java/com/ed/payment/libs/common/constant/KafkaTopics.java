@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class KafkaTopics {
-  public static final String ORDER_PAYMENT_REQUEST = "order-payment-request";
-  public static final String ORDER_PAYMENT_RESPONSE = "order-payment-response";
+  public static final String ORDER_PAYMENT_CONFIRM_REQUEST = "order_payment_confirm_request";
+  public static final String ORDER_PAYMENT_CONFIRM_RESPONSE = "order_payment_confirm_response";
 }

@@ -15,18 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class HandleFailPaymentController {
+public class RequestPaymentFailController {
 
   private final HandleFailPaymentUseCase handleFailPaymentUseCase;
   
   @GetMapping("/api/v1/payments/fail")
   public ResponseEntity<PaymentFail> requestPaymentFail(
-      @RequestParam String code, @RequestParam String message,
-      @RequestParam String orderId) {
-
-    log.info("Received Request Param: code={}, message={}, orderId={}",
-        code, message, orderId);
-
+      @RequestParam String code, @RequestParam String message, @RequestParam String orderId) {
     return ok(handleFailPaymentUseCase.handleFailPayment(
         HandleFailPaymentCommand.of(code, message, orderId)));
   }

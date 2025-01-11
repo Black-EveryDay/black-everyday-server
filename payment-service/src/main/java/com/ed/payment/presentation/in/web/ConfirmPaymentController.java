@@ -23,10 +23,6 @@ public class ConfirmPaymentController {
   public ResponseEntity<PaymentDone> requestPaymentSuccess(
       @RequestParam String paymentType, @RequestParam String paymentKey,
       @RequestParam String orderId, @RequestParam Long amount) {
-
-    log.info("Received Request Param: paymentType={}, paymentKey={}, orderId={}, amount={}"
-        , paymentType, paymentKey, orderId, amount);
-
     return ok(confirmPaymentUseCase.confirmPayment(
         ConfirmPaymentCommand.of(paymentType, paymentKey, orderId, amount)));
   }

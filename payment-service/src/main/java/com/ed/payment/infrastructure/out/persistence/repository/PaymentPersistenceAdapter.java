@@ -23,36 +23,37 @@ class PaymentPersistenceAdapter
   private final PaymentMapper paymentMapper;
 
   @Override
-  public Payment initPayment(
+  public Payment createPayment(
       String userPublicId, String orderPublicId, String orderName, Long amount,
-      LocalDateTime paymentDeadline) {
-    return paymentMapper.mapToDomain(
-        paymentRepository.save(
-            PaymentJpaEntity.initPayment(
-                userPublicId, orderPublicId, orderName, amount, paymentDeadline)));
+      LocalDateTime confirmDeadline, LocalDateTime cancelDeadLine) {
+
+    PaymentJpaEntity entity = PaymentJpaEntity.createPayment(
+        userPublicId, orderPublicId, orderName, amount, confirmDeadline, cancelDeadLine);
+
+    return paymentMapper.mapToDomain(paymentRepository.save(entity));
   }
 
   @Override
-  public Payment findPayment(String orderPublicId) {
-    return paymentMapper.mapToDomain(
-        paymentRepository.findByOrderPublicId(orderPublicId)
-            .orElseThrow(() -> new CustomException(PAYMENT_NOT_FOUND)));
+  public Payment findPaymentByOrderPublicId(String orderPublicId) {
+    PaymentJpaEntity entity = paymentRepository.findByOrderPublicId(orderPublicId)
+        .orElseThrow(() -> new CustomException(PAYMENT_NOT_FOUND));
+
+    return paymentMapper.mapToDomain(entity);
   }
 
   @Override
-  public Optional<PaymentJpaEntity> findOptPayment(String orderPublicId) {
+  public Optional<PaymentJpaEntity> findOptPaymentByOrderPublicId(String orderPublicId) {
     return paymentRepository.findByOrderPublicId(orderPublicId);
   }
 
   @Override
-  public void updatePaymentStatus(Long paymentId, PaymentStatus paymentStatus) {
+  public void updatePaymentStatusById(Long paymentId, PaymentStatus paymentStatus) {
     getPaymentJpaEntity(paymentId).updatePaymentStatus(paymentStatus);
   }
 
   @Override
-  public void updatePaymentAfterVerifying(
-      Long paymentId, PaymentStatus paymentStatus, String paymentKey) {
-    getPaymentJpaEntity(paymentId).updatePaymentAfterVerifying(paymentStatus, paymentKey);
+  public void updatePaymentStatusAndPaymentKeyById(Long paymentId, PaymentStatus paymentStatus, String paymentKey) {
+    getPaymentJpaEntity(paymentId).updatePaymentStatusAndPaymentKey(paymentStatus, paymentKey);
   }
 
   private PaymentJpaEntity getPaymentJpaEntity(Long paymentId) {

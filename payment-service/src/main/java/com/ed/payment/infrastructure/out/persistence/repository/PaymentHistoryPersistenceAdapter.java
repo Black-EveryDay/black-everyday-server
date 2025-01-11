@@ -13,9 +13,9 @@ class PaymentHistoryPersistenceAdapter implements CreatePaymentHistoryPort {
   private final SpringDataPaymentHistoryRepository paymentHistoryRepository;
 
   @Override
-  public void initPaymentHistory(Long paymentId, Long amount) {
+  public void createPaymentHistory(Long paymentId, Long amount) {
     paymentHistoryRepository.save(
-        PaymentHistoryJpaEntity.initPaymentHistory(paymentId, amount));
+        PaymentHistoryJpaEntity.createPaymentHistory(paymentId, amount));
   }
 
   @Override
@@ -31,7 +31,6 @@ class PaymentHistoryPersistenceAdapter implements CreatePaymentHistoryPort {
   public void createFailPaymentHistory(
       Long paymentId, PaymentStatus paymentStatus) {
     paymentHistoryRepository.save(
-        PaymentHistoryJpaEntity.createFailPaymentHistory(
-            paymentId, null, paymentStatus));
+        PaymentHistoryJpaEntity.createFailPaymentHistory(paymentId, paymentStatus));
   }
 }

@@ -1,8 +1,6 @@
 package com.ed.payment.infrastructure.out.pg.toss;
 
-import static com.ed.payment.domain.PaymentStatus.ABORTED;
 import static com.ed.payment.domain.PaymentStatus.DONE;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,9 +19,6 @@ class RestTemplateTossConfirmPaymentTest {
   @Mock
   private RestTemplateTossConfirmPayment mockRestTemplateTossConfirmPayment;
 
-  private final RestTemplateTossConfirmPayment restTemplateTossConfirmPayment
-      = new RestTemplateTossConfirmPayment();
-
   @Test
   @DisplayName("confirmPayment: 결제 정보를 입력 받아 Tosspayments 의 결제 승인 외부 API 를 요청한다.")
   void confirmPayment() {
@@ -37,7 +32,7 @@ class RestTemplateTossConfirmPaymentTest {
 
     final String paymentKey = "tgen_20250107154634hYNt7";
     final String lastTransactionKey = "9C62B18EEF0DE3EB7F4422EB6D14BC6E";
-    PaymentDone response = PaymentDone.of(paymentKey, orderId, amount, amount, DONE.name(), lastTransactionKey);
+    PaymentDone response = PaymentDone.of(paymentKey, orderId, amount, amount, DONE, lastTransactionKey);
 
     // stubbing
     when(mockRestTemplateTossConfirmPayment.confirmPayment(paymentBeforeVerifying, paymentKey))
@@ -49,31 +44,5 @@ class RestTemplateTossConfirmPaymentTest {
     // then
     verify(mockRestTemplateTossConfirmPayment)
         .confirmPayment(paymentBeforeVerifying, paymentKey);
-  }
-
-  @Test
-  @DisplayName("isPaymentConfirmed: 입력 받은 결제 상태를 기준으로 결제 승인 여부를 확인한다.")
-  void isPaymentConfirmed_true() {
-  	// given
-    final String paymentStatus = DONE.name();
-
-  	// when
-    boolean response = restTemplateTossConfirmPayment.isPaymentConfirmed(paymentStatus);
-
-    // then
-    assertThat(response).isTrue();
-  }
-
-  @Test
-  @DisplayName("isPaymentConfirmed: 입력 받은 결제 상태를 기준으로 결제 승인 여부를 확인한다.")
-  void isPaymentConfirmed_false() {
-    // given
-    final String paymentStatus = ABORTED.name();
-
-    // when
-    boolean response = restTemplateTossConfirmPayment.isPaymentConfirmed(paymentStatus);
-
-    // then
-    assertThat(response).isFalse();
   }
 }

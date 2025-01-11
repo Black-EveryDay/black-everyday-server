@@ -4,5 +4,4 @@ import com.ed.payment.domain.Payment;
 
 public interface ConfirmPaymentPort {
   PaymentDone confirmPayment(Payment payment, String paymentKey);
-  boolean isPaymentConfirmed(String paymentStatus);
 }

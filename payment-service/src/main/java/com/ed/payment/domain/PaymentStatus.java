@@ -6,4 +6,9 @@ public enum PaymentStatus {
   DONE,
   CANCELED,
   ABORTED
+  ;
+
+  public static boolean isSuccess(PaymentStatus paymentStatus) {
+    return DONE == paymentStatus;
+  }
 }

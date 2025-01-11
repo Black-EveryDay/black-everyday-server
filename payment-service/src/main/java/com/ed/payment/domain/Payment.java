@@ -14,7 +14,7 @@ public class Payment {
   private String orderName;
   private Long amount;
 
-  public boolean isValidAmount(Long requestAmount) {
-    return this.amount.equals(requestAmount);
+  public boolean isNotValidAmount(Long requestAmount) {
+    return !this.amount.equals(requestAmount);
   }
 }
