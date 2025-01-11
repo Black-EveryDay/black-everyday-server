@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "ed_coupon_templates")
+@Table(name = "ED_COUPON_TEMPLATE")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CouponTemplateJpaEntity extends BaseJpaEntity {
 
@@ -42,11 +42,14 @@ public class CouponTemplateJpaEntity extends BaseJpaEntity {
   private CouponExpirationInfoJpaEntity couponExpirationInfoJpaEntity;
 
   @Builder
-  private CouponTemplateJpaEntity(Long id, String couponName,
+  private CouponTemplateJpaEntity(Long id,
+      String couponName,
       CouponIssueInfoJpaEntity couponIssueInfoJpaEntity,
       CouponUsageTargetInfoJpaEntity couponUsageTargetInfoJpaEntity,
       CouponDiscountInfoJpaEntity couponDiscountInfoJpaEntity,
-      CouponExpirationInfoJpaEntity couponExpirationInfoJpaEntity) {
+      CouponExpirationInfoJpaEntity couponExpirationInfoJpaEntity
+  ) {
+    
     this.id = id;
     this.couponName = couponName;
     this.couponIssueInfoJpaEntity = couponIssueInfoJpaEntity;

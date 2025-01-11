@@ -4,7 +4,7 @@ import static com.ed.eventservice.libs.common.ApiResponseUtils.created;
 
 import com.ed.eventservice.coupon.adapter.in.web.dto.CreateCouponRequest;
 import com.ed.eventservice.coupon.adapter.in.web.dto.CreateCouponTemplateRequest;
-import com.ed.eventservice.coupon.application.port.in.CouponUseCase;
+import com.ed.eventservice.coupon.application.port.in.CouponTemplateUseCase;
 import com.ed.eventservice.coupon.application.port.in.CreateCouponCommand;
 import com.ed.eventservice.coupon.application.port.out.dto.CreateCouponTemplateResponse;
 import jakarta.validation.Valid;
@@ -22,18 +22,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CouponTemplateController {
 
-  private final CouponUseCase couponUseCase;
+  private final CouponTemplateUseCase couponTemplateUseCase;
 
   @PostMapping
   public ResponseEntity<CreateCouponTemplateResponse> createCouponTemplate(
-      @Valid @RequestBody CreateCouponTemplateRequest createCouponTemplateRequest) {
-    return created(couponUseCase.createCouponTemplate(createCouponTemplateRequest.toCommand()));
+      @Valid @RequestBody CreateCouponTemplateRequest createCouponTemplateRequest
+  ) {
+    return created(
+        couponTemplateUseCase.createCouponTemplate(createCouponTemplateRequest.toCommand()));
   }
 
   @PostMapping("{couponTemplateId}/coupons")
-  public ResponseEntity<String> createCoupon(@PathVariable UUID couponTemplateId,
-      @Valid @RequestBody CreateCouponRequest createCouponRequest) {
-    couponUseCase.createCoupon(CreateCouponCommand.builder()
+  public ResponseEntity<String> createCoupon(
+      @PathVariable UUID couponTemplateId,
+      @Valid @RequestBody CreateCouponRequest createCouponRequest
+  ) {
+    couponTemplateUseCase.createCoupon(CreateCouponCommand.builder()
         .couponTemplateId(couponTemplateId)
         .quantity(createCouponRequest.getQuantity())
         .build());

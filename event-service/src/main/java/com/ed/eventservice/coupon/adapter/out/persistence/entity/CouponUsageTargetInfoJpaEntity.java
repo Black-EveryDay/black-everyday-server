@@ -23,8 +23,10 @@ public class CouponUsageTargetInfoJpaEntity {
   private String couponUsageTargetId;
 
   @Builder
-  private CouponUsageTargetInfoJpaEntity(CouponUsageTargetType couponUsageTargetType,
-      UUID couponUsageTargetId) {
+  private CouponUsageTargetInfoJpaEntity(
+      CouponUsageTargetType couponUsageTargetType,
+      UUID couponUsageTargetId
+  ) {
     this.couponUsageTargetType = couponUsageTargetType;
     this.couponUsageTargetId = couponUsageTargetId == null ? null : couponUsageTargetId.toString();
   }
