@@ -4,6 +4,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class HttpHeaders {
+public class CustomHttpHeaders {
   public static final String HEADER_USER_ID = "X-User-Id";
 }

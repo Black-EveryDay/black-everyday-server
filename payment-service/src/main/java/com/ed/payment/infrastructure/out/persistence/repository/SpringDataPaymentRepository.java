@@ -5,5 +5,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 interface SpringDataPaymentRepository extends JpaRepository<PaymentJpaEntity, Long> {
+  boolean existsByOrderPublicId(String orderPublicId);
   Optional<PaymentJpaEntity> findByOrderPublicId(String orderPublicId);
 }

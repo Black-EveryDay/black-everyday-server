@@ -29,9 +29,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class HandleRequestPaymentFailControllerTest {
+class HandleFailPaymentServiceTest {
 
-  private HandlerFailPaymentService handlerFailPaymentService;
+  private HandleFailPaymentService handleFailPaymentService;
 
   @Mock
   private ReadPaymentPort readPaymentPort;
@@ -47,7 +47,7 @@ class HandleRequestPaymentFailControllerTest {
 
   @BeforeEach
   void setUp() {
-    handlerFailPaymentService = new HandlerFailPaymentService(
+    handleFailPaymentService = new HandleFailPaymentService(
         readPaymentPort, updatePaymentPort, createPaymentHistoryPort, producer);
   }
 
@@ -58,11 +58,10 @@ class HandleRequestPaymentFailControllerTest {
     final String code = "FAILED_CARD_COMPANY";
     final String message = "카드사 점검 중으로 다른 카드를 이용해 주세요.";
     final String orderId = UUID.randomUUID().toString();
-    HandleFailPaymentCommand request = HandleFailPaymentCommand.of(code,
-        message, orderId);
+    HandleFailPaymentCommand request = HandleFailPaymentCommand.of(code,message, orderId);
 
     // stubbing
-    when(readPaymentPort.findPaymentByOrderPublicId(anyString()))
+    when(readPaymentPort.getPaymentByOrderPublicId(anyString()))
         .thenReturn(mock(Payment.class));
 
     doNothing()
@@ -73,30 +72,35 @@ class HandleRequestPaymentFailControllerTest {
         .when(createPaymentHistoryPort)
         .createFailPaymentHistory(anyLong(), any((PaymentStatus.class)));
 
+    when(producer.send(anyString(), any(OrderPaymentConfirmResponse.class)))
+        .thenReturn(true);
+
     // when
-    handlerFailPaymentService.handleFailPayment(request);
+    handleFailPaymentService.handleFailPayment(request);
 
     // then
-    verify(readPaymentPort).findPaymentByOrderPublicId(anyString());
+    verify(readPaymentPort).getPaymentByOrderPublicId(anyString());
     verify(updatePaymentPort).updatePaymentStatusById(anyLong(), any(PaymentStatus.class));
-    verify(createPaymentHistoryPort).createFailPaymentHistory(anyLong(), any(PaymentStatus.class));
+    verify(createPaymentHistoryPort).createFailPaymentHistory(anyLong(),any(PaymentStatus.class));
+    verify(producer).send(anyString(), any(OrderPaymentConfirmResponse.class));
   }
 
   @Test
-  @DisplayName("handleFailPayment: 결제 실패 정보를 입력 받아 결제 실패 원인을 반환한다.")
+  @DisplayName("handleFailPayment: 결제 실패 정보 중 이미 승인/취소된 결제의 경우 예외를 던진다.")
   void handleFailPayment_duplicated_order_case() {
     // given
     final String code = "DUPLICATED_ORDER_ID";
     final String message = "이미 승인 및 취소가 진행된 중복된 주문번호 입니다. 다른 주문번호로 진행해주세요.";
     final String orderId = UUID.randomUUID().toString();
-    HandleFailPaymentCommand request = HandleFailPaymentCommand.of(code,message, orderId);
+    HandleFailPaymentCommand request = HandleFailPaymentCommand.of(code, message, orderId);
 
     // expected
-    assertThatThrownBy(() -> handlerFailPaymentService.handleFailPayment(request))
+    assertThatThrownBy(
+        () -> handleFailPaymentService.handleFailPayment(request))
         .isInstanceOf(CustomException.class)
         .hasMessage(DUPLICATED_ORDER_REQUEST.getMessage());
 
-    verify(readPaymentPort, never()).findPaymentByOrderPublicId(anyString());
+    verify(readPaymentPort, never()).getPaymentByOrderPublicId(anyString());
     verify(updatePaymentPort, never()).updatePaymentStatusById(anyLong(), any(PaymentStatus.class));
     verify(createPaymentHistoryPort, never()).createFailPaymentHistory(anyLong(), any(PaymentStatus.class));
   }

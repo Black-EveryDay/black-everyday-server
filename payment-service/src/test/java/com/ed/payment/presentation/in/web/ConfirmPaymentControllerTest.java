@@ -62,6 +62,7 @@ class ConfirmPaymentControllerTest {
         .andExpect(jsonPath("$.body.totalAmount").value(response.getTotalAmount()))
         .andExpect(jsonPath("$.body.balanceAmount").value(response.getBalanceAmount()))
         .andExpect(jsonPath("$.body.paymentStatus").value(response.getPaymentStatus().toString()))
+        .andExpect(jsonPath("$.body.lastTransactionKey").value(response.getLastTransactionKey()))
         .andExpect(jsonPath("$.timestamp").exists());
   }
 }

@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class HandlerFailPaymentService implements HandleFailPaymentUseCase {
+public class HandleFailPaymentService implements HandleFailPaymentUseCase {
 
   private static final String DUPLICATED_ORDER_ERROR = "DUPLICATED_ORDER_ID";
 
@@ -39,7 +39,7 @@ public class HandlerFailPaymentService implements HandleFailPaymentUseCase {
       throw new CustomException(DUPLICATED_ORDER_REQUEST);
     }
 
-    Payment payment = readPaymentPort.findPaymentByOrderPublicId(command.getOrderId());
+    Payment payment = readPaymentPort.getPaymentByOrderPublicId(command.getOrderId());
     updatePaymentPort.updatePaymentStatusById(payment.getPaymentId(), ABORTED);
     createPaymentHistoryPort.createFailPaymentHistory(payment.getPaymentId(), ABORTED);
 
