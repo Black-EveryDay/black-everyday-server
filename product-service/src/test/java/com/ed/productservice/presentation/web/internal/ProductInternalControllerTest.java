@@ -16,6 +16,7 @@ import com.ed.productservice.infrastructure.persistence.repository.ProductReposi
 import com.ed.productservice.infrastructure.persistence.repository.TopSizeStockRepository;
 import com.ed.productservice.libs.common.ApiResponse;
 import com.ed.productservice.presentation.web.request.StockPrepareRequest;
+import com.ed.productservice.presentation.web.request.StockPrepareRequest.ProductReservationInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.List;
@@ -64,13 +65,12 @@ class ProductInternalControllerTest {
 
 
   @Test
-  @DisplayName("재고 차감 요청 시 transactionId 반환")
+  @DisplayName("재고 차감 요청 시 transactionId, brandId, productId 반환")
   void t1() throws Exception {
+    List<ProductEntity> products = createProducts();
+
     StockPrepareRequest request = new StockPrepareRequest(
-        List.of(
-            new StockPrepareRequest.ProductReservationInfo(1L, 2, "M", ProductCategory.TOP),
-            new StockPrepareRequest.ProductReservationInfo(2L, 3, "L", ProductCategory.TOP)
-        )
+        requestForCreateProduct(products.get(0), products.get(1))
     );
 
     String content = objectMapper.writeValueAsString(request);
@@ -81,16 +81,18 @@ class ProductInternalControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.success").value(true))
         .andExpect(jsonPath("$.body.transactionId").exists())
+        .andExpect(jsonPath("$.body.productBrandInfoList[1].brandId").exists())
+        .andExpect(jsonPath("$.body.productBrandInfoList[1].productId").exists())
         .andDo(print());
   }
 
   @Test
   @DisplayName("재고보다 많은 수량을 예약 요청시 실패한다")
   void t2() throws Exception {
+    List<ProductEntity> products = createProducts();
+
     StockPrepareRequest request = new StockPrepareRequest(
-        List.of(
-            new StockPrepareRequest.ProductReservationInfo(1L, 1000, "M", ProductCategory.TOP)
-        )
+        requestForCreateProductV2(products.get(0), products.get(1))
     );
 
     String content = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
@@ -105,14 +107,13 @@ class ProductInternalControllerTest {
         .andDo(print());
   }
 
-
   @Test
   @DisplayName("재고 롤백 요청 후 transactionId 반환")
   void t3() throws Exception {
+    List<ProductEntity> products = createProducts();
+
     StockPrepareRequest request = new StockPrepareRequest(
-        List.of(
-            new StockPrepareRequest.ProductReservationInfo(1L, 2, "M", ProductCategory.TOP)
-        )
+        requestForCreateProduct(products.get(0), products.get(1))
     );
 
     String content = objectMapper.writeValueAsString(request);
@@ -153,20 +154,41 @@ class ProductInternalControllerTest {
         .andDo(print());
   }
 
+  private List<ProductEntity> createProducts() {
+    ProductEntity productEntity1 = createProduct(1L, "맨투맨");
+    ProductEntity productEntity2 = createProduct(1L, "후드티");
+
+    createTopSizeStock(productEntity1.getProductId(), "M");
+    createTopSizeStock(productEntity2.getProductId(), "L");
+
+    return List.of(productEntity1, productEntity2);
+  }
+
+  private static List<ProductReservationInfo> requestForCreateProduct(ProductEntity productEntity1,
+      ProductEntity productEntity2) {
+    return List.of(
+        new ProductReservationInfo(productEntity1.getProductPublicId(), 2, "M",
+            ProductCategory.TOP),
+        new ProductReservationInfo(productEntity2.getProductPublicId(), 3, "L", ProductCategory.TOP)
+    );
+  }
+
+  private static List<ProductReservationInfo> requestForCreateProductV2(ProductEntity productEntity1,
+      ProductEntity productEntity2) {
+    return List.of(
+        new ProductReservationInfo(productEntity1.getProductPublicId(), 1000000, "M",
+            ProductCategory.TOP),
+        new ProductReservationInfo(productEntity2.getProductPublicId(), 2000000, "L", ProductCategory.TOP)
+    );
+  }
+
   private void createTestData() {
     BrandEntity brand = brandRepository.save(
         new BrandEntity("테스트 브랜드", BrandType.CASUAL, "서울특별시"));
-
-    ProductEntity product = productRepository.save(
-        createProduct(brand.getBrandId(), "맨투맨", "M"));
-    ProductEntity product2 = productRepository.save(
-        createProduct(brand.getBrandId(), "후드티", "L"));
-    topSizeStockRepository.save(createTopSizeStock(product.getProductId(), "M"));
-    topSizeStockRepository.save(createTopSizeStock(product2.getProductId(), "L"));
   }
 
   private TopSizeStockEntity createTopSizeStock(Long productId, String size) {
-    return new TopSizeStockEntity(
+    return topSizeStockRepository.save(new TopSizeStockEntity(
         productId,
         size,
         new BigDecimal("65.0"),
@@ -174,11 +196,11 @@ class ProductInternalControllerTest {
         new BigDecimal("50.0"),
         new BigDecimal("60.0"),
         100
-    );
+    ));
   }
 
-  private ProductEntity createProduct(Long brandId, String name, String size) {
-    return new ProductEntity(
+  private ProductEntity createProduct(Long brandId, String name) {
+    return productRepository.save(new ProductEntity(
         UUID.randomUUID().toString(),
         brandId,
         name,
@@ -188,6 +210,6 @@ class ProductInternalControllerTest {
         "test-image.jpg",
         ProductStatus.ACTIVE,
         ProductCategory.TOP
-    );
+    ));
   }
 }
