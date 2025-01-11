@@ -21,7 +21,7 @@ public class DistributedStockRollback {
   }
 
   @Scheduled(cron = "30 * * * * *")
-  public void rollback() {
+  public void scheduleDistributedStockRollback() {
     RLock lock = redissonClient.getLock("stock-rollback-lock");
     try {
       boolean isLocked = lock.tryLock(10, 10, TimeUnit.SECONDS);
