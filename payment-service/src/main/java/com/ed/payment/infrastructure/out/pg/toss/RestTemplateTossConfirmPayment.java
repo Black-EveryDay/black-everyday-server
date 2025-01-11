@@ -37,7 +37,7 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
 
     URI url = URI.create(baseUrl + "/confirm");
     HttpHeaders headers = generateHeaders(payment.getIdempotencyKey());
-    Map<String, Object> body = generateBody(paymentKey, payment.getOrderId(), payment.getAmount());
+    Map<String, Object> body = generateBody(paymentKey, payment.getOrderPublicId(), payment.getAmount());
 
     HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, headers);
     return paymentDoneMapper.mapToApplication(

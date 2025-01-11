@@ -16,13 +16,6 @@
       "type": "string"
     },
     {
-      "name": "requestDateTime",
-      "type": {
-        "type": "long",
-        "logicalType": "local-timestamp-millis"
-      }
-    },
-    {
       "name": "paymentDeadline",
       "type": {
         "type": "long",
@@ -39,6 +32,13 @@
     {
       "name": "totalAmount",
       "type": "long"
+    },
+    {
+      "name": "messageTimestamp",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
     }
   ]
 }

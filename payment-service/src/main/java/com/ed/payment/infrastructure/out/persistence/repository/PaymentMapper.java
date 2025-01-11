@@ -10,10 +10,15 @@ class PaymentMapper {
   Payment mapToDomain(PaymentJpaEntity paymentJpaEntity) {
     return new Payment(
         paymentJpaEntity.getId(),
+        paymentJpaEntity.getPaymentPublicId(),
         paymentJpaEntity.getPaymentKey(),
         paymentJpaEntity.getIdempotencyKey(),
+        paymentJpaEntity.getUserPublicId(),
+        paymentJpaEntity.getPaymentStatus(),
         paymentJpaEntity.getOrderPublicId(),
         paymentJpaEntity.getOrderName(),
-        paymentJpaEntity.getAmount());
+        paymentJpaEntity.getAmount(),
+        paymentJpaEntity.getConfirmDeadline(),
+        paymentJpaEntity.getCancelDeadLine());
   }
 }

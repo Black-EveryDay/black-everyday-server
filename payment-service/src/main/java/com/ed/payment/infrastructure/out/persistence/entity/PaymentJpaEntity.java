@@ -34,7 +34,10 @@ public class PaymentJpaEntity extends BaseTimeByJpaEntity {
   @Column(name = "PAYMENT_ID")
   private Long id;
 
-  @Column(name = "PAYMENT_PUBLIC_ID", unique = true)
+  @Column(unique = true)
+  private String paymentPublicId;
+
+  @Column(unique = true)
   private String paymentKey;
 
   @Column(unique = true)
@@ -67,7 +70,8 @@ public class PaymentJpaEntity extends BaseTimeByJpaEntity {
       LocalDateTime confirmDeadline, LocalDateTime cancelDeadLine) {
 
     PaymentJpaEntity entity = PaymentJpaEntity.builder()
-        .idempotencyKey(UUID.randomUUID().toString())
+        .paymentPublicId(generatePublicId())
+        .idempotencyKey(generatePublicId())
         .userPublicId(userPublicId)
         .paymentStatus(READY)
         .orderPublicId(orderPublicId)
@@ -88,5 +92,9 @@ public class PaymentJpaEntity extends BaseTimeByJpaEntity {
   public void updatePaymentStatusAndPaymentKey(PaymentStatus paymentStatus, String paymentKey) {
     this.paymentKey = paymentKey;
     updatePaymentStatus(paymentStatus);
+  }
+
+  private static String generatePublicId() {
+    return UUID.randomUUID().toString();
   }
 }
