@@ -29,7 +29,10 @@ public class CouponTemplateService implements CouponTemplateUseCase {
   ) {
 
     CouponTemplate newCouponTemplate =
-        couponTemplateMapper.commandToDomain(createCouponTemplateCommand);
+        CouponTemplate.builder()
+            .createCouponTemplateDto(
+                couponTemplateMapper.commandToCreateDto(createCouponTemplateCommand))
+            .build();
 
     CouponTemplate savedCouponTemplate =
         couponTemplatePersistencePort.saveCouponTemplate(newCouponTemplate);

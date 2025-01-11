@@ -1,8 +1,10 @@
 package com.ed.eventservice.coupon.adapter.in.internal;
 
 import com.ed.eventservice.coupon.adapter.in.internal.dto.UseCouponRequest;
+import com.ed.eventservice.coupon.application.port.in.CouponCancelUseCommand;
 import com.ed.eventservice.coupon.application.port.in.CouponUseCase;
 import com.ed.eventservice.coupon.application.port.in.CouponUseCommand;
+import com.ed.eventservice.coupon.application.port.out.dto.UseCouponResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,17 +21,27 @@ public class CouponInternalController {
   private final CouponUseCase couponUseCase;
 
   @PostMapping("/{couponPublicId}/orderInfo")
-  public void useCoupon(
+  public UseCouponResponse useCoupon(
       @PathVariable UUID couponPublicId,
       @RequestBody UseCouponRequest useCouponRequest
   ) {
 
-    couponUseCase.useCoupon(CouponUseCommand.builder()
+    return couponUseCase.useCoupon(CouponUseCommand.builder()
         .couponId(couponPublicId)
         .userId(useCouponRequest.getUserId())
         .brandId(useCouponRequest.getBrandId())
         .productId(useCouponRequest.getProductId())
         .orderId(useCouponRequest.getOrderId())
+        .build());
+  }
+
+  @PostMapping("/{couponPublicId}/orderInfo/cancel")
+  public UseCouponResponse cancelUseCoupon(
+      @PathVariable UUID couponPublicId
+  ) {
+
+    return couponUseCase.cancelUseCoupon(CouponCancelUseCommand.builder()
+        .couponId(couponPublicId)
         .build());
   }
 }

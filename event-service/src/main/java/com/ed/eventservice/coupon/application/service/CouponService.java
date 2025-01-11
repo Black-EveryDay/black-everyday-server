@@ -1,9 +1,12 @@
 package com.ed.eventservice.coupon.application.service;
 
+import com.ed.eventservice.coupon.application.port.in.CouponCancelUseCommand;
 import com.ed.eventservice.coupon.application.port.in.CouponUseCase;
 import com.ed.eventservice.coupon.application.port.in.CouponUseCommand;
 import com.ed.eventservice.coupon.application.port.out.CouponPersistencePort;
+import com.ed.eventservice.coupon.application.port.out.dto.UseCouponResponse;
 import com.ed.eventservice.coupon.domain.Coupon;
+import com.ed.eventservice.coupon.domain.mapper.CouponMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,10 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class CouponService implements CouponUseCase {
 
   private final CouponPersistencePort couponPersistencePort;
+  private final CouponMapper couponMapper;
 
   @Override
   @Transactional
-  public void useCoupon(CouponUseCommand command) {
+  public UseCouponResponse useCoupon(CouponUseCommand command) {
 
     Coupon coupon = couponPersistencePort.getCouponByPublicId(command.getCouponId());
 
@@ -24,5 +28,19 @@ public class CouponService implements CouponUseCase {
         command.getOrderId());
 
     couponPersistencePort.updateCouponStatus(coupon);
+
+    return couponMapper.couponToUseCouponResponse(coupon);
+  }
+
+  @Override
+  public UseCouponResponse cancelUseCoupon(CouponCancelUseCommand command) {
+
+    Coupon coupon = couponPersistencePort.getCouponByPublicId(command.getCouponId());
+
+    coupon.cancelUseCoupon();
+
+    couponPersistencePort.updateCouponStatus(coupon);
+
+    return couponMapper.couponToUseCouponResponse(coupon);
   }
 }

@@ -17,4 +17,5 @@ public class CouponStatusChangeLog {
   private final CouponStatusChangeReason reason;
   private final LocalDateTime changedAt;
   private final UUID orderId;
+  private final Long couponId;
 }

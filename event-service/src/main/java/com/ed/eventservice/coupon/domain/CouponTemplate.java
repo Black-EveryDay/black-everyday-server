@@ -52,8 +52,8 @@ public class CouponTemplate {
 
   private void checkCouponIssuerTypeIsBrandAndIssuerIdIsNotNull(CouponIssueInfo couponIssueInfo) {
 
-    if (couponIssueInfo.getCouponIssuerType().equals(CouponIssuerType.BRAND)
-        && couponIssueInfo.getCouponIssuerId() == null) {
+    if (couponIssueInfo.getCouponIssuerType() == CouponIssuerType.BRAND
+        && Objects.isNull(couponIssueInfo.getCouponIssuerId())) {
 
       throw new DomainException(ExceptionStatus.INVALID_BRAND_ID);
     }
@@ -61,7 +61,7 @@ public class CouponTemplate {
 
   private void checkMaxIssuanceIsNullOrGreaterThanZero(CouponIssueInfo couponIssueInfo) {
 
-    if (!Objects.isNull(couponIssueInfo.getMaxIssuance())
+    if (Objects.nonNull(couponIssueInfo.getMaxIssuance())
         && couponIssueInfo.getMaxIssuance() <= 0) {
 
       throw new DomainException(ExceptionStatus.INVALID_MAX_ISSUANCE);
@@ -71,7 +71,7 @@ public class CouponTemplate {
   private void checkCouponUsageTargetTypeIsNotAllAndUsageTargetIdIsNotNull(
       CouponUsageTargetInfo couponUsageTargetInfo) {
 
-    if (!couponUsageTargetInfo.getCouponUsageTargetType().equals(CouponUsageTargetType.ALL)
+    if (couponUsageTargetInfo.getCouponUsageTargetType() != CouponUsageTargetType.ALL
         && Objects.isNull(couponUsageTargetInfo.getCouponUsageTargetId())) {
 
       throw new DomainException(ExceptionStatus.INVALID_USAGE_TARGET_ID);
@@ -102,8 +102,9 @@ public class CouponTemplate {
 
   private void checkMaxIssuanceLimit(Integer quantity) {
 
-    if (this.couponIssueInfo.getMaxIssuance() != null && this.couponIssueInfo.getMaxIssuance()
-        < this.couponIssueInfo.getIssuedCount() + quantity) {
+    if (this.couponIssueInfo.getMaxIssuance() != null
+        && this.couponIssueInfo.getMaxIssuance() < this.couponIssueInfo.getIssuedCount() + quantity
+    ) {
 
       throw new DomainException(ExceptionStatus.MAX_ISSUANCE_EXCEEDED);
     }

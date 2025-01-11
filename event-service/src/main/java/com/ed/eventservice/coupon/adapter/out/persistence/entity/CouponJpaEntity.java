@@ -1,7 +1,10 @@
 package com.ed.eventservice.coupon.adapter.out.persistence.entity;
 
+import com.ed.eventservice.coupon.domain.enums.CouponState;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,6 +37,9 @@ public class CouponJpaEntity extends BaseJpaEntity {
   @Column(length = 36)
   private String userId;
 
+  @Enumerated(EnumType.STRING)
+  private CouponState state;
+
   @Column
   @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime expirationDate;
@@ -48,13 +54,15 @@ public class CouponJpaEntity extends BaseJpaEntity {
       String publicId,
       String couponTemplateId,
       String userId,
+      CouponState state,
       LocalDateTime expirationDate
   ) {
-    
+
     this.id = id;
     this.publicId = publicId == null ? UUID.randomUUID().toString() : publicId;
     this.couponTemplateId = couponTemplateId;
     this.userId = userId;
+    this.state = state;
     this.expirationDate = expirationDate;
     this.issuedAt = LocalDateTime.now();
   }

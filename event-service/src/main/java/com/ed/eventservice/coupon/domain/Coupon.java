@@ -13,17 +13,30 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class Coupon {
 
-  private Long id;
-  private UUID publicId;
-  private CouponTemplate couponTemplate;
-  private UUID userId;
+  private final Long id;
+  private final UUID publicId;
+  private final CouponTemplate couponTemplate;
+  private final UUID userId;
+  private final LocalDateTime expirationDate;
+  private final LocalDateTime issuedAt;
+  private final List<CouponStatusChangeLog> couponStatusChangeLogs;
   private CouponState state;
-  private LocalDateTime expirationDate;
-  private LocalDateTime issuedAt;
-  private List<CouponStatusChangeLog> couponStatusChangelogs;
+
+  @Builder
+  private Coupon(Long id, UUID publicId, CouponTemplate couponTemplate, UUID userId,
+      CouponState state, LocalDateTime expirationDate, LocalDateTime issuedAt,
+      List<CouponStatusChangeLog> couponStatusChangeLogs) {
+    this.id = id;
+    this.publicId = publicId;
+    this.couponTemplate = couponTemplate;
+    this.userId = userId;
+    this.state = Objects.isNull(state) ? CouponState.CREATED : state;
+    this.expirationDate = expirationDate;
+    this.issuedAt = issuedAt;
+    this.couponStatusChangeLogs = couponStatusChangeLogs;
+  }
 
   public void useCoupon(UUID userId, UUID brandId, UUID productId, UUID orderId) {
 
@@ -32,8 +45,9 @@ public class Coupon {
     checkCouponUsageTarget(brandId, productId);
 
     this.state = CouponState.REDEEMED;
-    this.couponStatusChangelogs.add(
+    this.couponStatusChangeLogs.add(
         CouponStatusChangeLog.builder()
+            .couponId(this.id)
             .beforeStatus(this.state)
             .afterStatus(CouponState.REDEEMED)
             .changedAt(LocalDateTime.now())
@@ -45,7 +59,7 @@ public class Coupon {
 
   private void checkCouponOwner(UUID userId) {
 
-    if (!Objects.isNull(this.userId) && !this.userId.equals(userId)) {
+    if (Objects.isNull(this.userId) || Objects.isNull(userId) || !this.userId.equals(userId)) {
 
       throw new DomainException(ExceptionStatus.USER_NOT_OWNER_OF_COUPON);
     }
@@ -55,12 +69,12 @@ public class Coupon {
 
     if (this.state != CouponState.ISSUED) {
 
-      throw new IllegalArgumentException("Coupon is not in issued state");
+      throw new DomainException(ExceptionStatus.COUPON_NOT_USABLE);
     }
 
     if (this.expirationDate.isBefore(LocalDateTime.now())) {
 
-      throw new IllegalArgumentException("Coupon is expired");
+      throw new DomainException(ExceptionStatus.COUPON_EXPIRED);
     }
   }
 
@@ -99,5 +113,24 @@ public class Coupon {
 
       throw new DomainException(ExceptionStatus.COUPON_USAGE_TARGET_NOT_MATCHED);
     }
+  }
+
+  public void cancelUseCoupon() {
+
+    if (this.state != CouponState.REDEEMED) {
+
+      throw new DomainException(ExceptionStatus.COUPON_NOT_REDEEMED);
+    }
+
+    this.state = CouponState.ISSUED;
+    this.couponStatusChangeLogs.add(
+        CouponStatusChangeLog.builder()
+            .couponId(this.id)
+            .beforeStatus(CouponState.REDEEMED)
+            .afterStatus(CouponState.ISSUED)
+            .changedAt(LocalDateTime.now())
+            .reason(CouponStatusChangeReason.CANCELED)
+            .build()
+    );
   }
 }

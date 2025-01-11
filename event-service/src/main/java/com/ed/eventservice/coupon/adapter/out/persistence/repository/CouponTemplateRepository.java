@@ -26,7 +26,9 @@ public class CouponTemplateRepository implements CouponTemplatePersistencePort {
     CouponTemplateJpaEntity couponTemplateJpaEntity =
         couponTemplateJpaRepository.save(couponTemplateMapper.domainToJpaEntity(couponTemplate));
 
-    return couponTemplateMapper.jpaEntityToDomain(couponTemplateJpaEntity);
+    return CouponTemplate.builder()
+        .createCouponTemplateDto(couponTemplateMapper.jpaEntityToCreateDto(couponTemplateJpaEntity))
+        .build();
   }
 
   @Override
@@ -36,6 +38,8 @@ public class CouponTemplateRepository implements CouponTemplatePersistencePort {
         couponTemplateJpaRepository.findByPublicId(couponTemplateId.toString())
             .orElseThrow(() -> new AdapterException(ExceptionStatus.COUPON_TEMPLATE_NOT_FOUND));
 
-    return couponTemplateMapper.jpaEntityToDomain(couponTemplateJpaEntity);
+    return CouponTemplate.builder()
+        .createCouponTemplateDto(couponTemplateMapper.jpaEntityToCreateDto(couponTemplateJpaEntity))
+        .build();
   }
 }
