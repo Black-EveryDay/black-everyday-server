@@ -1,0 +1,44 @@
+{
+  "type": "record",
+  "name": "OrderPaymentConfirmRequest",
+  "namespace": "com.ed",
+  "fields": [
+    {
+      "name": "userId",
+      "type": "string"
+    },
+    {
+      "name": "orderId",
+      "type": "string"
+    },
+    {
+      "name": "orderName",
+      "type": "string"
+    },
+    {
+      "name": "requestDateTime",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
+    },
+    {
+      "name": "paymentDeadline",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
+    },
+    {
+      "name": "orderCancelDeadline",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
+    },
+    {
+      "name": "totalAmount",
+      "type": "long"
+    }
+  ]
+}
