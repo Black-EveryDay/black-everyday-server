@@ -42,6 +42,14 @@ class PaymentPersistenceAdapter
   }
   
   @Override
+  public List<PaymentResponse> getReadyPayments(String userPublicId) {
+    List<PaymentJpaEntity> entities = paymentRepository.findMyReadyPayments(userPublicId, List.of(DONE, CANCELED), LocalDateTime.now());
+    return entities.stream()
+        .map(paymentMapper::mapToApplication)
+        .toList();
+  }
+
+  @Override
   public Payment getPaymentByOrderPublicId(String orderPublicId) {
     PaymentJpaEntity entity = paymentRepository.findByOrderPublicId(orderPublicId)
         .orElseThrow(() -> new CustomException(PAYMENT_NOT_FOUND));

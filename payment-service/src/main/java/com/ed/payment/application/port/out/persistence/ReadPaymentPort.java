@@ -1,10 +1,10 @@
 package com.ed.payment.application.port.out.persistence;
 
 import com.ed.payment.domain.Payment;
-import com.ed.payment.infrastructure.out.persistence.entity.PaymentJpaEntity;
-import java.util.Optional;
+import java.util.List;
 
 public interface ReadPaymentPort {
-  Payment findPaymentByOrderPublicId(String orderPublicId);
-  Optional<PaymentJpaEntity> findOptPaymentByOrderPublicId(String orderPublicId);
+  boolean existsByOrderPublicId(String orderPublicId);
+  List<PaymentResponse> getReadyPayments(String userPublicId);
+  Payment getPaymentByOrderPublicId(String orderPublicId);
 }
