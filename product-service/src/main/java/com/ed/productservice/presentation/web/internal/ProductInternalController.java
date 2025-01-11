@@ -6,6 +6,7 @@ import com.ed.productservice.application.service.internal.ProductInternalService
 import com.ed.productservice.domain.DecreaseStockResponse;
 import com.ed.productservice.domain.vo.ProductReservationInfoDomain;
 import com.ed.productservice.presentation.web.request.StockPrepareRequest;
+import com.ed.productservice.presentation.web.response.ProductInternalResponse.StockCommitResponse;
 import com.ed.productservice.presentation.web.response.ProductInternalResponse.StockDecreaseResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -36,5 +37,12 @@ public class ProductInternalController {
       @PathVariable("transactionId") String transactionId) {
 
     return StockIncreaseResponse.from(productInternalService.increaseStock(transactionId));
+  }
+
+  @PostMapping("/commit/{transactionId}")
+  public StockCommitResponse commitStock(
+      @PathVariable("transactionId") String transactionId) {
+
+    return StockCommitResponse.from(productInternalService.commitStock(transactionId));
   }
 }

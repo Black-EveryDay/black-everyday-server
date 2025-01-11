@@ -56,4 +56,19 @@ public class StockAdapter {
       throw new ProductException(INVENTORY_ALREADY_DECREASE);
     }
   }
+
+  public String commitStock(String transactionId) {
+    List<StockDecreaseHistoryEntity> entityList = stockDecreaseHistoryRepository.findAllByTransactionId(
+        transactionId);
+
+    if (entityList.isEmpty()) {
+      throw new ProductException(STOCK_RESERVATION_NOT_FOUND);
+    }
+
+    for (StockDecreaseHistoryEntity entity : entityList) {
+      entity.setStatus(StockDecreaseHistoryStatus.COMMITTED);
+    }
+
+    return transactionId;
+  }
 }

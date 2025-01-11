@@ -51,4 +51,9 @@ public class ProductInternalService {
 
     return transactionId;
   }
+
+  @Transactional
+  public String commitStock(String transactionId) {
+    return stockService.commitStock(transactionId);
+  }
 }

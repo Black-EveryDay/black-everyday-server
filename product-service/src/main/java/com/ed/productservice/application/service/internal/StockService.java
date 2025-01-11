@@ -61,4 +61,8 @@ public class StockService {
       stockAdapter.deleteStockHistory(transactionId);
     }
   }
+
+  public String commitStock(String transactionId) {
+    return stockAdapter.commitStock(transactionId);
+  }
 }

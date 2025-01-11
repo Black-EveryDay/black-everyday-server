@@ -53,6 +53,18 @@ public record ProductInternalResponse(
       return new StockIncreaseResponse(transactionId);
     }
   }
+
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class StockCommitResponse {
+
+    private String transactionId;
+
+    public static StockCommitResponse from(String transactionId) {
+      return new StockCommitResponse(transactionId);
+    }
+  }
 }
 
 
