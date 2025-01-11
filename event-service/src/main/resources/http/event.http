@@ -1,3 +1,4 @@
+### 쿠폰 템플릿 생성 API
 @jwttoken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhdXRoLXNlcnZpY2UiLCJpYXQiOjE3MzYyNDM0OTQsImV4cCI6MTgyMjY0MzQ5NCwidXNlcklkIjoiZDFhMzU0ZDMtMWQ1Yi00YzE3LWI3MjctOGIzNTFjOWRhZTYzIiwidXNlclJvbGUiOiJERUZBVUxUX0NVU1RPTUVSIn0.VViuBe3YMyCg5asIPec2jc-Nd6Wkd9Co-25XFEI-NbYiJKEZK5UH8kCb1phPvBZptpGCXzkYV7ZGYCmPcYS7vw"
 POST http://localhost:19096/api/v1/coupon-templates
 Content-Type: application/json
@@ -11,14 +12,29 @@ Authorization: "Bearer {{jwttoken}}"
   "discountType": "PERCENTAGE",
   "discountValue": 10.5,
   "expirationDays": 1,
-  "expirationDate": "2021-08-31T14:00:00.000Z"
+  "expirationDate": "2025-08-31T14:00:00.000Z"
 }
 
 ### 쿠폰 발급 API
-@couponPublicId =bb40929d-0836-42dd-8433-36878b2a23bf
+@couponPublicId =1ff4f506-a107-495a-9d1f-f10611c89323
 POST http://localhost:19096/api/v1/coupon-templates/{{couponPublicId}}/coupons
 Content-Type: application/json
 
 {
   "quantity": 10
 }
+
+### 쿠폰 사용 API
+@couponPublicId2=bed542b3-4c88-4164-8880-99710102b497
+POST http://localhost:19096/api/v1/internal/coupons/{{couponPublicId2}}/orderInfo
+Content-Type: application/json
+
+{
+  "userId": "66656873-96ca-4a29-9a8f-311de8211bcb",
+  "productId": "66656873-96ca-4a29-9a8f-311de8211bcb",
+  "brandId": "66656873-96ca-4a29-9a8f-311de8211bcb",
+  "orderId": "66656873-96ca-4a29-9a8f-311de8211bcb"
+}
+
+### 쿠폰 사용 취소 API
+POST http://localhost:19096/api/v1/internal/coupons/{{couponPublicId2}}/orderInfo/cancel

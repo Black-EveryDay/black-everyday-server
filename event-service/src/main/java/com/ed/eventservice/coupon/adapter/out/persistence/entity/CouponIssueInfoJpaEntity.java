@@ -33,9 +33,14 @@ public class CouponIssueInfoJpaEntity {
   private Integer maxIssuance;
 
   @Builder
-  private CouponIssueInfoJpaEntity(CouponIssuanceType couponIssuanceType,
+  private CouponIssueInfoJpaEntity(
+      CouponIssuanceType couponIssuanceType,
       CouponIssuerType couponIssuerType,
-      UUID couponIssuerId, Boolean isIssuable, Integer maxIssuance) {
+      UUID couponIssuerId,
+      Boolean isIssuable,
+      Integer maxIssuance
+  ) {
+    
     this.couponIssuanceType = couponIssuanceType;
     this.couponIssuerType = couponIssuerType;
     this.couponIssuerId = couponIssuerId == null ? null : couponIssuerId.toString();

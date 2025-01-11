@@ -59,6 +59,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         .body(new ErrorResponse(stackTraces, ex.getMessage(), ex.getHttpStatus()));
   }
 
+  @ExceptionHandler(DomainException.class)
+  public final ResponseEntity<ErrorResponse> handleDomainExceptions(DomainException ex,
+      WebRequest request) {
+    List<StackTraceElement> stackTraces = null;
+    if (stackTrace) {
+      stackTraces = Arrays.asList(ex.getStackTrace());
+    }
+    logger.error("ERROR ::: [DomainException] ", ex);
+    return ResponseEntity.status(ex.getHttpStatus())
+        .body(new ErrorResponse(stackTraces, ex.getMessage(), ex.getHttpStatus()));
+  }
+
   @ExceptionHandler(IOException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public final ErrorResponse handleIOExceptions(Exception ex, WebRequest request) {

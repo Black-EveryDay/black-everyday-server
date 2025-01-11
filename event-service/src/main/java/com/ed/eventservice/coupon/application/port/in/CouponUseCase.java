@@ -1,11 +1,10 @@
 package com.ed.eventservice.coupon.application.port.in;
 
-import com.ed.eventservice.coupon.application.port.out.dto.CreateCouponTemplateResponse;
+import com.ed.eventservice.coupon.application.port.out.dto.UseCouponResponse;
 
 public interface CouponUseCase {
 
-  CreateCouponTemplateResponse createCouponTemplate(
-      CreateCouponTemplateCommand createCouponTemplateCommand);
+  UseCouponResponse useCoupon(CouponUseCommand command);
 
-  void createCoupon(CreateCouponCommand command);
+  UseCouponResponse cancelUseCoupon(CouponCancelUseCommand build);
 }

@@ -5,7 +5,24 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ExceptionStatus {
+  // CouponTemplate
   COUPON_TEMPLATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "t001", "Coupon template not found"),
+  INVALID_BRAND_ID(HttpStatus.BAD_REQUEST, "t002", "Invalid brand id"),
+  INVALID_USAGE_TARGET_ID(HttpStatus.BAD_REQUEST, "t003", "Invalid usage target id"),
+  INVALID_MAX_ISSUANCE(HttpStatus.BAD_REQUEST, "t004", "Invalid max issuance"),
+  INVALID_QUANTITY(HttpStatus.BAD_REQUEST, "t005", "Invalid quantity"),
+  MAX_ISSUANCE_EXCEEDED(HttpStatus.BAD_REQUEST, "t006", "Max issuance exceeded"),
+
+  // Coupon
+  USER_NOT_OWNER_OF_COUPON(HttpStatus.FORBIDDEN, "c001", "User is not the owner of the coupon"),
+  COUPON_USAGE_TARGET_NOT_MATCHED(HttpStatus.BAD_REQUEST, "c002",
+      "Coupon usage target not matched"),
+  COUPON_USAGE_TARGET_TYPE_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "c003",
+      "Coupon usage target type not supported"),
+  COUPON_NOT_FOUND(HttpStatus.NOT_FOUND, "c004", "Coupon not found"),
+  COUPON_NOT_USABLE(HttpStatus.BAD_REQUEST, "c005", "Coupon not usable"),
+  COUPON_EXPIRED(HttpStatus.BAD_REQUEST, "c006", "Coupon expired"),
+  COUPON_NOT_REDEEMED(HttpStatus.BAD_REQUEST, "c007", "Coupon not redeemed"),
   ;
 
   private final HttpStatus status;

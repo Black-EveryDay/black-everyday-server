@@ -8,6 +8,4 @@ public interface CouponTemplatePersistencePort {
   CouponTemplate saveCouponTemplate(CouponTemplate couponTemplate);
 
   CouponTemplate getCouponTemplateByPublicId(UUID couponTemplateId);
-
-  void updateCoupon(CouponTemplate couponTemplate);
 }

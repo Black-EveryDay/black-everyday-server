@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.ed.eventservice.coupon.adapter.in.web.dto.CreateCouponRequest;
 import com.ed.eventservice.coupon.adapter.in.web.dto.CreateCouponTemplateRequest;
-import com.ed.eventservice.coupon.application.port.in.CouponUseCase;
+import com.ed.eventservice.coupon.application.port.in.CouponTemplateUseCase;
 import com.ed.eventservice.coupon.application.port.in.CreateCouponTemplateCommand;
 import com.ed.eventservice.coupon.application.port.out.dto.CreateCouponTemplateResponse;
 import com.ed.eventservice.coupon.domain.enums.CouponIssuanceType;
@@ -46,7 +46,7 @@ class CouponTemplateControllerTest {
   private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
   @MockitoBean
-  private CouponUseCase couponUseCase;
+  private CouponTemplateUseCase couponTemplateUseCase;
 
   @Nested
   @DisplayName("CreateCouponTemplateTest")
@@ -84,7 +84,7 @@ class CouponTemplateControllerTest {
           .expirationDate(null)
           .build();
 
-      given(couponUseCase.createCouponTemplate(any(CreateCouponTemplateCommand.class)))
+      given(couponTemplateUseCase.createCouponTemplate(any(CreateCouponTemplateCommand.class)))
           .willReturn(createCouponTemplateResponse);
       // when
       ResultActions resultActions = mockMvc.perform(post(uri)
@@ -117,7 +117,8 @@ class CouponTemplateControllerTest {
           .andExpect(jsonPath("$.body.expirationDays").isEmpty())
           .andExpect(jsonPath("$.body.expirationDate").isEmpty());
 
-      verify(couponUseCase, times(1)).createCouponTemplate(any(CreateCouponTemplateCommand.class));
+      verify(couponTemplateUseCase, times(1)).createCouponTemplate(
+          any(CreateCouponTemplateCommand.class));
     }
 
     @ParameterizedTest

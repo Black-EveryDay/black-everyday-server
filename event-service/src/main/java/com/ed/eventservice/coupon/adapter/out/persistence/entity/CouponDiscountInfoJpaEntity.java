@@ -24,6 +24,7 @@ public class CouponDiscountInfoJpaEntity {
 
   @Builder
   private CouponDiscountInfoJpaEntity(DiscountType discountType, BigDecimal discountValue) {
+    
     this.discountType = discountType;
     this.discountValue = discountValue;
   }

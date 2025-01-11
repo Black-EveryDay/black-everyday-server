@@ -22,8 +22,11 @@ public class CouponExpirationInfoJpaEntity {
   private LocalDateTime fixedExpirationDate;
 
   @Builder
-  private CouponExpirationInfoJpaEntity(Duration expirationDays,
-      LocalDateTime fixedExpirationDate) {
+  private CouponExpirationInfoJpaEntity(
+      Duration expirationDays,
+      LocalDateTime fixedExpirationDate
+  ) {
+    
     this.expirationDays = expirationDays;
     this.fixedExpirationDate = fixedExpirationDate;
   }
