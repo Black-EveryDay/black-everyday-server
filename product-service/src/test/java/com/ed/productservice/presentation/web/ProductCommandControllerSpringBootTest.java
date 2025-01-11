@@ -48,6 +48,7 @@ class ProductCommandControllerSpringBootTest {
   @BeforeEach
   void setUp() {
     jdbcTemplate.execute("TRUNCATE TABLE ed_brands");
+    jdbcTemplate.execute("ALTER TABLE ed_brands ALTER COLUMN brand_id RESTART WITH 1");
   }
 
   @Transactional

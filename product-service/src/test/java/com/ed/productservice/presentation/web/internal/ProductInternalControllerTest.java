@@ -32,6 +32,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -39,6 +40,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Slf4j
+@TestPropertySource(locations = "classpath:application-test.yml") // application-test.yml만 로드
 class ProductInternalControllerTest {
 
   @Autowired
@@ -59,6 +61,7 @@ class ProductInternalControllerTest {
     jdbcTemplate.execute("TRUNCATE TABLE ed_brands");
     jdbcTemplate.execute("TRUNCATE TABLE ed_product");
     jdbcTemplate.execute("TRUNCATE TABLE ed_top_size_stock");
+    jdbcTemplate.execute("ALTER TABLE ed_brands ALTER COLUMN brand_id RESTART WITH 1");
 
     createTestData();
   }
@@ -173,18 +176,21 @@ class ProductInternalControllerTest {
     );
   }
 
-  private static List<ProductReservationInfo> requestForCreateProductV2(ProductEntity productEntity1,
+  private static List<ProductReservationInfo> requestForCreateProductV2(
+      ProductEntity productEntity1,
       ProductEntity productEntity2) {
     return List.of(
         new ProductReservationInfo(productEntity1.getProductPublicId(), 1000000, "M",
             ProductCategory.TOP),
-        new ProductReservationInfo(productEntity2.getProductPublicId(), 2000000, "L", ProductCategory.TOP)
+        new ProductReservationInfo(productEntity2.getProductPublicId(), 2000000, "L",
+            ProductCategory.TOP)
     );
   }
 
   private void createTestData() {
-    BrandEntity brand = brandRepository.save(
+    BrandEntity save = brandRepository.save(
         new BrandEntity("테스트 브랜드", BrandType.CASUAL, "서울특별시"));
+    log.info("save brand {}" ,save.getBrandId());
   }
 
   private TopSizeStockEntity createTopSizeStock(Long productId, String size) {
