@@ -5,6 +5,7 @@ import com.ed.productservice.domain.TopProduct;
 
 public interface ProductDetailPort {
 
-    void saveTopSize(Long product, TopProduct domain);
-    void saveBottomSize(Long productId, BottomProduct bottomProduct);
+  void saveTopSize(Long product, TopProduct domain);
+
+  void saveBottomSize(Long productId, BottomProduct bottomProduct);
 }

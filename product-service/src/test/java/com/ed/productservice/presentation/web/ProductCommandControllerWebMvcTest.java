@@ -5,7 +5,7 @@ import com.ed.productservice.domain.TopProduct;
 import com.ed.productservice.domain.vo.Product;
 import com.ed.productservice.domain.vo.ProductCategory;
 import com.ed.productservice.domain.vo.ProductStatus;
-import com.ed.productservice.presentation.port.in.ProductCreateUseCase;
+import com.ed.productservice.presentation.port.in.ProductUseCase;
 import com.ed.productservice.presentation.web.request.BottomProductCreateRequest;
 import com.ed.productservice.presentation.web.request.ProductCommonInfo;
 import com.ed.productservice.presentation.web.request.TopProductCreateRequest;
@@ -37,170 +37,176 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Slf4j
 class ProductCommandControllerWebMvcTest {
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @MockitoBean
-    private ProductCreateUseCase productCreateUseCase;
 
-    @DisplayName("상의 상품 등록 성공하면 true, productPublicId, timestamp 반환")
-    @Test
-    void t1() throws Exception {
-        String productPublicId = UUID.randomUUID().toString();
-        LocalDateTime createdTime = LocalDateTime.now();
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private ObjectMapper objectMapper;
+  @MockitoBean
+  private ProductUseCase productUseCase;
 
-        TopProductCreateRequest topProductRequest = createTopProductRequest();
+  @DisplayName("상의 상품 등록 성공하면 true, productPublicId, timestamp 반환")
+  @Test
+  void t1() throws Exception {
+    String productPublicId = UUID.randomUUID().toString();
+    LocalDateTime createdTime = LocalDateTime.now();
 
-        Product mockProduct = new Product(
-                1L,
-                productPublicId,
-                1L,
-                "베이직 긴팔 티셔츠",
-                29900,
-                "편안한 착용감의 데일리 티셔츠",
-                "BLACK",
-                100,
-                "top_image_url.jpg",
-                ProductStatus.ACTIVE,
-                ProductCategory.TOP,
-                createdTime
-        );
+    TopProductCreateRequest topProductRequest = createTopProductRequest();
 
-        when(productCreateUseCase.createApparelTop(any(TopProduct.class))).thenReturn(mockProduct);
+    Product mockProduct = new Product(
+        1L,
+        productPublicId,
+        1L,
+        "베이직 긴팔 티셔츠",
+        29900,
+        "편안한 착용감의 데일리 티셔츠",
+        "BLACK",
+        "top_image_url.jpg",
+        ProductStatus.ACTIVE,
+        ProductCategory.TOP,
+        createdTime
+    );
 
-        String requestBody = objectMapper.writerWithDefaultPrettyPrinter()
-                .writeValueAsString(topProductRequest);
+    when(productUseCase.createApparelTop(any(TopProduct.class))).thenReturn(mockProduct);
 
-        mockMvc.perform(post("/api/v1/products/top").contentType(MediaType.APPLICATION_JSON).content(requestBody))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.body.productPublicId").exists())
-                .andExpect(jsonPath("$.body.createdAt").exists())
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andDo(print());
+    String requestBody = objectMapper.writerWithDefaultPrettyPrinter()
+        .writeValueAsString(topProductRequest);
 
-        verify(productCreateUseCase).createApparelTop(any(TopProduct.class));
-    }
+    mockMvc.perform(
+            post("/api/v1/products/top").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.body.productPublicId").exists())
+        .andExpect(jsonPath("$.body.createdAt").exists())
+        .andExpect(jsonPath("$.timestamp").exists())
+        .andDo(print());
 
-    @DisplayName("하의 상품 등록 성공하면 true, productPublicId, timestamp 반환")
-    @Test
-    void t2() throws Exception {
-        String productPublicId = UUID.randomUUID().toString();
-        LocalDateTime createdTime = LocalDateTime.now();
+    verify(productUseCase).createApparelTop(any(TopProduct.class));
+  }
 
-        BottomProductCreateRequest bottomProductRequest = createBottomProductRequest();
+  @DisplayName("하의 상품 등록 성공하면 true, productPublicId, timestamp 반환")
+  @Test
+  void t2() throws Exception {
+    String productPublicId = UUID.randomUUID().toString();
+    LocalDateTime createdTime = LocalDateTime.now();
 
-        Product mockProduct = new Product(
-                1L,
-                productPublicId,
-                1L,
-                "스웻 팬츠",
-                29900,
-                "편안한 착용감의 데일리 팬츠",
-                "BLACK",
-                100,
-                "bottom_image_url.jpg",
-                ProductStatus.ACTIVE,
-                ProductCategory.BOTTOM,
-                createdTime
-        );
+    BottomProductCreateRequest bottomProductRequest = createBottomProductRequest();
 
-        when(productCreateUseCase.createApparelBottom(any(BottomProduct.class))).thenReturn(mockProduct);
+    Product mockProduct = new Product(
+        1L,
+        productPublicId,
+        1L,
+        "스웻 팬츠",
+        29900,
+        "편안한 착용감의 데일리 팬츠",
+        "BLACK",
+        "bottom_image_url.jpg",
+        ProductStatus.ACTIVE,
+        ProductCategory.BOTTOM,
+        createdTime
+    );
 
-        String requestBody = objectMapper.writerWithDefaultPrettyPrinter()
-                .writeValueAsString(bottomProductRequest);
+    when(productUseCase.createApparelBottom(any(BottomProduct.class))).thenReturn(mockProduct);
 
-        mockMvc.perform(post("/api/v1/products/bottom")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.body.productPublicId").exists())
-                .andExpect(jsonPath("$.body.createdAt").exists())
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andDo(print());
+    String requestBody = objectMapper.writerWithDefaultPrettyPrinter()
+        .writeValueAsString(bottomProductRequest);
 
-        verify(productCreateUseCase).createApparelBottom(any(BottomProduct.class));
-    }
+    mockMvc.perform(post("/api/v1/products/bottom")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.body.productPublicId").exists())
+        .andExpect(jsonPath("$.body.createdAt").exists())
+        .andExpect(jsonPath("$.timestamp").exists())
+        .andDo(print());
 
-    private BottomProductCreateRequest createBottomProductRequest() {
-        ProductCommonInfo productInfo = new ProductCommonInfo(
-                1L,
-                "스웻 팬츠",
-                29900,
-                "편안한 착용감의 데일리 팬츠",
-                ProductStatus.ACTIVE,
-                ProductCategory.BOTTOM,
-                "BLACK",
-                "bottom_image_url.jpg",
-                100
-        );
+    verify(productUseCase).createApparelBottom(any(BottomProduct.class));
+  }
 
-        List<BottomProductCreateRequest.BottomSizeRequest> sizeList = List.of(
-                new BottomProductCreateRequest.BottomSizeRequest(
-                        "S",
-                        new BigDecimal("32.0"),
-                        new BigDecimal("44.0"),
-                        new BigDecimal("28.0"),
-                        new BigDecimal("98.0")
-                ),
-                new BottomProductCreateRequest.BottomSizeRequest(
-                        "M",
-                        new BigDecimal("34.0"),
-                        new BigDecimal("46.0"),
-                        new BigDecimal("30.0"),
-                        new BigDecimal("99.0")
-                ),
-                new BottomProductCreateRequest.BottomSizeRequest(
-                        "L",
-                        new BigDecimal("36.0"),
-                        new BigDecimal("48.0"),
-                        new BigDecimal("32.0"),
-                        new BigDecimal("100.0")
-                )
-        );
+  private BottomProductCreateRequest createBottomProductRequest() {
+    ProductCommonInfo productInfo = new ProductCommonInfo(
+        1L,
+        "스웻 팬츠",
+        29900,
+        "편안한 착용감의 데일리 팬츠",
+        ProductStatus.ACTIVE,
+        ProductCategory.BOTTOM,
+        "BLACK",
+        "bottom_image_url.jpg",
+        100
+    );
 
-        return new BottomProductCreateRequest(productInfo, sizeList);
-    }
+    List<BottomProductCreateRequest.BottomSizeRequest> sizeList = List.of(
+        new BottomProductCreateRequest.BottomSizeRequest(
+            "S",
+            new BigDecimal("32.0"),
+            new BigDecimal("44.0"),
+            new BigDecimal("28.0"),
+            new BigDecimal("98.0"),
+            100
+        ),
+        new BottomProductCreateRequest.BottomSizeRequest(
+            "M",
+            new BigDecimal("34.0"),
+            new BigDecimal("46.0"),
+            new BigDecimal("30.0"),
+            new BigDecimal("99.0"),
+            100
+        ),
+        new BottomProductCreateRequest.BottomSizeRequest(
+            "L",
+            new BigDecimal("36.0"),
+            new BigDecimal("48.0"),
+            new BigDecimal("32.0"),
+            new BigDecimal("100.0"),
+            100
+        )
+    );
 
-    private static TopProductCreateRequest createTopProductRequest() {
-        ProductCommonInfo productInfo = new ProductCommonInfo(
-                1L,
-                "베이직 긴팔 티셔츠",
-                29900,
-                "편안한 착용감의 데일리 티셔츠",
-                ProductStatus.ACTIVE,
-                ProductCategory.TOP,
-                "BLACK",
-                "top_image_url.jpg",
-                100
-        );
+    return new BottomProductCreateRequest(productInfo, sizeList);
+  }
 
-        List<TopProductCreateRequest.TopSizeRequest> sizeList = List.of(
-                new TopProductCreateRequest.TopSizeRequest(
-                        "S",
-                        new BigDecimal("65.0"),
-                        new BigDecimal("42.0"),
-                        new BigDecimal("48.0"),
-                        new BigDecimal("61.0")
-                ),
-                new TopProductCreateRequest.TopSizeRequest(
-                        "M",
-                        new BigDecimal("67.0"),
-                        new BigDecimal("44.0"),
-                        new BigDecimal("50.0"),
-                        new BigDecimal("62.0")
-                ),
-                new TopProductCreateRequest.TopSizeRequest(
-                        "L",
-                        new BigDecimal("69.0"),
-                        new BigDecimal("46.0"),
-                        new BigDecimal("52.0"),
-                        new BigDecimal("63.0")
-                )
-        );
+  private static TopProductCreateRequest createTopProductRequest() {
+    ProductCommonInfo productInfo = new ProductCommonInfo(
+        1L,
+        "베이직 긴팔 티셔츠",
+        29900,
+        "편안한 착용감의 데일리 티셔츠",
+        ProductStatus.ACTIVE,
+        ProductCategory.TOP,
+        "BLACK",
+        "top_image_url.jpg",
+        100
+    );
 
-        return new TopProductCreateRequest(productInfo, sizeList);
-    }
+    List<TopProductCreateRequest.TopSizeRequest> sizeList = List.of(
+        new TopProductCreateRequest.TopSizeRequest(
+            "S",
+            new BigDecimal("65.0"),
+            new BigDecimal("42.0"),
+            new BigDecimal("48.0"),
+            new BigDecimal("61.0"),
+            10
+        ),
+        new TopProductCreateRequest.TopSizeRequest(
+            "M",
+            new BigDecimal("67.0"),
+            new BigDecimal("44.0"),
+            new BigDecimal("50.0"),
+            new BigDecimal("62.0"),
+            10
+        ),
+        new TopProductCreateRequest.TopSizeRequest(
+            "L",
+            new BigDecimal("69.0"),
+            new BigDecimal("46.0"),
+            new BigDecimal("52.0"),
+            new BigDecimal("63.0"),
+            10
+        )
+    );
+
+    return new TopProductCreateRequest(productInfo, sizeList);
+  }
 }
