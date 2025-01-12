@@ -3,22 +3,21 @@ package com.ed.orderservice.presentaion.web.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.ed.orderservice.application.port.in.OrderItemDto;
 import com.ed.orderservice.application.port.in.command.CreateOrderCommand;
+import com.ed.orderservice.application.port.in.dto.OrderItemDto;
 import com.ed.orderservice.domain.vo.order.Order;
 import com.ed.orderservice.domain.vo.order.OrderDelivery;
-import com.ed.orderservice.domain.vo.order.OrderItem;
 import com.ed.orderservice.domain.vo.order.Orderer;
+import com.ed.orderservice.domain.vo.order.item.OrderItem;
+import com.ed.orderservice.domain.vo.receiver.Receiver;
 import com.ed.orderservice.domain.vo.receiver.ReceiverAddress;
-import com.ed.orderservice.domain.vo.receiver.ReceiverInfo;
+import com.ed.orderservice.infrastructure.external.fegin.domain.product.dto.ProductCategory;
 import com.ed.orderservice.presentaion.port.in.CreateOrderUseCase;
 import com.ed.orderservice.presentaion.web.request.NewOrderRequest;
 import com.ed.orderservice.presentaion.web.request.OrderDeliveryRequest;
@@ -73,19 +72,19 @@ class OrderControllerTest {
                   .brandId("나이키")
                   .productId("SHIRT001")
                   .productName("클래식 화이트 셔츠")
-                  .quantity(2L)
+                  .quantity(2)
                   .unitPrice(59000L)
                   .size("M")
-                  .productCategory("상의")
+                  .productCategory(ProductCategory.TOP)
                   .build(),
               OrderItemDto.builder()
                   .brandId("아디다스")
                   .productId("JEANS002")
                   .productName("슬림핏 데님 진")
-                  .quantity(1L)
+                  .quantity(1)
                   .unitPrice(79000L)
                   .size("32")
-                  .productCategory("하의")
+                  .productCategory(ProductCategory.BOTTOM)
                   .build()
           ))
           .orderDeliveryRequest(OrderDeliveryRequest.builder()
@@ -186,8 +185,7 @@ class OrderControllerTest {
               .build())
           .toList();
 
-
-      ReceiverInfo receiverInfo = ReceiverInfo.builder()
+      Receiver receiver = Receiver.builder()
           .name(request.getOrderDeliveryRequest().getReceiverName())
           .phoneNumber(request.getOrderDeliveryRequest().getReceiverPhoneNumber())
           .mobileNumber(request.getOrderDeliveryRequest().getReceiverMobileNumber())
@@ -201,7 +199,7 @@ class OrderControllerTest {
           .build();
 
       OrderDelivery orderDelivery = OrderDelivery.builder()
-          .receiverInfo(receiverInfo)
+          .receiver(receiver)
           .receiverAddress(receiverAddress)
           .build();
 
