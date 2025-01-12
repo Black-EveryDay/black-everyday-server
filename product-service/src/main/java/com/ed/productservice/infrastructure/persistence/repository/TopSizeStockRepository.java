@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 public interface TopSizeStockRepository extends JpaRepository<TopSizeStockEntity, Long> {
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)
-  @Query("SELECT t FROM TopSizeStockEntity t WHERE t.productId = :productId AND t.topSize = :size")
+  @Query("SELECT t FROM TopSizeStockEntity t WHERE t.productId = :productId AND t.topSize = :size AND t.isDeleted = false")
   TopSizeStockEntity findByProductIdAndTopSize(@Param("productId") Long productId,
       @Param("size") String size);
 }

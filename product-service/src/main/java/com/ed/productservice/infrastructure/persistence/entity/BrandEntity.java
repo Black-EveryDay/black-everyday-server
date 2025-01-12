@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "ED_BRANDS")
 @NoArgsConstructor
 @Getter
-public class BrandEntity {
+public class BrandEntity extends BaseEntity{
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
