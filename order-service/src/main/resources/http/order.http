@@ -1,30 +1,33 @@
 ### Create a new order
 POST http://localhost:19095/api/v1/orders
 Content-Type: application/json
+X-User-Id: 550e8400-e29b-41d4-a716-446655440006
 
 {
   "orderer": {
-    "name": "홍길동",
+    "name": "베이직 긴팔 티셔츠 외 ~",
     "phoneNumber": "010-1234-5678"
   },
   "orderItemDtos": [
     {
-      "brandId": "나이키",
-      "productId": "SHIRT001",
-      "productName": "클래식 화이트 셔츠",
+      "brandId": "33732dd3-3901-4429-ba58-676c6965923",
+      "productId": "3a725377-affd-4533-82b5-285a735a78fc",
+      "productName": "베이직 긴팔 티셔츠",
       "quantity": 2,
-      "unitPrice": 59000,
-      "size": "M",
-      "productCategory": "상의"
+      "unitPrice": 40000,
+      "size": "S",
+      "productCategory": "TOP",
+      "orderItemCouponId": "4440b08b-1158-46e3-b4b5-767a07fcd5b1"
     },
     {
-      "brandId": "아디다스",
-      "productId": "JEANS002",
-      "productName": "슬림핏 데님 진",
-      "quantity": 1,
-      "unitPrice": 79000,
-      "size": "32",
-      "productCategory": "하의"
+      "brandId": "55732dd3-3901-4429-ba58-676c6965923",
+      "productId": "1b554921-eb04-4633-915b-4f864c486bd4",
+      "productName": "스웻 팬츠",
+      "quantity": 2,
+      "unitPrice": 50000,
+      "size": "S",
+      "productCategory": "BOTTOM",
+      "orderItemCouponId": null
     }
   ],
   "orderDeliveryRequest": {
