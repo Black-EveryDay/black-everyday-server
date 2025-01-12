@@ -62,7 +62,7 @@ public class PaymentJpaEntity extends BaseTimeByJpaEntity {
   @Column(name = "CONFIRM_DEADLINE", nullable = false)
   private LocalDateTime confirmDeadline;
 
-  @Column(name = "CANCEL_DEAD_LINE", nullable = false)
+  @Column(name = "CANCEL_DEADLINE", nullable = false)
   private LocalDateTime cancelDeadLine;
 
   public static PaymentJpaEntity createPayment(
