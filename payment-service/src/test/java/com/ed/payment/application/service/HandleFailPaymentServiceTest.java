@@ -18,7 +18,7 @@ import com.ed.payment.application.port.out.persistence.ReadPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
-import com.ed.payment.infrastructure.out.mq.OrderPaymentProducer;
+import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import com.ed.payment.libs.common.exception.CustomException;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ class HandleFailPaymentServiceTest {
   private CreatePaymentHistoryPort createPaymentHistoryPort;
 
   @Mock
-  private OrderPaymentProducer<OrderPaymentConfirmResponse> producer;
+  private OrderPaymentResponse<OrderPaymentConfirmResponse> producer;
 
   @BeforeEach
   void setUp() {

@@ -4,8 +4,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import com.ed.payment.application.port.out.pg.PaymentDone;
-import com.ed.payment.domain.Payment;
+import com.ed.payment.application.port.out.pg.PaymentCanceled;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -20,11 +19,11 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @RequiredArgsConstructor
-public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
+public class RestTemplateTossCancelPayment implements TossCancelPayment {
 
   private static final String AUTHENTICATION_SCHEME = "Basic ";
 
-  private final PaymentPgMapper paymentPgMapper;
+  private final PaymentPgMapper paymentPGMapper;
 
   @Value("${pg.tosspayments.secret-key}")
   private String secretKey;
@@ -32,24 +31,21 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
   private String baseUrl;
 
   @Override
-  public PaymentDone confirmPayment(Payment payment, String paymentKey) {
+  public PaymentCanceled cancelPayment(String paymentKey, String idempotencyKey, String cancelReason) {
     RestTemplate restTemplate = new RestTemplate();
 
-    URI url = URI.create(baseUrl + "/confirm");
-    HttpHeaders headers = generateHeaders(payment.getIdempotencyKey());
-    Map<String, Object> body = generateBody(paymentKey, payment.getOrderPublicId(), payment.getAmount());
+    URI url = URI.create(baseUrl + "/" + paymentKey + "/cancel");
+    HttpHeaders headers = generateHeaders(idempotencyKey);
+    Map<String, Object> body = generateBody(cancelReason);
 
     HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, headers);
-    return paymentPgMapper.mapConfirmResponseToApplication(
-        restTemplate.postForObject(url, httpEntity, TossPaymentDone.class));
+    return paymentPGMapper.mapCancelResponseToApplication(
+        restTemplate.postForObject(url, httpEntity, TossPaymentCanceled.class));
   }
 
-  private Map<String, Object> generateBody(
-      String paymentKey, String orderId, Long amount) {
+  private Map<String, Object> generateBody(String cancelReason) {
     Map<String, Object> body = new HashMap<>();
-    body.put("orderId", orderId);
-    body.put("amount", amount);
-    body.put("paymentKey", paymentKey);
+    body.put("cancelReason", cancelReason);
     return body;
   }
 

@@ -8,7 +8,11 @@ public enum PaymentStatus {
   ABORTED
   ;
 
-  public static boolean isSuccess(PaymentStatus paymentStatus) {
+  public static boolean isConfirmSuccess(PaymentStatus paymentStatus) {
     return DONE == paymentStatus;
+  }
+
+  public static boolean isCancelSuccess(PaymentStatus paymentStatus) {
+    return CANCELED == paymentStatus;
   }
 }

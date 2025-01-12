@@ -3,6 +3,7 @@ package com.ed.payment.infrastructure.out.persistence.repository;
 import static com.ed.payment.domain.PaymentStatus.CANCELED;
 import static com.ed.payment.domain.PaymentStatus.DONE;
 import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_NOT_FOUND;
+import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_NOT_MATCHED;
 
 import com.ed.payment.application.port.out.persistence.CreatePaymentPort;
 import com.ed.payment.application.port.out.persistence.PaymentResponse;
@@ -52,15 +53,19 @@ class PaymentPersistenceAdapter implements CreatePaymentPort, ReadPaymentPort, U
   public Payment getPaymentByOrderPublicId(String orderPublicId) {
     PaymentJpaEntity entity = paymentRepository.findByOrderPublicId(orderPublicId)
         .orElseThrow(() -> new CustomException(PAYMENT_NOT_FOUND));
+    return paymentPersistenceMapper.mapToDomain(entity);
+  }
 
+  @Override
+  public Payment getCancelablePayment(String paymentPublicId, LocalDateTime requestDateTime) {
+    PaymentJpaEntity entity = paymentRepository.findByPaymentPublicId(paymentPublicId, DONE, requestDateTime)
+        .orElseThrow(() -> new CustomException(PAYMENT_NOT_MATCHED));
     return paymentPersistenceMapper.mapToDomain(entity);
   }
 
   @Override
   public void updatePaymentStatusById(Long paymentId, PaymentStatus paymentStatus) {
-    PaymentJpaEntity paymentJpaEntity = getPaymentJpaEntity(paymentId);
-    paymentJpaEntity.updatePaymentStatus(paymentStatus);
-    paymentRepository.save(paymentJpaEntity);
+    getPaymentJpaEntity(paymentId).updatePaymentStatus(paymentStatus);
   }
 
   @Override

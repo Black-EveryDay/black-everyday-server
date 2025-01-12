@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "OrderPaymentCancelRequest",
+  "namespace": "com.ed",
+  "fields": [
+    {
+      "name": "userId",
+      "type": "string"
+    },
+    {
+      "name": "paymentId",
+      "type": "string"
+    },
+    {
+      "name": "cancelReason",
+      "type": "string"
+    },
+    {
+      "name": "requestDateTime",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
+    }
+  ]
+}

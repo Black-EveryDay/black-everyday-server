@@ -75,7 +75,7 @@ tasks.register("generateAvroJava", JavaExec) {
     classpath = configurations.avroTools
     args = [
             "compile", "-string", "schema",
-            "src/main/avro/**.avsc",
+            "src/main/avro/**_v1.avsc",
             "build/generated-src"
     ]
 }

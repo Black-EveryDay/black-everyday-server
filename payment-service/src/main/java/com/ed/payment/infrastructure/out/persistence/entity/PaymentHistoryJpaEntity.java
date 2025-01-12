@@ -55,6 +55,9 @@ public class PaymentHistoryJpaEntity extends BaseTimeJpaEntity {
   @Column
   private Long cancelAmount;
 
+  @Column
+  private String cancelReason;
+
   public static PaymentHistoryJpaEntity createPaymentHistory(Long paymentId, Long amount) {
     return PaymentHistoryJpaEntity.builder()
         .paymentHistoryPublicId(generatePublicId())
@@ -84,6 +87,21 @@ public class PaymentHistoryJpaEntity extends BaseTimeJpaEntity {
         .paymentHistoryPublicId(generatePublicId())
         .paymentId(paymentId)
         .paymentStatus(paymentStatus)
+        .build();
+  }
+
+  public static PaymentHistoryJpaEntity createCancelSuccessPaymentHistory(
+      Long paymentId, String lastTransactionKey, PaymentStatus paymentStatus,
+      Long totalAmount, Long balanceAmount, Long cancelAmount, String cancelReason) {
+    return PaymentHistoryJpaEntity.builder()
+        .paymentHistoryPublicId(generatePublicId())
+        .paymentId(paymentId)
+        .lastTransactionKey(lastTransactionKey)
+        .paymentStatus(paymentStatus)
+        .totalAmount(totalAmount)
+        .balanceAmount(balanceAmount)
+        .cancelAmount(cancelAmount)
+        .cancelReason(cancelReason)
         .build();
   }
 
