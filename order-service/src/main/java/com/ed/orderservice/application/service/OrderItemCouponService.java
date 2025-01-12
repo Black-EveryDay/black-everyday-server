@@ -60,9 +60,6 @@ public class OrderItemCouponService {
         .findFirst()
         .ifPresent(item -> item.updateOrderItemCoupon(createUpdatedOrderItemCoupon(response)));
 
-    order.recalculateTotals();
-    order.updateOrderTimelines();
-
     return order;
   }
 

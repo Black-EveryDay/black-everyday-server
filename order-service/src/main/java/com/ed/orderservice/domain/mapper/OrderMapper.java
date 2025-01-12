@@ -29,13 +29,17 @@ public class OrderMapper {
         .receiverAddress(command.getReceiverAddress())
         .build();
 
-    return Order.builder()
+    Order order = Order.builder()
         .userId(command.getUserId())
         .orderer(orderer)
         .orderItems(orderItems)
         .orderDelivery(orderDelivery)
         .productTransactionId(productTransactionId)
         .build();
+
+    order.recalculateTotals();
+    order.updateOrderTimelines();
+    return order;
   }
 
   public Order toDomain(OrderEntity orderEntity) {

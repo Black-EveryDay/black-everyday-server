@@ -20,13 +20,17 @@ public class CreateOrderService implements CreateOrderUseCase {
   private final ProductStockService productStockService;
   private final OrderItemCouponService orderItemCouponService;
   private final OrderCreatedOutPort orderCreatedOutPort;
+  private final OrderPaymentCreateService orderPaymentCreateService;
 
   @Override
   public Order createOrder(CreateOrderCommand orderCommand) {
     String inventoryReservationId = productStockService.reserveProductStock(orderCommand);
     Order orderWithReservedInventory = orderMapper.toDomain(orderCommand, inventoryReservationId);
     Order orderWithAppliedCoupons = orderItemCouponService.applyCoupons(orderWithReservedInventory);
-    return orderCreatedOutPort.save(orderWithAppliedCoupons);
+    Order savedOrder = orderCreatedOutPort.save(orderWithAppliedCoupons);
+    orderPaymentCreateService.requestPaymentConfirmation(savedOrder);
+
+    return savedOrder;
   }
 
 }
