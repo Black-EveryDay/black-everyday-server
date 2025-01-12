@@ -2,7 +2,7 @@ package com.ed.orderservice.infrastructure.entity;
 
 import com.ed.orderservice.domain.enums.OrderStatus;
 import com.ed.orderservice.domain.vo.order.OrderDelivery;
-import com.ed.orderservice.domain.vo.order.OrderItem;
+import com.ed.orderservice.domain.vo.order.item.OrderItem;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,95 +25,112 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "ED_ORDERS")
+@Table(name = "ED_ORDER")
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ORDER_ID")
-	private Long orderId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "ORDER_ID")
+  private Long orderId;
 
-	@Column(name = "ORDER_PUBLIC_Id", updatable = false, nullable = false)
-	private String orderPublicId;
+  @Column(name = "ORDER_PUBLIC_ID", updatable = false, nullable = false)
+  private String orderPublicId;
 
-	@Column(name = "ORDER_NAME", nullable = false)
-	private String orderName;
+  @Column(name = "ORDER_NAME", nullable = false)
+  private String orderName;
 
-	@Column(name = "PHONE_NUMBER", nullable = false)
-	private String phoneNumber;
+  @Column(name = "PHONE_NUMBER", nullable = false)
+  private String phoneNumber;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "ORDER_STATUS", nullable = false)
-	private OrderStatus orderStatus;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "ORDER_STATUS", nullable = false)
+  private OrderStatus orderStatus;
 
-	@Column(name = "ORDER_DATE", nullable = false)
-	private LocalDateTime orderDate;
+  @Column(name = "ORDER_DATE", nullable = false)
+  private LocalDateTime orderDate;
 
-	@OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<OrderItemEntity> orderItemEntitys = new ArrayList<>();
+  @Column(name = "PAYMENT_DEADLINE", nullable = false)
+  private LocalDateTime paymentDeadline;
 
-	@OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<OrderStatusHistoryEntity> orderStatusHistoryEntity = new ArrayList<>();
+  @Column(name = "ORDER_CANCEL_DEADLINE", nullable = false)
+  private LocalDateTime orderCancelDeadline;
 
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "orderEntity")
-	@JoinColumn(name = "order_delivery_id")
-	private OrderDeliveryEntity orderDeliveryEntity;
+  @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<OrderItemEntity> orderItemEntitys = new ArrayList<>();
 
-	@Column(name = "TOTAL_AMOUNT", nullable = false)
-	private Long totalAmount;
+  @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<OrderStatusHistoryEntity> orderStatusHistoryEntity = new ArrayList<>();
 
-	@Column(name = "TOTAL_QUANTITY", nullable = false)
-	private Long totalQuantity;
+  @OneToOne(cascade = CascadeType.ALL, mappedBy = "orderEntity")
+  @JoinColumn(name = "order_delivery_id")
+  private OrderDeliveryEntity orderDeliveryEntity;
 
-	@Column(name = "PAUMENT_ID", nullable = true)
-	private String paymentId = null;
-	@Column(name = "PAID_AT", nullable = true)
-	private LocalDateTime paidAt = null;
+  @Column(name = "TOTAL_AMOUNT", nullable = false)
+  private Long totalAmount;
 
-	@Builder
-	public OrderEntity(String orderPublicId, String orderName, String phoneNumber,
-			OrderStatus orderStatus, LocalDateTime orderDate,
-			Long totalAmount, Long totalQuantity, String paymentId, LocalDateTime paidAt) {
-		this.orderPublicId = orderPublicId;
-		this.orderName = orderName;
-		this.phoneNumber = phoneNumber;
-		this.orderStatus = orderStatus;
-		this.orderDate = orderDate;
-		this.totalAmount = totalAmount;
-		this.totalQuantity = totalQuantity;
-		this.paymentId = paymentId;
-		this.paidAt = paidAt;
-	}
+  @Column(name = "TOTAL_QUANTITY", nullable = false)
+  private Long totalQuantity;
 
-	public void addOrderItems(List<OrderItem> items) {
-		for (OrderItem item : items) {
-			addOrderItem(item);
-		}
-	}
+  @Column(name = "USER_ID", nullable = false)
+  private String userid;
 
-	private void addOrderItem(OrderItem orderItem) {
-		OrderItemEntity orderItemEntity = OrderItem.fromOrderItem(orderItem);
-		this.orderItemEntitys.add(orderItemEntity);
-		orderItemEntity.updateOrder(this);
-	}
+  @Column(name = "PAUMENT_ID", nullable = true)
+  private String paymentId = null;
+  @Column(name = "PAID_AT", nullable = true)
+  private LocalDateTime paidAt = null;
 
-	public void addOrderStatuesHistory(OrderStatus orderStatus) {
-		OrderStatusHistoryEntity history =
-				OrderStatusHistoryEntity.builder()
-						.orderStatus(orderStatus)
-						.build();
+  @Builder
+  public OrderEntity(String orderPublicId, String orderName, String phoneNumber,
+      OrderStatus orderStatus, LocalDateTime orderDate,
+      Long totalAmount, Long totalQuantity, String userid, String paymentId, LocalDateTime paidAt) {
+    this.orderPublicId = orderPublicId;
+    this.orderName = orderName;
+    this.phoneNumber = phoneNumber;
+    this.orderStatus = orderStatus;
+    this.orderDate = orderDate;
+    this.totalAmount = totalAmount;
+    this.totalQuantity = totalQuantity;
+    this.userid = userid;
+    this.paymentId = paymentId;
+    this.paidAt = paidAt;
+  }
 
-		this.orderStatusHistoryEntity = orderStatusHistoryEntity;
-		history.updateOrder(this);
-		this.orderStatusHistoryEntity.add(history);
-	}
+  public void addOrderItems(List<OrderItem> items) {
+    for (OrderItem item : items) {
+      addOrderItem(item);
+    }
+  }
 
-	public void addOrderDeliveryEntity(OrderDelivery orderDelivery) {
-		OrderDeliveryEntity orderDeliveryEntity = OrderDelivery.fromOrderDelivery(orderDelivery);
-		this.orderDeliveryEntity = orderDeliveryEntity;
-		orderDeliveryEntity.updateOrder(this);
-	}
+  private void addOrderItem(OrderItem orderItem) {
+    OrderItemEntity orderItemEntity = OrderItem.fromOrderItem(orderItem);
+    this.orderItemEntitys.add(orderItemEntity);
+    orderItemEntity.updateOrder(this);
+  }
+
+  public void addOrderStatuesHistory(OrderStatus orderStatus) {
+    OrderStatusHistoryEntity history =
+        OrderStatusHistoryEntity.builder()
+            .orderStatus(orderStatus)
+            .build();
+
+    this.orderStatusHistoryEntity = orderStatusHistoryEntity;
+    history.updateOrder(this);
+    this.orderStatusHistoryEntity.add(history);
+  }
+
+  public void addOrderDeliveryEntity(OrderDelivery orderDelivery) {
+    OrderDeliveryEntity orderDeliveryEntity = OrderDelivery.fromOrderDelivery(orderDelivery);
+    this.orderDeliveryEntity = orderDeliveryEntity;
+    orderDeliveryEntity.updateOrder(this);
+  }
+
+  public void addOrderTimeline(LocalDateTime orderDate,
+      LocalDateTime paymentDeadline, LocalDateTime orderCancelDeadline) {
+    this.orderDate = orderDate;
+    this.paymentDeadline = paymentDeadline;
+    this.orderCancelDeadline = orderCancelDeadline;
+  }
 
 }

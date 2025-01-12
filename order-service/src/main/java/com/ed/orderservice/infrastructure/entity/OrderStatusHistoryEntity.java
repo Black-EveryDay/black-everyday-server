@@ -20,26 +20,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderStatusHistoryEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ORDER_HISTORY_ID")
-	private Long orderHistoryId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "ORDER_HISTORY_ID")
+  private Long orderHistoryId;
 
-	@Convert(converter = OrderStatusConverter.class)
-	@Column(name = "ORDER_STATUS", nullable = false)
-	private OrderStatus orderStatus;
+  @Convert(converter = OrderStatusConverter.class)
+  @Column(name = "ORDER_STATUS", nullable = false)
+  private OrderStatus orderStatus;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ORDER_ID", nullable = false)
-	private OrderEntity orderEntity;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "ORDER_ID", nullable = false)
+  private OrderEntity orderEntity;
 
-	@Builder
-	private OrderStatusHistoryEntity(OrderStatus orderStatus) {
-		this.orderStatus = orderStatus;
-	}
+  @Builder
+  private OrderStatusHistoryEntity(OrderStatus orderStatus) {
+    this.orderStatus = orderStatus;
+  }
 
-	public void updateOrder(OrderEntity orderEntity) {
-		this.orderEntity = orderEntity;
-	}
+  public void updateOrder(OrderEntity orderEntity) {
+    this.orderEntity = orderEntity;
+  }
 
 }

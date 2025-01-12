@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 @Converter(autoApply = true)
 @Slf4j
 public class OrderDeliveryConverter implements AttributeConverter<OrderDeliveryStatus, String> {
+
   @Override
   public String convertToDatabaseColumn(OrderDeliveryStatus orderDeliveryStatus) {
     return orderDeliveryStatus.name();
@@ -19,5 +20,5 @@ public class OrderDeliveryConverter implements AttributeConverter<OrderDeliveryS
   public OrderDeliveryStatus convertToEntityAttribute(String dbData) {
     return OrderDeliveryStatus.valueOf(dbData);
   }
-}
 
+}

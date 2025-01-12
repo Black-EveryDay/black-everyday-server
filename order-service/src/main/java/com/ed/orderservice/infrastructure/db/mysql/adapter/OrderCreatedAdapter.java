@@ -1,17 +1,17 @@
-package com.ed.orderservice.infrastructure.db.mysql;
+package com.ed.orderservice.infrastructure.db.mysql.adapter;
 
-import com.ed.orderservice.application.port.out.OrderOutPort;
+import com.ed.orderservice.application.port.out.OrderCreatedOutPort;
 import com.ed.orderservice.domain.mapper.OrderMapper;
 import com.ed.orderservice.domain.vo.order.Order;
+import com.ed.orderservice.infrastructure.db.mysql.OrderJpaRepository;
 import com.ed.orderservice.infrastructure.entity.OrderEntity;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-@Transactional
 @RequiredArgsConstructor
-public class OrderAdapter implements OrderOutPort {
+public class OrderCreatedAdapter implements OrderCreatedOutPort {
+
   private final OrderJpaRepository orderJpaRepository;
   private final OrderMapper orderMapper;
 
@@ -21,4 +21,5 @@ public class OrderAdapter implements OrderOutPort {
     OrderEntity savedEntity = orderJpaRepository.save(orderEntity);
     return orderMapper.toDomain(savedEntity);
   }
+
 }
