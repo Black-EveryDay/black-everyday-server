@@ -33,29 +33,29 @@ public class PaymentHistoryJpaEntity extends BaseTimeJpaEntity {
   @Column(name = "PAYMENT_HISTORY_ID")
   private Long id;
 
-  @Column(nullable = false, unique = true)
+  @Column(name = "PAYMENT_HISTORY_PUBLIC_ID", nullable = false, unique = true)
   private String paymentHistoryPublicId;
 
-  @Column(nullable = false)
+  @Column(name = "PAYMENT_ID", nullable = false)
   private Long paymentId;
 
-  @Column
+  @Column(name = "LAST_TRANSACTION_KEY")
   private String lastTransactionKey;
 
-  @Column(nullable = false)
+  @Column(name = "PAYMENT_STATUS", nullable = false)
   @Enumerated(EnumType.STRING)
   private PaymentStatus paymentStatus;
 
-  @Column
+  @Column(name = "TOTAL_AMOUNT")
   private Long totalAmount;
 
-  @Column
+  @Column(name = "BALANCE_AMOUNT")
   private Long balanceAmount;
 
-  @Column
+  @Column(name = "CANCEL_AMOUNT")
   private Long cancelAmount;
 
-  @Column
+  @Column(name = "CANCEL_REASON")
   private String cancelReason;
 
   public static PaymentHistoryJpaEntity createPaymentHistory(Long paymentId, Long amount) {

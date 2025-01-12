@@ -15,17 +15,17 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public abstract class BaseTimeJpaEntity {
 
   @CreatedDate
-  @Column(nullable = false, updatable = false)
+  @Column(name = "CREATED_AT", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
   @LastModifiedDate
-  @Column
+  @Column(name = "UPDATED_AT")
   private LocalDateTime updatedAt;
 
-  @Column
+  @Column(name = "DELETED_AT")
   private LocalDateTime deletedAt;
 
-  @Column(nullable = false)
+  @Column(name = "IS_DELETED", nullable = false)
   private boolean isDeleted = false;
 
   public void softDelete() {

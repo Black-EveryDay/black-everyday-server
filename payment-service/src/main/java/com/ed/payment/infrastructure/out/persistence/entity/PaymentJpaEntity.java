@@ -34,35 +34,35 @@ public class PaymentJpaEntity extends BaseTimeByJpaEntity {
   @Column(name = "PAYMENT_ID")
   private Long id;
 
-  @Column(unique = true)
+  @Column(name = "PAYMENT_PUBLIC_ID" , unique = true)
   private String paymentPublicId;
 
-  @Column(unique = true)
+  @Column(name = "PAYMENT_KEY", unique = true)
   private String paymentKey;
 
-  @Column(unique = true)
+  @Column(name = "IDEMPOTENCY_KEY")
   private String idempotencyKey;
 
-  @Column(nullable = false)
+  @Column(name = "USER_PUBLIC_ID", nullable = false)
   private String userPublicId;
 
-  @Column(nullable = false)
+  @Column(name = "PAYMENT_STATUS", nullable = false)
   @Enumerated(EnumType.STRING)
   private PaymentStatus paymentStatus;
 
-  @Column(nullable = false, unique = true)
+  @Column(name = "ORDER_PUBLIC_ID", nullable = false, unique = true)
   private String orderPublicId;
 
-  @Column(nullable = false)
+  @Column(name = "ORDER_NAME", nullable = false)
   private String orderName;
 
-  @Column(nullable = false)
+  @Column(name = "AMOUNT", nullable = false)
   private Long amount;
 
-  @Column(nullable = false)
+  @Column(name = "CONFIRM_DEADLINE", nullable = false)
   private LocalDateTime confirmDeadline;
 
-  @Column(nullable = false)
+  @Column(name = "CANCEL_DEAD_LINE", nullable = false)
   private LocalDateTime cancelDeadLine;
 
   public static PaymentJpaEntity createPayment(
