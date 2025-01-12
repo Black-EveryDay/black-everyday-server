@@ -6,13 +6,14 @@ import lombok.Getter;
 
 @Getter
 public class OrderDeliveryInfo {
-  private String receiverAddress;
-  private String receiverName;
-  private String receiverPhoneNumber;
-  private String receiverMobileNumber;
-  private String zipcode;
-  private String roadZipCode;
-  private String requirement;
+
+  private final String receiverAddress;
+  private final String receiverName;
+  private final String receiverPhoneNumber;
+  private final String receiverMobileNumber;
+  private final String zipcode;
+  private final String roadZipCode;
+  private final String requirement;
 
   @Builder
   public OrderDeliveryInfo(OrderDelivery orderDelivery) {
