@@ -6,14 +6,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BottomSizeMapper {
-    public BottomSizeStockEntity from(Long productId, BottomProduct.BottomSize bottomSize) {
-        return new BottomSizeStockEntity(
-                productId,
-                bottomSize.getBottomSize(),
-                bottomSize.getBottomTotalLength(),
-                bottomSize.getThighWidth(),
-                bottomSize.getHipWidth(),
-                bottomSize.getQuantity()
-        );
-    }
+
+  public BottomSizeStockEntity from(Long productId, BottomProduct.BottomSize bottomSize) {
+    return new BottomSizeStockEntity(
+        productId,
+        bottomSize.getBottomSize(),
+        bottomSize.getBottomTotalLength(),
+        bottomSize.getThighWidth(),
+        bottomSize.getHipWidth(),
+        bottomSize.getQuantity()
+    );
+  }
 }

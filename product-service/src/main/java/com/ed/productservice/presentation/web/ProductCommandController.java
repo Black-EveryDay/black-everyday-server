@@ -25,39 +25,40 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ProductCommandController {
 
-    private final ProductUseCase productUseCase;
+  private final ProductUseCase productUseCase;
 
-    @PostMapping("/top")
-    public ProductCreateResponse createApparelTop(@RequestBody TopProductCreateRequest request) {
-        TopProduct domain = request.toDomain();
+  @PostMapping("/top")
+  public ProductCreateResponse createApparelTop(@RequestBody TopProductCreateRequest request) {
+    TopProduct domain = request.toDomain();
 
-        Product product = productUseCase.createApparelTop(domain);
+    Product product = productUseCase.createApparelTop(domain);
 
-        return ProductCreateResponse.from(product);
-    }
+    return ProductCreateResponse.from(product);
+  }
 
-    @PostMapping("/bottom")
-    public ProductCreateResponse createApparelBottom(
-        @RequestBody BottomProductCreateRequest request) {
-        BottomProduct bottomProduct = request.toDomain();
+  @PostMapping("/bottom")
+  public ProductCreateResponse createApparelBottom(
+      @RequestBody BottomProductCreateRequest request) {
+    BottomProduct bottomProduct = request.toDomain();
 
-        Product product = productUseCase.createApparelBottom(bottomProduct);
+    Product product = productUseCase.createApparelBottom(bottomProduct);
 
-        return ProductCreateResponse.from(product);
-    }
+    return ProductCreateResponse.from(product);
+  }
 
-    @PatchMapping("/{productPublicId}")
-    public ProductUpdateResponse updateProduct(@PathVariable("productPublicId") String productPublicId,
-        @Valid @RequestBody UpdateProductRequest request) {
-        ProductForUpdate productForUpdate = request.toDomain();
+  @PatchMapping("/{productPublicId}")
+  public ProductUpdateResponse updateProduct(
+      @PathVariable("productPublicId") String productPublicId,
+      @Valid @RequestBody UpdateProductRequest request) {
+    ProductForUpdate productForUpdate = request.toDomain();
 
-        Product product = productUseCase.updateProduct(productForUpdate);
+    Product product = productUseCase.updateProduct(productForUpdate);
 
-        return ProductUpdateResponse.from(product);
-    }
+    return ProductUpdateResponse.from(product);
+  }
 
-    @DeleteMapping("/{productPublicId}")
-    public void updateProduct(@PathVariable("productPublicId") String productPublicId) {
-        productUseCase.deleteProduct(productPublicId);
-    }
+  @DeleteMapping("/{productPublicId}")
+  public void updateProduct(@PathVariable("productPublicId") String productPublicId) {
+    productUseCase.deleteProduct(productPublicId);
+  }
 }

@@ -21,17 +21,17 @@ public record UpdateProductRequest(
     ProductCategory category
 ) {
 
-    public ProductForUpdate toDomain() {
-        return new ProductForUpdate(
-            productPublicId,
-            brandId,
-            name,
-            price,
-            description,
-            color,
-            image,
-            status,
-            category
-        );
-    }
+  public ProductForUpdate toDomain() {
+    return new ProductForUpdate(
+        productPublicId,
+        brandId,
+        name,
+        price,
+        description,
+        color,
+        image,
+        status,
+        category
+    );
+  }
 }

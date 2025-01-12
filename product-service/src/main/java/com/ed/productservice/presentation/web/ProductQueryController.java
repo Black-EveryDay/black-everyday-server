@@ -19,21 +19,21 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class ProductQueryController {
 
-    private final ProductQueryAdapter productQueryAdapter;
+  private final ProductQueryAdapter productQueryAdapter;
 
-    @GetMapping("/{productPublicId}")
-    public ProductDetailResponse findOne(@PathVariable("productPublicId") String productPublicId) {
-        ProductInfoDto dto = productQueryAdapter.findById(productPublicId);
+  @GetMapping("/{productPublicId}")
+  public ProductDetailResponse findOne(@PathVariable("productPublicId") String productPublicId) {
+    ProductInfoDto dto = productQueryAdapter.findById(productPublicId);
 
-        return ProductDetailResponse.from(dto);
+    return ProductDetailResponse.from(dto);
 
-    }
+  }
 
-    @GetMapping()
-    public Page<ProductDetailResponse> getShopList(ProductSearchCondition condition,
-        Pageable pageable) {
+  @GetMapping()
+  public Page<ProductDetailResponse> getShopList(ProductSearchCondition condition,
+      Pageable pageable) {
 
-        return productQueryAdapter.search(condition, pageable)
-            .map(ProductDetailResponse::from);
-    }
+    return productQueryAdapter.search(condition, pageable)
+        .map(ProductDetailResponse::from);
+  }
 }

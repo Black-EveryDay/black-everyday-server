@@ -3,13 +3,12 @@ package com.ed.productservice.infrastructure.persistence.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Getter
 @MappedSuperclass
@@ -17,33 +16,40 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
 
-    @CreatedDate
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-    private Long createdBy;
+  @CreatedDate
+  @Column(name = "CREATED_AT", nullable = false)
+  private LocalDateTime createdAt;
 
-    @LastModifiedDate
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-    private Long updatedBy;
+  @Column(name = "CREATED_BY")
+  private Long createdBy;
 
-    private LocalDateTime deletedAt;
-    private Long deletedBy;
+  @LastModifiedDate
+  @Column(name = "UPDATED_AT", nullable = false)
+  private LocalDateTime updatedAt;
 
-    @Column(nullable = false)
-    private boolean isDeleted = false;
+  @Column(name = "UPDATED_BY")
+  private Long updatedBy;
 
-    protected void createdFrom(Long createdBy) {
-        this.createdBy = createdBy;
-        this.updatedBy = createdBy;
-    }
+  @Column(name = "DELETED_AT")
+  private LocalDateTime deletedAt;
 
-    protected void updatedFrom(Long updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  @Column(name = "DELETED_BY")
+  private Long deletedBy;
 
-    public void deletedFrom() {
-        this.deletedAt = LocalDateTime.now();
-        this.isDeleted = true;
-    }
+  @Column(name = "IS_DELETED", nullable = false)
+  private boolean isDeleted = false;
+
+  protected void createdFrom(Long createdBy) {
+    this.createdBy = createdBy;
+    this.updatedBy = createdBy;
+  }
+
+  protected void updatedFrom(Long updatedBy) {
+    this.updatedBy = updatedBy;
+  }
+
+  public void deletedFrom() {
+    this.deletedAt = LocalDateTime.now();
+    this.isDeleted = true;
+  }
 }

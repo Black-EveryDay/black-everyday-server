@@ -10,4 +10,6 @@ public record ProductSearchCondition(
     Integer minPrice,
     Integer maxPrice,
     String brandName
-) { }
+) {
+
+}

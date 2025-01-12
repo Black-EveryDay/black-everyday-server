@@ -1,5 +1,7 @@
 package com.ed.productservice.infrastructure.persistence.adapter.internal;
 
+import com.ed.productservice.application.service.internal.strategy.StockDecreaseStrategy;
+import com.ed.productservice.application.service.internal.strategy.StockIncreaseStrategy;
 import com.ed.productservice.domain.vo.ProductReservationInfoDomain;
 import com.ed.productservice.infrastructure.persistence.entity.size.BottomSizeStockEntity;
 import com.ed.productservice.infrastructure.persistence.repository.BottomSizeStockRepository;
@@ -8,23 +10,25 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class BottomSizeStockAdapter {
+public class BottomSizeStockAdapter implements StockDecreaseStrategy, StockIncreaseStrategy {
 
-    private final BottomSizeStockRepository bottomSizeStockRepository;
+  private final BottomSizeStockRepository bottomSizeStockRepository;
 
-    public void bottomDecreaseStock(ProductReservationInfoDomain reservationInfo, Long productId) {
-        BottomSizeStockEntity bottomSizeStockEntity = bottomSizeStockRepository.findByProductIdAndBottomSize(
-            productId,
-            reservationInfo.getSize());
+  @Override
+  public void decreaseStock(ProductReservationInfoDomain productReservationInfo, Long productId) {
+    BottomSizeStockEntity bottomSizeStockEntity = bottomSizeStockRepository.findByProductIdAndBottomSize(
+        productId,
+        productReservationInfo.getSize());
 
-        bottomSizeStockEntity.decrease(reservationInfo.getQuantity());
-    }
+    bottomSizeStockEntity.decrease(productReservationInfo.getQuantity());
+  }
 
-    public void bottomIncrease(ProductReservationInfoDomain item, Long productId) {
-        BottomSizeStockEntity entity = bottomSizeStockRepository.findByProductIdAndBottomSize(
-            productId,
-            item.getSize());
+  @Override
+  public void increaseStock(ProductReservationInfoDomain productReservationInfo, Long productId) {
+    BottomSizeStockEntity entity = bottomSizeStockRepository.findByProductIdAndBottomSize(
+        productId,
+        productReservationInfo.getSize());
 
-        entity.increaseStock(item.getQuantity());
-    }
+    entity.increaseStock(productReservationInfo.getQuantity());
+  }
 }

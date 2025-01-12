@@ -19,23 +19,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ProductQueryAdapter {
 
-    private final ProductRepository productRepository;
-    private final ProductQueryDslRepository productQueryDslRepository;
-    public ProductInfoDto findById(String productPublicId) {
+  private final ProductRepository productRepository;
+  private final ProductQueryDslRepository productQueryDslRepository;
 
-        return productRepository.findByProductInfo(productPublicId)
-            .orElseThrow(() -> new ProductException(
-                ErrorCode.PRODUCT_NOT_FOUND));
-    }
+  public ProductInfoDto findById(String productPublicId) {
 
-    public Page<ProductInfoDto> search(ProductSearchCondition condition, Pageable pageable) {
+    return productRepository.findByProductInfo(productPublicId)
+        .orElseThrow(() -> new ProductException(
+            ErrorCode.PRODUCT_NOT_FOUND));
+  }
 
-        return productQueryDslRepository.search(condition.productName(),
-            condition.color(),
-            condition.category(),
-            condition.minPrice(),
-            condition.maxPrice(),
-            condition.brandName(),
-            pageable);
-    }
+  public Page<ProductInfoDto> search(ProductSearchCondition condition, Pageable pageable) {
+
+    return productQueryDslRepository.search(condition.productName(),
+        condition.color(),
+        condition.category(),
+        condition.minPrice(),
+        condition.maxPrice(),
+        condition.brandName(),
+        pageable);
+  }
 }

@@ -13,46 +13,58 @@ public record ProductInternalResponse(
 
 ) {
 
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class StockDecreaseResponse {
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class StockDecreaseResponse {
 
-        private String transactionId;
-        private List<ProductBrandInfoV2> productBrandInfoList;
+    private String transactionId;
+    private List<ProductBrandInfoV2> productBrandInfoList;
 
-        public static StockDecreaseResponse from(DecreaseStockResponse response) {
-            return new StockDecreaseResponse(response.transactionId(),
-                response.productBrandInfoList().stream().map(
-                    ProductBrandInfoV2::from
-                ).toList());
-        }
-
-        @Getter
-        @AllArgsConstructor
-        public static class ProductBrandInfoV2 {
-
-            private Long brandId;
-            private Long productId;
-
-            public static ProductBrandInfoV2 from(ProductBrandInfo productBrandInfo) {
-                return new ProductBrandInfoV2(productBrandInfo.getBrandId(),
-                    productBrandInfo.getProductId());
-            }
-        }
+    public static StockDecreaseResponse from(DecreaseStockResponse response) {
+      return new StockDecreaseResponse(response.transactionId(),
+          response.productBrandInfoList().stream().map(
+              ProductBrandInfoV2::from
+          ).toList());
     }
 
     @Getter
-    @NoArgsConstructor
     @AllArgsConstructor
-    public static class StockIncreaseResponse {
+    public static class ProductBrandInfoV2 {
 
-        private String transactionId;
+      private Long brandId;
+      private Long productId;
 
-        public static StockIncreaseResponse from(String transactionId) {
-            return new StockIncreaseResponse(transactionId);
-        }
+      public static ProductBrandInfoV2 from(ProductBrandInfo productBrandInfo) {
+        return new ProductBrandInfoV2(productBrandInfo.getBrandId(),
+            productBrandInfo.getProductId());
+      }
     }
+  }
+
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class StockIncreaseResponse {
+
+    private String transactionId;
+
+    public static StockIncreaseResponse from(String transactionId) {
+      return new StockIncreaseResponse(transactionId);
+    }
+  }
+
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class StockCommitResponse {
+
+    private String transactionId;
+
+    public static StockCommitResponse from(String transactionId) {
+      return new StockCommitResponse(transactionId);
+    }
+  }
 }
 
 

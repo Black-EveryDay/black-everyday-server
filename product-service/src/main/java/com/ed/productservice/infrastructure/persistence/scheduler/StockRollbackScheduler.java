@@ -7,11 +7,9 @@ import com.ed.productservice.infrastructure.persistence.repository.StockDecrease
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +21,8 @@ public class StockRollbackScheduler {
 
     private final StockDecreaseHistoryRepository stockDecreaseHistoryRepository;
     private final ProductInternalService productInternalService;
+    private final SchedulerUtil schedulerUtil;
 
-    // 초 분 시 일 월 요일
-    @Scheduled(cron = "30 * * * * *")
     @Transactional
     public void rollbackUncommittedStock() {
         List<StockDecreaseHistoryEntity> uncommittedStocks = findUncommittedStocks();
@@ -33,7 +30,7 @@ public class StockRollbackScheduler {
             return;
         }
 
-        Set<String> transactionIdSet = convertSet(uncommittedStocks);
+        Set<String> transactionIdSet = schedulerUtil.convertSet(uncommittedStocks);
 
         stockRollback(transactionIdSet);
 
@@ -61,12 +58,5 @@ public class StockRollbackScheduler {
 
         return stockDecreaseHistoryRepository
             .findUncommittedStocks(timeLimit, StockDecreaseHistoryStatus.DECREASED);
-    }
-
-    private static Set<String> convertSet(List<StockDecreaseHistoryEntity> uncommittedStocks) {
-
-        return uncommittedStocks.stream().map(
-                StockDecreaseHistoryEntity::getTransactionId)
-            .collect(Collectors.toSet());
     }
 }

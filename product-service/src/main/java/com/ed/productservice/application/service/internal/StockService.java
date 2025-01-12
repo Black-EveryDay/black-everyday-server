@@ -2,15 +2,16 @@ package com.ed.productservice.application.service.internal;
 
 import static com.ed.productservice.libs.common.ErrorCode.STOCK_RESERVATION_NOT_FOUND;
 
+import com.ed.productservice.application.service.internal.strategy.StockDecreaseStrategy;
+import com.ed.productservice.application.service.internal.strategy.StockIncreaseStrategy;
 import com.ed.productservice.domain.vo.Product;
 import com.ed.productservice.domain.vo.ProductCategory;
 import com.ed.productservice.domain.vo.ProductReservationInfoDomain;
 import com.ed.productservice.infrastructure.persistence.adapter.ProductAdapter;
-import com.ed.productservice.infrastructure.persistence.adapter.internal.BottomSizeStockAdapter;
-import com.ed.productservice.infrastructure.persistence.adapter.internal.TopSizeStockAdapter;
 import com.ed.productservice.infrastructure.persistence.adapter.internal.StockAdapter;
 import com.ed.productservice.libs.common.ProductException;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,46 +19,50 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class StockService {
 
-    private final TopSizeStockAdapter topSizeStockAdapter;
-    private final BottomSizeStockAdapter bottomSizeStockAdapter;
-    private final StockAdapter stockAdapter;
-    private final ProductAdapter productAdapter;
+  private final StockAdapter stockAdapter;
+  private final ProductAdapter productAdapter;
+  private final Map<ProductCategory, StockDecreaseStrategy> decreaseStockStrategy;
+  private final Map<ProductCategory, StockIncreaseStrategy> increaseStockStrategy;
 
-    public void decreaseStockReservation(ProductReservationInfoDomain productReservationInfo,
-        String transactionId, Long productId) {
-        stockAdapter.isDuplicateStockDecrease(productReservationInfo, transactionId);
+  public void decreaseStockReservation(ProductReservationInfoDomain productReservationInfo,
+      String transactionId, Long productId) {
+    stockAdapter.isDuplicateStockDecrease(productReservationInfo, transactionId);
 
-        ProductCategory category = productReservationInfo.getProductCategory();
-        if (category.equals(ProductCategory.TOP)) {
-            topSizeStockAdapter.topDecreaseStock(productReservationInfo, productId);
-        }
+    ProductCategory category = productReservationInfo.getProductCategory();
+    StockDecreaseStrategy strategy = decreaseStockStrategy.get(category);
 
-        if (category.equals(ProductCategory.BOTTOM)) {
-            bottomSizeStockAdapter.bottomDecreaseStock(productReservationInfo, productId);
-        }
-
-        stockAdapter.save(productReservationInfo, transactionId);
+    if (strategy != null) {
+      strategy.decreaseStock(productReservationInfo, productId);
+    } else {
+      throw new IllegalArgumentException("존재하지 않는 카테고리 입니다. " + category);
     }
 
-    public void increaseStock(String transactionId) {
-        List<ProductReservationInfoDomain> itemList = stockAdapter.findAllByTransactionId(
-            transactionId);
+    stockAdapter.save(productReservationInfo, transactionId);
+  }
 
-        if (itemList.isEmpty()) {
-            throw new ProductException(STOCK_RESERVATION_NOT_FOUND);
-        }
+  public void increaseStock(String transactionId) {
+    List<ProductReservationInfoDomain> itemList = stockAdapter.findAllByTransactionId(
+        transactionId);
 
-        for (ProductReservationInfoDomain item : itemList) {
-            Product product = productAdapter.findOne(item.getProductPublicId());
-            if (item.getProductCategory().equals(ProductCategory.TOP)) {
-                topSizeStockAdapter.topIncrease(item, product.getProductId());
-            }
-
-            if (item.getProductCategory().equals(ProductCategory.BOTTOM)) {
-                bottomSizeStockAdapter.bottomIncrease(item, product.getProductId());
-            }
-
-            stockAdapter.deleteStockHistory(transactionId);
-        }
+    if (itemList.isEmpty()) {
+      throw new ProductException(STOCK_RESERVATION_NOT_FOUND);
     }
+
+    for (ProductReservationInfoDomain item : itemList) {
+      Product product = productAdapter.findOne(item.getProductPublicId());
+      StockIncreaseStrategy strategy = increaseStockStrategy.get(product.getCategory());
+
+      if (strategy != null) {
+        strategy.increaseStock(item, product.getProductId());
+      } else {
+        throw new IllegalArgumentException("존재하지 않는 카테고리 입니다. " + product.getCategory());
+      }
+
+      stockAdapter.deleteStockHistory(transactionId);
+    }
+  }
+
+  public String commitStock(String transactionId) {
+    return stockAdapter.commitStock(transactionId);
+  }
 }

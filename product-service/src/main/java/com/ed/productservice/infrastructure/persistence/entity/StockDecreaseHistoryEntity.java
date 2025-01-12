@@ -2,6 +2,7 @@ package com.ed.productservice.infrastructure.persistence.entity;
 
 import com.ed.productservice.domain.vo.ProductCategory;
 import com.ed.productservice.domain.vo.StockDecreaseHistoryStatus;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,38 +14,47 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Table(name = "ed_stock_decrease_history")
+@Table(name = "ED_STOCK_DECREASE_HISTORY")
 @Entity
 @NoArgsConstructor
-public class StockDecreaseHistoryEntity extends BaseEntity{
+public class StockDecreaseHistoryEntity extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "ID", nullable = false)
+  private Long id;
 
-    private String productPublicId;
-    private Integer quantity;
-    private String size;
+  @Column(name = "PRODUCT_PUBLIC_ID", nullable = false)
+  private String productPublicId;
 
-    @Enumerated(EnumType.STRING)
-    private ProductCategory productCategory;
+  @Column(name = "QUANTITY", nullable = false)
+  private Integer quantity;
 
-    private String transactionId;
+  @Column(name = "SIZE", nullable = false)
+  private String size;
 
-    @Enumerated(EnumType.STRING)
-    private StockDecreaseHistoryStatus status;
+  @Column(name = "PRODUCT_CATEGORY", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private ProductCategory productCategory;
 
-    public StockDecreaseHistoryEntity(String productPublicId, Integer quantity, String size,
-        ProductCategory productCategory, String transactionId, StockDecreaseHistoryStatus status) {
-        this.productPublicId = productPublicId;
-        this.quantity = quantity;
-        this.size = size;
-        this.productCategory = productCategory;
-        this.transactionId = transactionId;
-        this.status = status;
-    }
+  @Column(name = "TRANSACTION_ID", nullable = false)
+  private String transactionId;
 
-    public void setStatus(StockDecreaseHistoryStatus status) {
-        this.status = status;
-    }
+  @Column(name = "STATUS", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private StockDecreaseHistoryStatus status;
+
+  public StockDecreaseHistoryEntity(String productPublicId, Integer quantity, String size,
+      ProductCategory productCategory, String transactionId, StockDecreaseHistoryStatus status) {
+    this.productPublicId = productPublicId;
+    this.quantity = quantity;
+    this.size = size;
+    this.productCategory = productCategory;
+    this.transactionId = transactionId;
+    this.status = status;
+  }
+
+  public void setStatus(StockDecreaseHistoryStatus status) {
+    this.status = status;
+  }
 }

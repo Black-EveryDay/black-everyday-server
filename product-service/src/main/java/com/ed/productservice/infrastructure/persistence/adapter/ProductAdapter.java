@@ -15,39 +15,40 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ProductAdapter implements ProductOutPort {
-    private final ProductRepository productRepository;
-    private final ProductMapper productMapper;
 
-    @Override
-    public Product createProduct(ProductForCreate productForCreate, Long brandId) {
-        ProductEntity entity = productMapper.from(productForCreate, brandId);
+  private final ProductRepository productRepository;
+  private final ProductMapper productMapper;
 
-        return productMapper.toDomain(productRepository.save(entity));
-    }
+  @Override
+  public Product createProduct(ProductForCreate productForCreate, Long brandId) {
+    ProductEntity entity = productMapper.from(productForCreate, brandId);
 
-    @Override
-    public Product findOne(String productPublicId) {
-        ProductEntity entity = productRepository.findByProductPublicId(productPublicId)
-            .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+    return productMapper.toDomain(productRepository.save(entity));
+  }
 
-        return productMapper.toDomain(entity);
-    }
+  @Override
+  public Product findOne(String productPublicId) {
+    ProductEntity entity = productRepository.findByProductPublicId(productPublicId)
+        .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
 
-    @Override
-    public Product update(Product product) {
-        ProductEntity entity = productRepository.findById(product.getProductId())
-            .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+    return productMapper.toDomain(entity);
+  }
 
-        entity.update(product);
+  @Override
+  public Product update(Product product) {
+    ProductEntity entity = productRepository.findById(product.getProductId())
+        .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
 
-        return productMapper.toDomain(entity);
-    }
+    entity.update(product);
 
-    @Override
-    public void deleteOne(String productPublicId) {
-        ProductEntity entity = productRepository.findByProductPublicId(productPublicId)
-            .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+    return productMapper.toDomain(entity);
+  }
 
-        entity.deletedFrom();
-    }
+  @Override
+  public void deleteOne(String productPublicId) {
+    ProductEntity entity = productRepository.findByProductPublicId(productPublicId)
+        .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+
+    entity.deletedFrom();
+  }
 }

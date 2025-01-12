@@ -6,11 +6,12 @@ import com.ed.productservice.domain.vo.Product;
 import com.ed.productservice.domain.vo.ProductForUpdate;
 
 public interface ProductUseCase {
-    Product createApparelTop(TopProduct productForCreate);
 
-    Product createApparelBottom(BottomProduct bottomProduct);
+  Product createApparelTop(TopProduct productForCreate);
 
-    Product updateProduct(ProductForUpdate request);
+  Product createApparelBottom(BottomProduct bottomProduct);
 
-    void deleteProduct(String productPublicId);
+  Product updateProduct(ProductForUpdate request);
+
+  void deleteProduct(String productPublicId);
 }

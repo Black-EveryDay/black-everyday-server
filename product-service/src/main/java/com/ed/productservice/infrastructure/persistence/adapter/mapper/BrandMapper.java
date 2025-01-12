@@ -6,11 +6,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BrandMapper {
-    public Brand toDomain(BrandEntity entity) {
-        return new Brand(
-                entity.getBrandId(),
-                entity.getBrandName(),
-                entity.getBrandType(),
-                entity.getBrandAddress());
-    }
+
+  public Brand toDomain(BrandEntity entity) {
+    return new Brand(
+        entity.getBrandId(),
+        entity.getBrandName(),
+        entity.getBrandType(),
+        entity.getBrandAddress());
+  }
 }
