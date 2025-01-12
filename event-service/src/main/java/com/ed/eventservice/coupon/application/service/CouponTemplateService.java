@@ -41,6 +41,7 @@ public class CouponTemplateService implements CouponTemplateUseCase {
   }
 
   @Override
+  @Transactional
   public void createCoupon(CreateCouponCommand command) {
 
     CouponTemplate couponTemplate =
