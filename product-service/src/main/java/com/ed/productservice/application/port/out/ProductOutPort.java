@@ -5,5 +5,11 @@ import com.ed.productservice.domain.vo.Product;
 
 public interface ProductOutPort {
 
-    Product createProduct(ProductForCreate productForCreate, Long brandId);
+  Product createProduct(ProductForCreate productForCreate, Long brandId);
+
+  Product findOne(String productPublicId);
+
+  Product update(Product product);
+
+  void deleteOne(String productPublicId);
 }

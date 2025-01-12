@@ -7,7 +7,8 @@ import com.ed.productservice.domain.BottomProduct;
 import com.ed.productservice.domain.TopProduct;
 import com.ed.productservice.domain.vo.Brand;
 import com.ed.productservice.domain.vo.Product;
-import com.ed.productservice.presentation.port.in.ProductCreateUseCase;
+import com.ed.productservice.domain.vo.ProductForUpdate;
+import com.ed.productservice.presentation.port.in.ProductUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,29 +16,50 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ProductCommandService implements ProductCreateUseCase {
-    private final ProductOutPort productOutPort;
-    private final BrandOutPort brandOutPort;
-    private final ProductDetailPort productDetailPort;
+public class ProductCommandService implements ProductUseCase {
 
-    public Product createApparelTop(TopProduct topProduct) {
-        Brand brand = brandOutPort.findOne(topProduct.getProductForCreate().getBrandId());
+  private final ProductOutPort productOutPort;
+  private final BrandOutPort brandOutPort;
+  private final ProductDetailPort productDetailPort;
 
-        Product product = productOutPort.createProduct(topProduct.getProductForCreate(), brand.getBrandId());
+  @Override
+  public Product createApparelTop(TopProduct topProduct) {
+    Brand brand = getBrandForCreate(topProduct.getProductForCreate().getBrandId());
 
-        productDetailPort.saveTopSize(product.getProductId(), topProduct);
+    Product product = productOutPort.createProduct(topProduct.getProductForCreate(),
+        brand.getBrandId());
 
-        return product;
-    }
+    productDetailPort.saveTopSize(product.getProductId(), topProduct);
 
-    @Override
-    public Product createApparelBottom(BottomProduct bottomProduct) {
-        Brand brand = brandOutPort.findOne(bottomProduct.getProductForCreate().getBrandId());
+    return product;
+  }
 
-        Product product = productOutPort.createProduct(bottomProduct.getProductForCreate(), brand.getBrandId());
+  @Override
+  public Product createApparelBottom(BottomProduct bottomProduct) {
+    Brand brand = getBrandForCreate(bottomProduct.getProductForCreate().getBrandId());
 
-        productDetailPort.saveBottomSize(product.getProductId(), bottomProduct);
+    Product product = productOutPort.createProduct(bottomProduct.getProductForCreate(),
+        brand.getBrandId());
 
-        return product;
-    }
+    productDetailPort.saveBottomSize(product.getProductId(), bottomProduct);
+
+    return product;
+  }
+
+  @Override
+  public Product updateProduct(ProductForUpdate request) {
+    Product product = productOutPort.findOne(request.productPublicId());
+    brandOutPort.findOne(request.brandId());
+
+    return productOutPort.update(product.update(request));
+  }
+
+  @Override
+  public void deleteProduct(String productPublicId) {
+    productOutPort.deleteOne(productPublicId);
+  }
+
+  private Brand getBrandForCreate(Long bottomProduct) {
+    return brandOutPort.findOne(bottomProduct);
+  }
 }

@@ -6,8 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class Brand {
-    private Long brandId;
-    private String name;
-    private BrandType type;
-    private String address;
+
+  private Long brandId;
+  private String name;
+  private BrandType type;
+  private String address;
 }

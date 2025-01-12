@@ -22,33 +22,35 @@ import java.util.List;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CommonHttpMessageConverter extends
-	AbstractHttpMessageConverter<ApiResponse<Object>> {
-	private final ObjectMapper objectMapper;
+    AbstractHttpMessageConverter<ApiResponse<Object>> {
 
-	public CommonHttpMessageConverter(ObjectMapper objectMapper) {
-		this.objectMapper = objectMapper;
-	}
+  private final ObjectMapper objectMapper;
 
-	@Override
-	public List<MediaType> getSupportedMediaTypes() {
-		return Collections.singletonList(MediaType.APPLICATION_JSON);
-	}
+  public CommonHttpMessageConverter(ObjectMapper objectMapper) {
+    this.objectMapper = objectMapper;
+  }
 
-	@Override
-	protected boolean supports(Class<?> clazz) {
-		return clazz.equals(String.class);
-	}
+  @Override
+  public List<MediaType> getSupportedMediaTypes() {
+    return Collections.singletonList(MediaType.APPLICATION_JSON);
+  }
 
-	@Override
-	protected ApiResponse<Object> readInternal(Class<? extends ApiResponse<Object>> clazz, HttpInputMessage inputMessage)
-		throws IOException, HttpMessageNotReadableException {
-		throw new UnsupportedOperationException("This converter can only support writing operation.");
-	}
+  @Override
+  protected boolean supports(Class<?> clazz) {
+    return clazz.equals(String.class);
+  }
 
-	@Override
-	protected void writeInternal(ApiResponse<Object> resultMessage, HttpOutputMessage outputMessage)
-		throws IOException, HttpMessageNotWritableException {
-		String responseMessage = this.objectMapper.writeValueAsString(resultMessage);
-		StreamUtils.copy(responseMessage.getBytes(StandardCharsets.UTF_8), outputMessage.getBody());
-	}
+  @Override
+  protected ApiResponse<Object> readInternal(Class<? extends ApiResponse<Object>> clazz,
+      HttpInputMessage inputMessage)
+      throws IOException, HttpMessageNotReadableException {
+    throw new UnsupportedOperationException("This converter can only support writing operation.");
+  }
+
+  @Override
+  protected void writeInternal(ApiResponse<Object> resultMessage, HttpOutputMessage outputMessage)
+      throws IOException, HttpMessageNotWritableException {
+    String responseMessage = this.objectMapper.writeValueAsString(resultMessage);
+    StreamUtils.copy(responseMessage.getBytes(StandardCharsets.UTF_8), outputMessage.getBody());
+  }
 }
