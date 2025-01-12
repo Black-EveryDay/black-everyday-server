@@ -8,14 +8,22 @@ plugins {
 group = 'com.ed'
 version = '0.0.1-SNAPSHOT'
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
     }
+    avroTools
 }
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://packages.confluent.io/maven")
+    }
 }
 
 dependencies {
@@ -43,14 +51,47 @@ dependencies {
     testImplementation "org.springframework.restdocs:spring-restdocs-mockmvc:${springRestdocsVersion}"
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocOpenapiVersion}"
     testImplementation "com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}"
+
+    // Kafka
+    implementation "org.springframework.kafka:spring-kafka:${springKafkaVersion}"
+    testImplementation "org.springframework.kafka:spring-kafka-test:${springKafkaVersion}"
+    avroTools "org.apache.avro:avro-tools:${avroToolsVersion}"
+    implementation "io.confluent:kafka-avro-serializer:${kafkaAvroSerializerVersion}"
+    implementation "com.google.code.gson:gson:${gsonVersion}"
 }
 
 
 tasks.named('test') {
     useJUnitPlatform()
+    jvmArgs '-XX:+EnableDynamicAgentLoading'
 }
 
 tasks.withType(JavaCompile) {
     options.compilerArgs.add('-parameters')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'build/generated-src'
+        }
+    }
+}
+
+
+tasks.register("generateAvroJava", JavaExec) {
+    group = "build"
+    description = "Compiles Avro schemas into Java classes"
+    mainClass.set("org.apache.avro.tool.Main")
+    classpath = configurations.avroTools
+    args = [
+            "compile", "-string", "schema",
+            "src/main/avro/order_payment_create_request_v1.avsc",
+            "build/generated-src"
+    ]
+}
+
+tasks.named("compileJava") {
+    dependsOn("generateAvroJava")
 }
 

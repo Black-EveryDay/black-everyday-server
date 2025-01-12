@@ -15,7 +15,9 @@ spring:
     url: ${SPRING_DATASOURCE_URL}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
-
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS}
+    schema-registry-url: ${SCHEMA_REGISTRY_URL}
 server:
   port: 19095
 
