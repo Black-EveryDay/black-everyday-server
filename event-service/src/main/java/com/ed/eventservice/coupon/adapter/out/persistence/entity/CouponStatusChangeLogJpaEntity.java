@@ -13,7 +13,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,8 +47,8 @@ public class CouponStatusChangeLogJpaEntity extends BaseJpaEntity {
   @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime changedAt;
 
-  @Column(updatable = false)
-  private UUID orderId;
+  @Column(updatable = false, length = 18)
+  private String orderId;
 
   @Column(nullable = false, updatable = false)
   private Long couponId;

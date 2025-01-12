@@ -33,6 +33,7 @@ public class CouponService implements CouponUseCase {
   }
 
   @Override
+  @Transactional
   public UseCouponResponse cancelUseCoupon(CouponCancelUseCommand command) {
 
     Coupon coupon = couponPersistencePort.getCouponByPublicId(command.getCouponId());

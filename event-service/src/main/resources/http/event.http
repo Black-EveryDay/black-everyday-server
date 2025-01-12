@@ -9,14 +9,14 @@ Authorization: "Bearer {{jwttoken}}"
   "couponIssuanceType": "MANUAL",
   "couponIssuerType": "SERVICE",
   "couponUsageTargetType": "ALL",
-  "discountType": "PERCENTAGE",
-  "discountValue": 10.5,
+  "discountType": "FIXED",
+  "discountValue": 10000,
   "expirationDays": 1,
   "expirationDate": "2025-08-31T14:00:00.000Z"
 }
 
 ### 쿠폰 발급 API
-@couponPublicId =1ff4f506-a107-495a-9d1f-f10611c89323
+@couponPublicId =52acde1a-e254-4ea7-b18d-735dc5bdd585
 POST http://localhost:19096/api/v1/coupon-templates/{{couponPublicId}}/coupons
 Content-Type: application/json
 
@@ -25,15 +25,15 @@ Content-Type: application/json
 }
 
 ### 쿠폰 사용 API
-@couponPublicId2=bed542b3-4c88-4164-8880-99710102b497
+@couponPublicId2=aff9c535-cd4c-4252-989b-7bb10d9aec3b
 POST http://localhost:19096/api/v1/internal/coupons/{{couponPublicId2}}/orderInfo
 Content-Type: application/json
 
 {
-  "userId": "66656873-96ca-4a29-9a8f-311de8211bcb",
+  "userId": "aff9c535-cd4c-4252-989b-7bb10d9aec3b",
   "productId": "66656873-96ca-4a29-9a8f-311de8211bcb",
   "brandId": "66656873-96ca-4a29-9a8f-311de8211bcb",
-  "orderId": "66656873-96ca-4a29-9a8f-311de8211bcb"
+  "orderId": "qwertasdfgzxcv1234"
 }
 
 ### 쿠폰 사용 취소 API
