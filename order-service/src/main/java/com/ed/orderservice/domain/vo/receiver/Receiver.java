@@ -6,18 +6,19 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ReceiverInfo {
+public class Receiver {
+
   private String name;
   private String phoneNumber;
   private String mobileNumber;
   private String requirement;
 
   @Builder
-  private ReceiverInfo(String name, String phoneNumber, String mobileNumber, String requirement) {
+  private Receiver(String name, String phoneNumber, String mobileNumber, String requirement) {
     this.name = name;
     this.phoneNumber = phoneNumber;
     this.mobileNumber = mobileNumber;
     this.requirement = requirement;
   }
-}
 
+}

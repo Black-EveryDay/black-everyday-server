@@ -2,14 +2,15 @@ package com.ed.orderservice.domain.vo.order;
 
 import com.ed.orderservice.domain.enums.DeliveryCompanyCode;
 import com.ed.orderservice.domain.enums.OrderDeliveryStatus;
+import com.ed.orderservice.domain.vo.receiver.Receiver;
 import com.ed.orderservice.domain.vo.receiver.ReceiverAddress;
-import com.ed.orderservice.domain.vo.receiver.ReceiverInfo;
 import com.ed.orderservice.infrastructure.entity.OrderDeliveryEntity;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class OrderDelivery {
+
   private String receiverName;
   private String receiverAddress;
   private String receiverPhoneNumber;
@@ -19,15 +20,15 @@ public class OrderDelivery {
   private String requirement;
   private OrderDeliveryStatus orderDeliveryStatus = OrderDeliveryStatus.ORDER_CONFIRMED;
   private DeliveryCompanyCode deliveryCompanyCode = null;
-  private String invoiceNumber= null;
+  private String invoiceNumber = null;
 
   @Builder
-  private OrderDelivery(ReceiverInfo receiverInfo, ReceiverAddress receiverAddress
-      ) {
-    this.receiverName = receiverInfo.getName();
-    this.receiverPhoneNumber = receiverInfo.getPhoneNumber();
-    this.receiverMobileNumber = receiverInfo.getMobileNumber();
-    this.requirement = receiverInfo.getRequirement();
+  private OrderDelivery(Receiver receiver, ReceiverAddress receiverAddress
+  ) {
+    this.receiverName = receiver.getName();
+    this.receiverPhoneNumber = receiver.getPhoneNumber();
+    this.receiverMobileNumber = receiver.getMobileNumber();
+    this.requirement = receiver.getRequirement();
     this.receiverAddress = receiverAddress.getAddress();
     this.zipcode = receiverAddress.getRoadZipCode();
     this.roadZipCode = receiverAddress.getRoadZipCode();
@@ -55,20 +56,19 @@ public class OrderDelivery {
   }
 
   public static OrderDelivery fromOrderDeliveryEntity(OrderDeliveryEntity orderDeliveryEntity) {
-    ReceiverInfo receiverInfo = ReceiverInfo.builder()
+    Receiver receiver = Receiver.builder()
         .name(orderDeliveryEntity.getReceiverName())
         .phoneNumber(orderDeliveryEntity.getReceiverPhoneNumber())
         .mobileNumber(orderDeliveryEntity.getReceiverMobileNumber())
         .requirement(orderDeliveryEntity.getRequirement())
         .build();
-
     ReceiverAddress receiverAddress = ReceiverAddress.builder()
         .address(orderDeliveryEntity.getReceiverAddress())
         .roadZipCode(orderDeliveryEntity.getRoadZipCode())
         .build();
 
     return OrderDelivery.builder()
-        .receiverInfo(receiverInfo)
+        .receiver(receiver)
         .receiverAddress(receiverAddress)
         .build();
   }

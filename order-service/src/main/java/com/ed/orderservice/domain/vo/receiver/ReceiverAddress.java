@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ReceiverAddress {
+
   private String address;
   private String zipCode;
   private String roadZipCode;
-
 
   @Builder
   private ReceiverAddress(String address, String zipCode, String roadZipCode
@@ -19,4 +19,5 @@ public class ReceiverAddress {
     this.zipCode = zipCode;
     this.roadZipCode = roadZipCode;
   }
+  
 }

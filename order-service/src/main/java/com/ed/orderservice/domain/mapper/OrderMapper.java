@@ -3,12 +3,13 @@ package com.ed.orderservice.domain.mapper;
 import com.ed.orderservice.application.port.in.command.CreateOrderCommand;
 import com.ed.orderservice.domain.vo.order.Order;
 import com.ed.orderservice.domain.vo.order.OrderDelivery;
-import com.ed.orderservice.domain.vo.order.OrderItem;
 import com.ed.orderservice.domain.vo.order.Orderer;
+import com.ed.orderservice.domain.vo.order.item.OrderItem;
 import com.ed.orderservice.infrastructure.entity.OrderEntity;
+import com.ed.orderservice.infrastructure.external.fegin.domain.event.dto.UseCouponDto;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,20 +19,22 @@ public class OrderMapper {
 
   private final OrderItemMapper orderItemMapper;
 
-  public Order toDomain(CreateOrderCommand command) {
+  public Order toDomain(CreateOrderCommand command, String productTransactionId) {
     Orderer orderer = command.getOrderer();
     List<OrderItem> orderItems = command.getOrderItemDtos().stream()
         .map(orderItemMapper::toOrderItem)
         .toList();
     OrderDelivery orderDelivery = OrderDelivery.builder()
-        .receiverInfo(command.getReceiverInfo())
+        .receiver(command.getReceiver())
         .receiverAddress(command.getReceiverAddress())
         .build();
 
     return Order.builder()
+        .userId(command.getUserId())
         .orderer(orderer)
         .orderItems(orderItems)
         .orderDelivery(orderDelivery)
+        .productTransactionId(productTransactionId)
         .build();
   }
 
@@ -40,6 +43,7 @@ public class OrderMapper {
         .name(orderEntity.getOrderName())
         .phoneNumber(orderEntity.getPhoneNumber())
         .build();
+
     List<OrderItem> orderItems = orderEntity.getOrderItemEntitys().stream()
         .map(orderItemMapper::fromOrderItemEntity)
         .toList();
@@ -47,12 +51,18 @@ public class OrderMapper {
     OrderDelivery orderDelivery = OrderDelivery.
         fromOrderDeliveryEntity(orderEntity.getOrderDeliveryEntity());
 
-    return Order.builder()
+    Order newOrder = Order.builder()
+        .userId(orderEntity.getUserid())
         .orderId(orderEntity.getOrderId())
         .orderer(orderer)
         .orderItems(orderItems)
         .orderDelivery(orderDelivery)
         .build();
+
+    newOrder.recalculateTotals();
+    newOrder.updateOrderTimelines();
+
+    return newOrder;
   }
 
   public OrderEntity toEntity(Order newOrder) {
@@ -64,6 +74,7 @@ public class OrderMapper {
         .orderDate(LocalDateTime.now())
         .totalAmount(newOrder.getTotalAmount())
         .totalQuantity(newOrder.getTotalQuantity())
+        .userid(newOrder.getUserId())
         .paymentId(newOrder.getPaymentId())
         .paidAt(newOrder.getPaidAt())
         .build();
@@ -71,8 +82,25 @@ public class OrderMapper {
     orderEntity.addOrderItems(newOrder.getOrderItems());
     orderEntity.addOrderStatuesHistory(newOrder.getOrderStatus());
     orderEntity.addOrderDeliveryEntity(newOrder.getOrderDelivery());
+    orderEntity.addOrderTimeline(newOrder.getOrderTimeLine().getOrderDate(),
+        newOrder.getOrderTimeLine().getPaymentDeadline(),
+        newOrder.getOrderTimeLine().getPaymentDeadline());
 
     return orderEntity;
+  }
+
+  public List<UseCouponDto> toUseCouponDto(Order order) {
+    return order.getOrderItems().stream()
+        .filter(orderItem -> orderItem.getOrderItemCoupon() != null)
+        .map(orderItem -> UseCouponDto.builder()
+            .orderId(order.getOrderPublicId())
+            .userId(UUID.fromString(order.getUserId()))
+            .brandId(UUID.fromString(orderItem.getBrandId()))
+            .productId(UUID.fromString(orderItem.getProductId()))
+            .couponPublicId(
+                UUID.fromString(orderItem.getOrderItemCoupon().getOrderCouponPublicId()))
+            .build())
+        .toList();
   }
 
 }

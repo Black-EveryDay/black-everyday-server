@@ -1,23 +1,36 @@
 package com.ed.orderservice.domain.mapper;
 
-import com.ed.orderservice.application.port.in.OrderItemDto;
-import com.ed.orderservice.domain.vo.order.OrderItem;
+import com.ed.orderservice.application.port.in.dto.OrderItemDto;
+import com.ed.orderservice.domain.vo.order.item.OrderItem;
+import com.ed.orderservice.domain.vo.order.item.OrderItemCoupon;
 import com.ed.orderservice.infrastructure.entity.OrderItemEntity;
+import com.ed.orderservice.infrastructure.external.fegin.domain.product.dto.StockPrepareRequest;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderItemMapper {
 
-  public OrderItem toOrderItem(OrderItemDto orderItem) {
-    return OrderItem.builder()
-        .brandId(orderItem.getBrandId())
-        .productId(orderItem.getProductId())
-        .productName(orderItem.getProductName())
-        .quantity(orderItem.getQuantity())
-        .unitPrice(orderItem.getUnitPrice())
-        .size(orderItem.getSize())
-        .productCategory(orderItem.getProductCategory())
+  public OrderItem toOrderItem(OrderItemDto dto) {
+    OrderItem orderItem = OrderItem.builder()
+        .brandId(dto.getBrandId())
+        .productId(dto.getProductId())
+        .productName(dto.getProductName())
+        .quantity(dto.getQuantity())
+        .unitPrice(dto.getUnitPrice())
+        .size(dto.getSize())
+        .productCategory(dto.getProductCategory())
         .build();
+
+    if (dto.getOrderItemCouponId() != null) {
+      OrderItemCoupon orderItemCoupon = OrderItemCoupon.builder()
+          .orderCouponPublicId(dto.getOrderItemCouponId())
+          .build();
+      orderItem.updateOrderItemCoupon(orderItemCoupon);
+    }
+
+    return orderItem;
   }
 
   public OrderItem fromOrderItemEntity(OrderItemEntity orderItemEntity) {
@@ -29,7 +42,26 @@ public class OrderItemMapper {
         .unitPrice(orderItemEntity.getUnitPrice())
         .size(orderItemEntity.getSize())
         .productCategory(orderItemEntity.getProductCategory())
+        .orderItemCoupon(Optional.ofNullable(orderItemEntity.getOrderItemCouponEntity())
+            .map(OrderItemCoupon::entityToDomain)
+            .orElse(null))
         .build();
+  }
+
+  public StockPrepareRequest toStockPrepareRequest(List<OrderItemDto> orderItemDtos) {
+    return new StockPrepareRequest(orderItemDtos.stream()
+        .map(this::convertToProductReservationInfo)
+        .toList());
+  }
+
+  private StockPrepareRequest.ProductReservationInfo convertToProductReservationInfo(
+      OrderItemDto orderItemDto) {
+    return new StockPrepareRequest.ProductReservationInfo(
+        orderItemDto.getProductId(),
+        orderItemDto.getQuantity(),
+        orderItemDto.getSize(),
+        orderItemDto.getProductCategory()
+    );
   }
 
 }
