@@ -38,7 +38,7 @@ public class Coupon {
     this.couponStatusChangeLogs = couponStatusChangeLogs;
   }
 
-  public void useCoupon(UUID userId, UUID brandId, UUID productId, UUID orderId) {
+  public void useCoupon(UUID userId, UUID brandId, UUID productId, String orderId) {
 
     checkCouponOwner(userId);
     checkCouponUsable();

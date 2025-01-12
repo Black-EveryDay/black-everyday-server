@@ -57,7 +57,7 @@ class CouponInternalControllerTest {
           .userId(UUID.randomUUID())
           .productId(UUID.randomUUID())
           .brandId(UUID.randomUUID())
-          .orderId(UUID.randomUUID())
+          .orderId("qwertasdfgzxcvb123")
           .build();
 
       UseCouponResponse useCouponResponse = UseCouponResponse.builder()

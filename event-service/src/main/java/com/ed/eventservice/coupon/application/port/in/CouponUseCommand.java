@@ -12,5 +12,5 @@ public class CouponUseCommand {
   private final UUID userId;
   private final UUID productId;
   private final UUID brandId;
-  private final UUID orderId;
+  private final String orderId;
 }

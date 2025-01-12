@@ -5,6 +5,7 @@ import com.ed.eventservice.coupon.application.port.in.CouponCancelUseCommand;
 import com.ed.eventservice.coupon.application.port.in.CouponUseCase;
 import com.ed.eventservice.coupon.application.port.in.CouponUseCommand;
 import com.ed.eventservice.coupon.application.port.out.dto.UseCouponResponse;
+import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,7 @@ public class CouponInternalController {
   @PostMapping("/{couponPublicId}/orderInfo")
   public UseCouponResponse useCoupon(
       @PathVariable UUID couponPublicId,
-      @RequestBody UseCouponRequest useCouponRequest
+      @Valid @RequestBody UseCouponRequest useCouponRequest
   ) {
 
     return couponUseCase.useCoupon(CouponUseCommand.builder()

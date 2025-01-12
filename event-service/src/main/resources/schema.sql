@@ -1,4 +1,11 @@
-CREATE TABLE ed_coupon_template
+DROP TABLE IF EXISTS ED_COUPON_STATUS_CHANGE_LOG;
+DROP TABLE IF EXISTS ED_COUPON;
+DROP TABLE IF EXISTS ED_COUPON_TEMPLATE;
+DROP TABLE IF EXISTS ED_COUPON_TEMPLATE_SEQ;
+DROP TABLE IF EXISTS ED_COUPON_SEQ;
+DROP TABLE IF EXISTS ED_COUPON_STATUS_CHANGE_LOG_SEQ;
+
+CREATE TABLE ED_COUPON_TEMPLATE
 (
     ID                       BIGINT           NOT NULL,
     COUPON_NAME              VARCHAR(255)     NOT NULL,
@@ -11,59 +18,77 @@ CREATE TABLE ed_coupon_template
     DISCOUNT_TYPE            VARCHAR(255)     NOT NULL,
     DISCOUNT_VALUE           DECIMAL(10, 2)   NOT NULL,
     IS_ISSUABLE              BIT(1)           NOT NULL,
-    EXPIRATION_DAYS          timestamp         NULL,
-    FIXED_EXPIRATION_DATE    timestamp         NULL,
+    EXPIRATION_DAYS          TIMESTAMP        NULL,
+    FIXED_EXPIRATION_DATE    TIMESTAMP        NULL,
     MAX_ISSUANCE             INT              NULL,
     IS_DELETED               BIT(1) DEFAULT 0 NULL,
-    CREATED_AT               timestamp         NULL,
+    CREATED_AT               TIMESTAMP        NULL,
     CREATED_BY               VARCHAR(36)      NULL,
-    UPDATED_AT               timestamp         NULL,
+    UPDATED_AT               TIMESTAMP        NULL,
     UPDATED_BY               VARCHAR(36)      NULL,
-    DELETED_AT               timestamp         NULL,
+    DELETED_AT               TIMESTAMP        NULL,
     DELETED_BY               VARCHAR(36)      NULL,
     CONSTRAINT pk_ed_coupon_template PRIMARY KEY (id)
 );
 
-CREATE TABLE ed_coupon
+CREATE TABLE ED_COUPON
 (
     ID                 BIGINT           NOT NULL,
     COUPON_TEMPLATE_ID VARCHAR(36)      NOT NULL,
     PUBLIC_ID          VARCHAR(36)      NOT NULL,
     USER_ID            VARCHAR(36)      NULL,
     STATE              VARCHAR(255)     NOT NULL,
-    EXPIRATION_DATE    timestamp         NOT NULL,
-    ISSUED_AT          timestamp         NOT NULL,
+    EXPIRATION_DATE    TIMESTAMP        NOT NULL,
+    ISSUED_AT          TIMESTAMP        NOT NULL,
     IS_DELETED         BIT(1) DEFAULT 0 NULL,
-    CREATED_AT         timestamp         NULL,
+    CREATED_AT         TIMESTAMP        NULL,
     CREATED_BY         VARCHAR(36)      NULL,
-    UPDATED_AT         timestamp         NULL,
+    UPDATED_AT         TIMESTAMP        NULL,
     UPDATED_BY         VARCHAR(36)      NULL,
-    DELETED_AT         timestamp         NULL,
+    DELETED_AT         TIMESTAMP        NULL,
     DELETED_BY         VARCHAR(36)      NULL,
     CONSTRAINT pk_ed_coupon PRIMARY KEY (id)
 );
 
-CREATE TABLE ed_coupon_status_change_log
+CREATE TABLE ED_COUPON_STATUS_CHANGE_LOG
 (
     ID            BIGINT           NOT NULL,
     BEFORE_STATUS VARCHAR(255)     NOT NULL,
     AFTER_STATUS  VARCHAR(255)     NOT NULL,
     REASON        VARCHAR(255)     NOT NULL,
-    CHANGED_AT    timestamp         NOT NULL,
-    ORDER_ID      VARCHAR(36)       NULL,
+    CHANGED_AT    TIMESTAMP        NOT NULL,
+    ORDER_ID      VARCHAR(18)      NULL,
     COUPON_ID     BIGINT           NOT NULL,
     IS_DELETED    BIT(1) DEFAULT 0 NULL,
-    CREATED_AT    timestamp         NULL,
+    CREATED_AT    TIMESTAMP        NULL,
     CREATED_BY    VARCHAR(36)      NULL,
-    UPDATED_AT    timestamp         NULL,
+    UPDATED_AT    TIMESTAMP        NULL,
     UPDATED_BY    VARCHAR(36)      NULL,
-    DELETED_AT    timestamp         NULL,
+    DELETED_AT    TIMESTAMP        NULL,
     DELETED_BY    VARCHAR(36)      NULL,
     CONSTRAINT pk_ed_coupon_status_change_log PRIMARY KEY (id)
 );
 
-ALTER TABLE ed_coupon
+ALTER TABLE ED_COUPON
     ADD CONSTRAINT uc_ed_coupon_publicid UNIQUE (public_id);
 
-ALTER TABLE ed_coupon_template
+ALTER TABLE ED_COUPON_TEMPLATE
     ADD CONSTRAINT uc_ed_coupon_template_publicid UNIQUE (public_id);
+
+CREATE TABLE ED_COUPON_TEMPLATE_SEQ
+(
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE ED_COUPON_SEQ
+(
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE ED_COUPON_STATUS_CHANGE_LOG_SEQ
+(
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+);
