@@ -25,7 +25,7 @@ import com.ed.payment.application.port.out.pg.ConfirmPaymentPort;
 import com.ed.payment.application.port.out.pg.PaymentDone;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
-import com.ed.payment.infrastructure.out.mq.OrderPaymentConfirmProducer;
+import com.ed.payment.infrastructure.out.mq.OrderPaymentProducer;
 import com.ed.payment.libs.common.exception.CustomException;
 import com.ed.payment.libs.common.helper.TransactionHelper;
 import java.time.LocalDateTime;
@@ -58,7 +58,7 @@ class ConfirmPaymentServiceTest {
   private CreatePaymentHistoryPort createPaymentHistoryPort;
 
   @Mock
-  private OrderPaymentConfirmProducer<OrderPaymentConfirmResponse> producer;
+  private OrderPaymentProducer<OrderPaymentConfirmResponse> producer;
 
   @BeforeEach
   void setUp() {

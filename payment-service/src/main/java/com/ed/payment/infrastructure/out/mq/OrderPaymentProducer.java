@@ -9,12 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class OrderPaymentConfirmProducer<T> implements Producer<T> {
+public class OrderPaymentProducer<T> implements Producer<T> {
+
     private final KafkaTemplate<String, T> kafkaTemplate;
 
     @Override
     public boolean send(String topic, T payload) {
-        log.info("sending payload={} to topic={}", payload, topic);
+        log.info("Sending payload={} to topic={}", payload, topic);
         kafkaTemplate.send(topic, payload);
         return true;
     }
