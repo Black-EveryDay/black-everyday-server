@@ -12,7 +12,6 @@ import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_AMOUNT_MISM
 import com.ed.OrderPaymentConfirmResponse;
 import com.ed.payment.application.port.in.ConfirmPaymentCommand;
 import com.ed.payment.application.port.in.ConfirmPaymentUseCase;
-import com.ed.payment.application.port.out.mq.Producer;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.ReadPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
@@ -20,6 +19,7 @@ import com.ed.payment.application.port.out.pg.ConfirmPaymentPort;
 import com.ed.payment.application.port.out.pg.PaymentDone;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
+import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import com.ed.payment.libs.common.exception.CustomException;
 import com.ed.payment.libs.common.helper.TransactionHelper;
 import java.time.LocalDateTime;
@@ -34,11 +34,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class ConfirmPaymentService implements ConfirmPaymentUseCase {
 
   private final TransactionHelper transactionHelper;
+  private final ConfirmPaymentPort confirmPaymentPort;
   private final ReadPaymentPort readPaymentPort;
   private final UpdatePaymentPort updatePaymentPort;
-  private final ConfirmPaymentPort confirmPaymentPort;
   private final CreatePaymentHistoryPort createPaymentHistoryPort;
-  private final Producer<OrderPaymentConfirmResponse> orderPaymentConfirmProducer;
+  private final OrderPaymentResponse<OrderPaymentConfirmResponse> orderPaymentConfirmProducer;
 
   @Transactional
   @Override

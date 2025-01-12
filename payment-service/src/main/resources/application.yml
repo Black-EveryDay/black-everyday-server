@@ -1,5 +1,14 @@
 spring:
   application:
     name: payment-service
+
   profiles:
-    active: local
+    active: dev
+
+server:
+  port: 19096
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka

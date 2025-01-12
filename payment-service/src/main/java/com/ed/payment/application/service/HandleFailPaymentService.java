@@ -12,7 +12,7 @@ import com.ed.payment.application.port.out.persistence.ReadPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.application.port.out.pg.PaymentFail;
 import com.ed.payment.domain.Payment;
-import com.ed.payment.infrastructure.out.mq.OrderPaymentProducer;
+import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import com.ed.payment.libs.common.exception.CustomException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class HandleFailPaymentService implements HandleFailPaymentUseCase {
   private final ReadPaymentPort readPaymentPort;
   private final UpdatePaymentPort updatePaymentPort;
   private final CreatePaymentHistoryPort createPaymentHistoryPort;
-  private final OrderPaymentProducer<OrderPaymentConfirmResponse> producer;
+  private final OrderPaymentResponse<OrderPaymentConfirmResponse> orderPaymentConfirmResponse;
 
   @Transactional
   @Override
@@ -49,7 +49,7 @@ public class HandleFailPaymentService implements HandleFailPaymentUseCase {
   }
 
   private void sendOrderPaymentConfirmResponse(String orderId) {
-    producer.send(ORDER_PAYMENT_CONFIRM_RESPONSE, OrderPaymentConfirmResponse.newBuilder()
+    orderPaymentConfirmResponse.send(ORDER_PAYMENT_CONFIRM_RESPONSE, OrderPaymentConfirmResponse.newBuilder()
         .setIsSuccess(false)
         .setOrderId(orderId)
         .setMessageTimestamp(LocalDateTime.now())

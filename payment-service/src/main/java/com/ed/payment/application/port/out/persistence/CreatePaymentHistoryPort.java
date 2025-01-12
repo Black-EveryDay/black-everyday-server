@@ -6,4 +6,5 @@ public interface CreatePaymentHistoryPort {
   void createPaymentHistory(Long paymentId, Long amount);
   void createConfirmSuccessPaymentHistory(Long paymentId, String lastTransactionKey, PaymentStatus paymentStatus, Long totalAmount, Long balanceAmount);
   void createFailPaymentHistory(Long paymentId, PaymentStatus paymentStatus);
+  void createCancelSuccessPaymentHistory(Long paymentId, String lastTransactionKey, PaymentStatus paymentStatus, Long totalAmount, Long balanceAmount, Long cancelAmount, String cancelReason);
 }

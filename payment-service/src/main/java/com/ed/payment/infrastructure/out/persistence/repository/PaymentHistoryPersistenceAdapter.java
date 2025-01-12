@@ -33,4 +33,13 @@ class PaymentHistoryPersistenceAdapter implements CreatePaymentHistoryPort {
     paymentHistoryRepository.save(
         PaymentHistoryJpaEntity.createFailPaymentHistory(paymentId, paymentStatus));
   }
+
+  @Override
+  public void createCancelSuccessPaymentHistory(
+      Long paymentId, String lastTransactionKey, PaymentStatus paymentStatus,
+      Long totalAmount, Long balanceAmount, Long cancelAmount, String cancelReason) {
+    paymentHistoryRepository.save(
+        PaymentHistoryJpaEntity.createCancelSuccessPaymentHistory(
+            paymentId, lastTransactionKey, paymentStatus, totalAmount, balanceAmount, cancelAmount, cancelReason));
+  }
 }

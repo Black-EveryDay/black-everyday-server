@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "OrderPaymentCancelResponse",
+  "namespace": "com.ed",
+  "fields": [
+    {
+      "name": "isSuccess",
+      "type": "boolean"
+    },
+    {
+      "name": "orderId",
+      "type": "string"
+    },
+    {
+      "name": "paymentId",
+      "type": "string"
+    },
+    {
+      "name": "messageTimestamp",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
+    }
+  ]
+}

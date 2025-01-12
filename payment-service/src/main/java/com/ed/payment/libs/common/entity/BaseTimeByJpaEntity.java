@@ -8,13 +8,13 @@ import lombok.Getter;
 @MappedSuperclass
 public abstract class BaseTimeByJpaEntity extends BaseTimeJpaEntity {
 
-  @Column(length = 36)
+  @Column(name = "CREATED_BY", length = 36)
   private String createdBy;
 
-  @Column(length = 36)
+  @Column(name = "UPDATED_BY", length = 36)
   private String updatedBy;
 
-  @Column(length = 36)
+  @Column(name = "DELETED_BY", length = 36)
   private String deletedBy;
 
   public void createBy(String userUuid) {
