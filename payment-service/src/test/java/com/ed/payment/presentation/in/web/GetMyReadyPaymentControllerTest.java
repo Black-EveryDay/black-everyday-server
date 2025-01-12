@@ -42,7 +42,7 @@ class GetMyReadyPaymentControllerTest {
     final Long amount = 10000L;
     final LocalDateTime confirmDeadline = LocalDateTime.now().plusDays(5);
     final LocalDateTime cancelDeadLine = LocalDateTime.now().plusDays(5);
-    List<PaymentResponse> response = List.of(new PaymentResponse(
+    List<PaymentResponse> response = List.of(PaymentResponse.of(
         paymentPublicId, idempotencyKey, orderPublicId, orderName, amount,
         confirmDeadline, cancelDeadLine));
 

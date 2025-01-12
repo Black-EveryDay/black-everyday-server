@@ -6,10 +6,10 @@ import com.ed.payment.infrastructure.out.persistence.entity.PaymentJpaEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-class PaymentMapper {
+class PaymentPersistenceMapper {
 
   PaymentResponse mapToApplication(PaymentJpaEntity paymentJpaEntity) {
-    return new PaymentResponse(
+    return PaymentResponse.of(
         paymentJpaEntity.getPaymentPublicId(),
         paymentJpaEntity.getIdempotencyKey(),
         paymentJpaEntity.getOrderPublicId(),

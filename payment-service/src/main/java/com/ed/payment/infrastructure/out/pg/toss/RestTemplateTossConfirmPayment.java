@@ -24,7 +24,7 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
 
   private static final String AUTHENTICATION_SCHEME = "Basic ";
 
-  private final PaymentDoneMapper paymentDoneMapper;
+  private final PaymentPgMapper paymentPGMapper;
 
   @Value("${pg.tosspayments.secret-key}")
   private String secretKey;
@@ -40,7 +40,7 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
     Map<String, Object> body = generateBody(paymentKey, payment.getOrderPublicId(), payment.getAmount());
 
     HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, headers);
-    return paymentDoneMapper.mapToApplication(
+    return paymentPGMapper.mapConfirmResponseToApplication(
         restTemplate.postForObject(url, httpEntity, TossPaymentDone.class));
   }
 
@@ -57,8 +57,7 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
     HttpHeaders headers = new HttpHeaders();
 
     byte[] encodedBytes = Base64.getEncoder()
-        .encode((secretKey + ":")
-            .getBytes(StandardCharsets.UTF_8));
+        .encode((secretKey + ":").getBytes(StandardCharsets.UTF_8));
     String authorizations = AUTHENTICATION_SCHEME.concat(new String(encodedBytes));
 
     headers.add(AUTHORIZATION, authorizations);

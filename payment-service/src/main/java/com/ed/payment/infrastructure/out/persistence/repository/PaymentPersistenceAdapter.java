@@ -19,11 +19,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-class PaymentPersistenceAdapter
-    implements CreatePaymentPort, ReadPaymentPort, UpdatePaymentPort {
+class PaymentPersistenceAdapter implements CreatePaymentPort, ReadPaymentPort, UpdatePaymentPort {
 
   private final SpringDataPaymentRepository paymentRepository;
-  private final PaymentMapper paymentMapper;
+  private final PaymentPersistenceMapper paymentPersistenceMapper;
 
   @Override
   public Payment createPayment(
@@ -33,7 +32,7 @@ class PaymentPersistenceAdapter
     PaymentJpaEntity entity = PaymentJpaEntity.createPayment(
         userPublicId, orderPublicId, orderName, amount, confirmDeadline, cancelDeadLine);
 
-    return paymentMapper.mapToDomain(paymentRepository.save(entity));
+    return paymentPersistenceMapper.mapToDomain(paymentRepository.save(entity));
   }
 
   @Override
@@ -45,7 +44,7 @@ class PaymentPersistenceAdapter
   public List<PaymentResponse> getReadyPayments(String userPublicId) {
     List<PaymentJpaEntity> entities = paymentRepository.findMyReadyPayments(userPublicId, List.of(DONE, CANCELED), LocalDateTime.now());
     return entities.stream()
-        .map(paymentMapper::mapToApplication)
+        .map(paymentPersistenceMapper::mapToApplication)
         .toList();
   }
 
@@ -54,12 +53,14 @@ class PaymentPersistenceAdapter
     PaymentJpaEntity entity = paymentRepository.findByOrderPublicId(orderPublicId)
         .orElseThrow(() -> new CustomException(PAYMENT_NOT_FOUND));
 
-    return paymentMapper.mapToDomain(entity);
+    return paymentPersistenceMapper.mapToDomain(entity);
   }
 
   @Override
   public void updatePaymentStatusById(Long paymentId, PaymentStatus paymentStatus) {
-    getPaymentJpaEntity(paymentId).updatePaymentStatus(paymentStatus);
+    PaymentJpaEntity paymentJpaEntity = getPaymentJpaEntity(paymentId);
+    paymentJpaEntity.updatePaymentStatus(paymentStatus);
+    paymentRepository.save(paymentJpaEntity);
   }
 
   @Override

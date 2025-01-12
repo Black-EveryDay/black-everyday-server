@@ -75,8 +75,7 @@ tasks.register("generateAvroJava", JavaExec) {
     classpath = configurations.avroTools
     args = [
             "compile", "-string", "schema",
-            "src/main/avro/order_payment_confirm_request_v1.avsc",
-            "src/main/avro/order_payment_confirm_response_v1.avsc",
+            "src/main/avro/**.avsc",
             "build/generated-src"
     ]
 }

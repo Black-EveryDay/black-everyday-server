@@ -1,4 +1,4 @@
-package com.ed.payment.infrastructure.out.mq.config;
+package com.ed.payment.infrastructure.in.mq.config;
 
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG;

@@ -3,7 +3,7 @@ package com.ed.payment.application.service;
 import static com.ed.payment.domain.PaymentStatus.CANCELED;
 import static com.ed.payment.domain.PaymentStatus.DONE;
 import static com.ed.payment.domain.PaymentStatus.VERIFY_FAILED;
-import static com.ed.payment.domain.PaymentStatus.isSuccess;
+import static com.ed.payment.domain.PaymentStatus.isConfirmSuccess;
 import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_CONFIRM_RESPONSE;
 import static com.ed.payment.libs.common.exception.ErrorCode.DUPLICATED_ORDER_REQUEST;
 import static com.ed.payment.libs.common.exception.ErrorCode.EXPIRED_PAYMENT_CONFIRM_REQUEST;
@@ -12,6 +12,7 @@ import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_AMOUNT_MISM
 import com.ed.OrderPaymentConfirmResponse;
 import com.ed.payment.application.port.in.ConfirmPaymentCommand;
 import com.ed.payment.application.port.in.ConfirmPaymentUseCase;
+import com.ed.payment.application.port.out.mq.Producer;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.ReadPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
@@ -19,7 +20,6 @@ import com.ed.payment.application.port.out.pg.ConfirmPaymentPort;
 import com.ed.payment.application.port.out.pg.PaymentDone;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
-import com.ed.payment.infrastructure.out.mq.OrderPaymentConfirmProducer;
 import com.ed.payment.libs.common.exception.CustomException;
 import com.ed.payment.libs.common.helper.TransactionHelper;
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
   private final UpdatePaymentPort updatePaymentPort;
   private final ConfirmPaymentPort confirmPaymentPort;
   private final CreatePaymentHistoryPort createPaymentHistoryPort;
-  private final OrderPaymentConfirmProducer<OrderPaymentConfirmResponse> producer;
+  private final Producer<OrderPaymentConfirmResponse> orderPaymentConfirmProducer;
 
   @Transactional
   @Override
@@ -57,7 +57,7 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
         payment.getPaymentId(), paymentDone.getLastTransactionKey(), paymentDone.getPaymentStatus(),
         paymentDone.getTotalAmount(), paymentDone.getBalanceAmount());
 
-    sendOrderPaymentConfirmResponse(paymentDone);
+    sendOrderPaymentConfirmResponse(paymentDone, payment.getPaymentPublicId());
 
     return paymentDone;
   }
@@ -68,7 +68,7 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
       throw new CustomException(DUPLICATED_ORDER_REQUEST);
     }
 
-    if (isExpiredPaymentRequest(payment, command)) {
+    if (isExpiredPaymentRequest(payment, command.getRequestDateTime())) {
       logExpiredPaymentRequest(payment, command);
       throw new CustomException(EXPIRED_PAYMENT_CONFIRM_REQUEST);
     }
@@ -90,15 +90,15 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
     return paymentStatus == DONE || paymentStatus == CANCELED;
   }
 
-  private boolean isExpiredPaymentRequest(Payment payment, ConfirmPaymentCommand command) {
-    return payment.getConfirmDeadline().isBefore(command.getRequestDateTime());
+  private boolean isExpiredPaymentRequest(Payment payment, LocalDateTime requestDateTime) {
+    return payment.getConfirmDeadline().isBefore(requestDateTime);
   }
 
-  private void sendOrderPaymentConfirmResponse(PaymentDone paymentDone) {
-    producer.send(ORDER_PAYMENT_CONFIRM_RESPONSE, OrderPaymentConfirmResponse.newBuilder()
-        .setIsSuccess(isSuccess(paymentDone.getPaymentStatus()))
+  private void sendOrderPaymentConfirmResponse(PaymentDone paymentDone, String paymentPublicId) {
+    orderPaymentConfirmProducer.send(ORDER_PAYMENT_CONFIRM_RESPONSE, OrderPaymentConfirmResponse.newBuilder()
+        .setIsSuccess(isConfirmSuccess(paymentDone.getPaymentStatus()))
         .setOrderId(paymentDone.getOrderId())
-        .setPaymentId(paymentDone.getPaymentKey())
+        .setPaymentId(paymentPublicId)
         .setMessageTimestamp(LocalDateTime.now())
         .build());
   }

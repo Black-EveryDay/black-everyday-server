@@ -1,6 +1,6 @@
 {
   "type": "record",
-  "name": "OrderPaymentConfirmRequest",
+  "name": "OrderPaymentCreateRequest",
   "namespace": "com.ed",
   "fields": [
     {

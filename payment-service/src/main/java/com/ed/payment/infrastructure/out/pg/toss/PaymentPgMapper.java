@@ -7,19 +7,15 @@ import com.ed.payment.application.port.out.pg.PaymentDone;
 import org.springframework.stereotype.Component;
 
 @Component
-class PaymentDoneMapper {
+class PaymentPgMapper {
 
-  PaymentDone mapToApplication(TossPaymentDone tossPaymentDone) {
+  PaymentDone mapConfirmResponseToApplication(TossPaymentDone tossPaymentDone) {
     return PaymentDone.of(
         tossPaymentDone.getPaymentKey(),
         tossPaymentDone.getOrderId(),
         tossPaymentDone.getTotalAmount(),
         tossPaymentDone.getBalanceAmount(),
-        isPaymentConfirmed(tossPaymentDone.getStatus()) ? DONE : ABORTED,
+        DONE.name().equalsIgnoreCase(tossPaymentDone.getStatus()) ? DONE : ABORTED,
         tossPaymentDone.getLastTransactionKey());
-  }
-
-  private boolean isPaymentConfirmed(String paymentStatus) {
-    return DONE.name().equalsIgnoreCase(paymentStatus);
   }
 }
