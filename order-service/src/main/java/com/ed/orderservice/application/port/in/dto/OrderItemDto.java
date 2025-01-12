@@ -1,5 +1,6 @@
-package com.ed.orderservice.application.port.in;
+package com.ed.orderservice.application.port.in.dto;
 
+import com.ed.orderservice.infrastructure.external.fegin.domain.product.dto.ProductCategory;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,14 +12,15 @@ public class OrderItemDto {
   private String brandId;
   private String productId;
   private String productName;
-  private Long quantity;
+  private int quantity;
   private Long unitPrice;
   private String size;
-  private String productCategory;
+  private ProductCategory productCategory;
+  private String orderItemCouponId;
 
   @Builder
-  public OrderItemDto(String brandId, String productId, String productName, Long quantity,
-      Long unitPrice, String size, String productCategory) {
+  public OrderItemDto(String brandId, String productId, String productName, int quantity,
+      Long unitPrice, String size, ProductCategory productCategory, String orderItemCouponId) {
     this.brandId = brandId;
     this.productId = productId;
     this.productName = productName;
@@ -26,5 +28,7 @@ public class OrderItemDto {
     this.unitPrice = unitPrice;
     this.size = size;
     this.productCategory = productCategory;
+    this.orderItemCouponId = orderItemCouponId;
   }
+
 }
