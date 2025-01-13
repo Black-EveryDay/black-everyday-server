@@ -10,9 +10,24 @@ spring:
         default_schema: public
         default_batch_fetch_size: 500
     open-in-view: false
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${SPRING_DATASOURCE_URL}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS}
+    schema-registry-url: ${SCHEMA_REGISTRY_URL}
+server:
+  port: 19095
+
+feign:
+  client:
+    config:
+      event-service:
+        loggerLevel: FULL
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
