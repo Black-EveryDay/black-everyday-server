@@ -15,18 +15,27 @@ Authorization: "Bearer {{jwttoken}}"
   "expirationDate": "2025-08-31T14:00:00.000Z"
 }
 
-### 쿠폰 발급 API
-@couponPublicId =52acde1a-e254-4ea7-b18d-735dc5bdd585
-POST http://localhost:19096/api/v1/coupon-templates/{{couponPublicId}}/coupons
+### 쿠폰 생성 API
+@couponTemplatePublicId =eac65ea9-1db4-4f63-85cf-6a2a9debbcc9
+POST http://localhost:19096/api/v1/coupon-templates/{{couponTemplatePublicId}}/coupons
 Content-Type: application/json
 
 {
   "quantity": 10
 }
 
+
+### 쿠폰 발급 API
+@couponPublicId=bc4e62cf-1aaf-4e94-a630-c7efe79f7671
+POST http://localhost:19096/api/v1/coupons/{{couponPublicId}}/user
+Content-Type: application/json
+
+{
+  "userId": "aff9c535-cd4c-4252-989b-7bb10d9aec3b"
+}
+
 ### 쿠폰 사용 API
-@couponPublicId2=aff9c535-cd4c-4252-989b-7bb10d9aec3b
-POST http://localhost:19096/api/v1/internal/coupons/{{couponPublicId2}}/orderInfo
+POST http://localhost:19096/api/v1/internal/coupons/{{couponPublicId}}/orderInfo
 Content-Type: application/json
 
 {
@@ -37,4 +46,4 @@ Content-Type: application/json
 }
 
 ### 쿠폰 사용 취소 API
-POST http://localhost:19096/api/v1/internal/coupons/{{couponPublicId2}}/orderInfo/cancel
+POST http://localhost:19096/api/v1/internal/coupons/{{couponPublicId}}/orderInfo/cancel
