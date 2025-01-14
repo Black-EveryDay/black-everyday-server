@@ -3,7 +3,9 @@ package com.ed.eventservice.coupon.application.service;
 import com.ed.eventservice.coupon.application.port.in.CouponCancelUseCommand;
 import com.ed.eventservice.coupon.application.port.in.CouponUseCase;
 import com.ed.eventservice.coupon.application.port.in.CouponUseCommand;
+import com.ed.eventservice.coupon.application.port.in.IssueCouponCommand;
 import com.ed.eventservice.coupon.application.port.out.CouponPersistencePort;
+import com.ed.eventservice.coupon.application.port.out.dto.IssueCouponResponse;
 import com.ed.eventservice.coupon.application.port.out.dto.UseCouponResponse;
 import com.ed.eventservice.coupon.domain.Coupon;
 import com.ed.eventservice.coupon.domain.mapper.CouponMapper;
@@ -44,4 +46,18 @@ public class CouponService implements CouponUseCase {
 
     return couponMapper.couponToUseCouponResponse(coupon);
   }
+
+  @Override
+  @Transactional
+  public IssueCouponResponse issueCoupon(IssueCouponCommand command) {
+
+    Coupon coupon = couponPersistencePort.getCouponByPublicId(command.getCouponId());
+
+    coupon.issueCoupon(command.getUserId());
+
+    couponPersistencePort.updateCouponStatus(coupon);
+
+    return couponMapper.couponToIssueCouponResponse(coupon);
+  }
+
 }

@@ -18,10 +18,10 @@ public class Coupon {
   private final Long id;
   private final UUID publicId;
   private final CouponTemplate couponTemplate;
-  private final UUID userId;
   private final LocalDateTime expirationDate;
   private final LocalDateTime issuedAt;
   private final List<CouponStatusChangeLog> couponStatusChangeLogs;
+  private UUID userId;
   private CouponState state;
 
   @Builder
@@ -132,5 +132,30 @@ public class Coupon {
             .reason(CouponStatusChangeReason.CANCELED)
             .build()
     );
+  }
+
+  public void issueCoupon(UUID userId) {
+
+    if (this.state != CouponState.CREATED) {
+
+      throw new DomainException(ExceptionStatus.COUPON_NOT_ISSUABLE);
+    }
+
+    if (Objects.nonNull(this.userId)) {
+
+      throw new DomainException(ExceptionStatus.COUPON_ALREADY_ASSIGNED);
+    }
+
+    this.userId = userId;
+    this.couponStatusChangeLogs.add(
+        CouponStatusChangeLog.builder()
+            .couponId(this.id)
+            .beforeStatus(this.state)
+            .afterStatus(CouponState.ISSUED)
+            .changedAt(LocalDateTime.now())
+            .reason(CouponStatusChangeReason.ISSUED)
+            .build()
+    );
+    this.state = CouponState.ISSUED;
   }
 }
