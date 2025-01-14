@@ -48,10 +48,9 @@ public class ProductCommandService implements ProductUseCase {
 
   @Override
   public Product updateProduct(ProductForUpdate request) {
-    Product product = productOutPort.findOne(request.productPublicId());
     brandOutPort.findOne(request.brandId());
 
-    return productOutPort.update(product.update(request));
+    return productOutPort.update(request);
   }
 
   @Override

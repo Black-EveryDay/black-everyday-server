@@ -69,7 +69,7 @@ public class ProductEntity extends BaseEntity {
   }
 
   public void update(Product product) {
-    this.brandId = product.getProductId();
+    this.brandId = product.getBrandId();
     this.name = product.getName();
     this.description = product.getDescription();
     this.color = product.getColor();

@@ -1,10 +1,12 @@
 package com.ed.productservice.infrastructure.persistence.adapter;
 
 import static com.ed.productservice.libs.common.ErrorCode.PRODUCT_NOT_FOUND;
+import static com.ed.productservice.libs.common.ErrorCode.PRODUCT_PRICE_NOT_FOUND;
 
 import com.ed.productservice.application.port.out.ProductOutPort;
 import com.ed.productservice.domain.ProductForCreate;
 import com.ed.productservice.domain.vo.Product;
+import com.ed.productservice.domain.vo.ProductForUpdate;
 import com.ed.productservice.infrastructure.persistence.adapter.mapper.ProductMapper;
 import com.ed.productservice.infrastructure.persistence.entity.ProductEntity;
 import com.ed.productservice.infrastructure.persistence.entity.ProductPriceVersionEntity;
@@ -36,20 +38,19 @@ public class ProductAdapter implements ProductOutPort {
     ProductEntity entity = productRepository.findByProductPublicId(productPublicId)
         .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
 
-    ProductPriceVersionEntity productPriceVersionEntity = productPriceVersionRepository.findByProductId(
-        entity.getProductId()).orElseThrow();
+    ProductPriceVersionEntity productPriceVersionEntity = getCurrentPrice(entity);
 
     return productMapper.toDomain(entity, productPriceVersionEntity.getPrice());
   }
 
   @Override
-  public Product update(Product product) {
-    ProductEntity entity = productRepository.findById(product.getProductId())
-        .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+  public Product update(ProductForUpdate productForUpdate) {
+    ProductEntity entity = updateProductEntity(productForUpdate);
 
-    entity.update(product);
-    return null;
-//    return productMapper.toDomain(entity, productPriceVersionEntity.getPrice());
+    ProductPriceVersionEntity productPriceVersionEntity = updateProductPrice(productForUpdate,
+        entity);
+
+    return productMapper.toDomain(entity, productPriceVersionEntity.getPrice());
   }
 
   @Override
@@ -66,10 +67,55 @@ public class ProductAdapter implements ProductOutPort {
     return productRepository.save(entity);
   }
 
-  private void createProductPriceVersion(ProductForCreate productForCreate, ProductEntity productEntity) {
+  private void createProductPriceVersion(ProductForCreate productForCreate,
+      ProductEntity productEntity) {
     ProductPriceVersionEntity entity = ProductPriceVersionEntity.of(productEntity.getProductId(),
         productForCreate.getPrice());
 
     productPriceVersionRepository.save(entity);
+  }
+
+  private ProductPriceVersionEntity updateProductPrice(ProductForUpdate productForUpdate,
+      ProductEntity entity) {
+    var currentPrice = getCurrentPrice(entity);
+
+    if (isPriceChange(productForUpdate, currentPrice)) {
+
+      return createNewPriceVersion(productForUpdate, entity, currentPrice);
+    }
+
+    return currentPrice;
+  }
+
+  private ProductPriceVersionEntity getCurrentPrice(ProductEntity entity) {
+
+    return productPriceVersionRepository.findByProductId(entity.getProductId())
+        .orElseThrow(() -> new ProductException(PRODUCT_PRICE_NOT_FOUND));
+  }
+
+  private static boolean isPriceChange(ProductForUpdate productForUpdate,
+      ProductPriceVersionEntity currentPrice) {
+
+    return productForUpdate.price() != currentPrice.getPrice();
+  }
+
+  private ProductPriceVersionEntity createNewPriceVersion(ProductForUpdate productForUpdate,
+      ProductEntity entity, ProductPriceVersionEntity currentPrice) {
+    var newPrice = ProductPriceVersionEntity.of(entity.getProductId(), productForUpdate.price(),
+        currentPrice.getVersion());
+
+    currentPrice.deletedFrom();
+
+    return productPriceVersionRepository.save(newPrice);
+  }
+
+  private ProductEntity updateProductEntity(ProductForUpdate productForUpdate) {
+    var productEntity = productRepository.findByProductPublicId(
+            productForUpdate.productPublicId())
+        .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+
+    productEntity.update(Product.from(productForUpdate));
+
+    return productEntity;
   }
 }

@@ -1,5 +1,6 @@
 package com.ed.productservice.infrastructure.persistence.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,18 +20,31 @@ import lombok.NoArgsConstructor;
 public class ProductPriceVersionEntity extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long productPriceVersion;
+  @Column(name = "PRODUCT_PRICE_VERSION_ID")
+  private Long productPriceVersionId;
 
+  @Column(name = "PRODUCT_ID")
   private Long productId;
 
+  @Column(name = "PRICE")
   private Integer price;
-  private Long version;
+
+  @Column(name = "VERSION")
+  private int version;
+
+  public static ProductPriceVersionEntity of(Long productId, int price, int version) {
+    return ProductPriceVersionEntity.builder()
+        .productId(productId)
+        .price(price)
+        .version(version + 1)
+        .build();
+  }
 
   public static ProductPriceVersionEntity of(Long productId, int price) {
     return ProductPriceVersionEntity.builder()
         .productId(productId)
         .price(price)
-        .version(1L)
+        .version(1)
         .build();
   }
 }

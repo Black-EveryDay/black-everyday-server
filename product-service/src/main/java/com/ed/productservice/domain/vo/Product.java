@@ -25,16 +25,29 @@ public class Product {
   private ProductCategory category;
   private LocalDateTime createdAt;
 
-  public Product update(ProductForUpdate request) {
-    this.brandId = request.brandId();
-    this.name = request.name();
-    this.price = request.price();
-    this.description = request.description();
-    this.color = request.color();
-    this.image = request.image();
-    this.status = request.status();
-    this.category = request.category();
+  public static Product from(ProductForUpdate productForUpdate) {
+    return new Product(
+        productForUpdate.brandId(),
+        productForUpdate.name(),
+        productForUpdate.price(),
+        productForUpdate.description(),
+        productForUpdate.color(),
+        productForUpdate.image(),
+        productForUpdate.status(),
+        productForUpdate.category()
+    );
+  }
 
-    return this;
+  public Product(Long brandId, String name, int price, String description, String color,
+      String image,
+      ProductStatus status, ProductCategory category) {
+    this.brandId = brandId;
+    this.name = name;
+    this.price = price;
+    this.description = description;
+    this.color = color;
+    this.image = image;
+    this.status = status;
+    this.category = category;
   }
 }
