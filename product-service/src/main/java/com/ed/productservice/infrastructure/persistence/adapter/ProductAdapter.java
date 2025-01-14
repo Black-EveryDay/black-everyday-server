@@ -7,6 +7,8 @@ import com.ed.productservice.domain.ProductForCreate;
 import com.ed.productservice.domain.vo.Product;
 import com.ed.productservice.infrastructure.persistence.adapter.mapper.ProductMapper;
 import com.ed.productservice.infrastructure.persistence.entity.ProductEntity;
+import com.ed.productservice.infrastructure.persistence.entity.ProductPriceVersionEntity;
+import com.ed.productservice.infrastructure.persistence.repository.ProductPriceVersionRepository;
 import com.ed.productservice.infrastructure.persistence.repository.ProductRepository;
 import com.ed.productservice.libs.common.ProductException;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +19,16 @@ import org.springframework.stereotype.Component;
 public class ProductAdapter implements ProductOutPort {
 
   private final ProductRepository productRepository;
+  private final ProductPriceVersionRepository productPriceVersionRepository;
   private final ProductMapper productMapper;
 
   @Override
   public Product createProduct(ProductForCreate productForCreate, Long brandId) {
-    ProductEntity entity = productMapper.from(productForCreate, brandId);
+    ProductEntity entity = createProductEntity(productForCreate, brandId);
 
-    return productMapper.toDomain(productRepository.save(entity));
+    createProductPriceVersion(productForCreate, entity);
+
+    return productMapper.toDomain(entity, productForCreate.getPrice());
   }
 
   @Override
@@ -31,7 +36,10 @@ public class ProductAdapter implements ProductOutPort {
     ProductEntity entity = productRepository.findByProductPublicId(productPublicId)
         .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
 
-    return productMapper.toDomain(entity);
+    ProductPriceVersionEntity productPriceVersionEntity = productPriceVersionRepository.findByProductId(
+        entity.getProductId()).orElseThrow();
+
+    return productMapper.toDomain(entity, productPriceVersionEntity.getPrice());
   }
 
   @Override
@@ -40,8 +48,8 @@ public class ProductAdapter implements ProductOutPort {
         .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
 
     entity.update(product);
-
-    return productMapper.toDomain(entity);
+    return null;
+//    return productMapper.toDomain(entity, productPriceVersionEntity.getPrice());
   }
 
   @Override
@@ -50,5 +58,18 @@ public class ProductAdapter implements ProductOutPort {
         .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
 
     entity.deletedFrom();
+  }
+
+  private ProductEntity createProductEntity(ProductForCreate productForCreate, Long brandId) {
+    ProductEntity entity = productMapper.from(productForCreate, brandId);
+
+    return productRepository.save(entity);
+  }
+
+  private void createProductPriceVersion(ProductForCreate productForCreate, ProductEntity productEntity) {
+    ProductPriceVersionEntity entity = ProductPriceVersionEntity.of(productEntity.getProductId(),
+        productForCreate.getPrice());
+
+    productPriceVersionRepository.save(entity);
   }
 }

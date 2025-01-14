@@ -3,9 +3,8 @@ package com.ed.productservice.infrastructure.persistence.adapter.mapper;
 import com.ed.productservice.domain.ProductForCreate;
 import com.ed.productservice.domain.vo.Product;
 import com.ed.productservice.infrastructure.persistence.entity.ProductEntity;
-import org.springframework.stereotype.Component;
-
 import java.util.UUID;
+import org.springframework.stereotype.Component;
 
 @Component
 public class ProductMapper {
@@ -15,7 +14,6 @@ public class ProductMapper {
         productPublicId(createPublicId())
         .brandId(brandId)
         .name(productForCreate.getName())
-        .price(productForCreate.getPrice())
         .description(productForCreate.getDescription())
         .color(productForCreate.getColor())
         .image(productForCreate.getImage())
@@ -28,13 +26,13 @@ public class ProductMapper {
     return UUID.randomUUID().toString();
   }
 
-  public Product toDomain(ProductEntity entity) {
+  public Product toDomain(ProductEntity entity, int price) {
     return new Product(
         entity.getProductId(),
         entity.getProductPublicId(),
         entity.getBrandId(),
         entity.getName(),
-        entity.getPrice(),
+        price,
         entity.getDescription(),
         entity.getColor(),
         entity.getImage(),
