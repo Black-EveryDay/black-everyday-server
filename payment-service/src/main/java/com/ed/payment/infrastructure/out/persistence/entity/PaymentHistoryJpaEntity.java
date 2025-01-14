@@ -58,13 +58,13 @@ public class PaymentHistoryJpaEntity extends BaseTimeJpaEntity {
   @Column(name = "CANCEL_REASON")
   private String cancelReason;
 
-  public static PaymentHistoryJpaEntity createPaymentHistory(Long paymentId, Long amount) {
+  public static PaymentHistoryJpaEntity createPaymentHistory(Long paymentId, Long totalAmount, Long balanceAmount) {
     return PaymentHistoryJpaEntity.builder()
         .paymentHistoryPublicId(generatePublicId())
         .paymentId(paymentId)
         .paymentStatus(READY)
-        .totalAmount(amount)
-        .balanceAmount(amount)
+        .totalAmount(totalAmount)
+        .balanceAmount(balanceAmount)
         .build();
   }
 

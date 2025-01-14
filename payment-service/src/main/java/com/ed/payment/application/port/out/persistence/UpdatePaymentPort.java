@@ -5,4 +5,5 @@ import com.ed.payment.domain.PaymentStatus;
 public interface UpdatePaymentPort {
   void updatePaymentStatusById(Long paymentId, PaymentStatus paymentStatus);
   void updatePaymentStatusAndPaymentKeyById(Long paymentId, PaymentStatus paymentStatus, String paymentKey);
+  void updatePaymentStatusAndIdempotencyKeyById(Long paymentId, PaymentStatus paymentStatus, Long totalAmount, Long balanceAmount);
 }

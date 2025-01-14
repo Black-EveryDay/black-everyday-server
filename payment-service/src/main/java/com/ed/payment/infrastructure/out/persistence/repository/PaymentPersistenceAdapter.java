@@ -3,11 +3,10 @@ package com.ed.payment.infrastructure.out.persistence.repository;
 import static com.ed.payment.domain.PaymentStatus.CANCELED;
 import static com.ed.payment.domain.PaymentStatus.DONE;
 import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_NOT_FOUND;
-import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_NOT_MATCHED;
 
 import com.ed.payment.application.port.out.persistence.CreatePaymentPort;
+import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.PaymentResponse;
-import com.ed.payment.application.port.out.persistence.ReadPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
@@ -20,7 +19,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-class PaymentPersistenceAdapter implements CreatePaymentPort, ReadPaymentPort, UpdatePaymentPort {
+class PaymentPersistenceAdapter implements CreatePaymentPort, GetPaymentPort, UpdatePaymentPort {
 
   private final SpringDataPaymentRepository paymentRepository;
   private final PaymentPersistenceMapper paymentPersistenceMapper;
@@ -57,13 +56,6 @@ class PaymentPersistenceAdapter implements CreatePaymentPort, ReadPaymentPort, U
   }
 
   @Override
-  public Payment getCancelablePayment(String paymentPublicId, LocalDateTime requestDateTime) {
-    PaymentJpaEntity entity = paymentRepository.findByPaymentPublicId(paymentPublicId, DONE, requestDateTime)
-        .orElseThrow(() -> new CustomException(PAYMENT_NOT_MATCHED));
-    return paymentPersistenceMapper.mapToDomain(entity);
-  }
-
-  @Override
   public void updatePaymentStatusById(Long paymentId, PaymentStatus paymentStatus) {
     getPaymentJpaEntity(paymentId).updatePaymentStatus(paymentStatus);
   }
@@ -71,6 +63,11 @@ class PaymentPersistenceAdapter implements CreatePaymentPort, ReadPaymentPort, U
   @Override
   public void updatePaymentStatusAndPaymentKeyById(Long paymentId, PaymentStatus paymentStatus, String paymentKey) {
     getPaymentJpaEntity(paymentId).updatePaymentStatusAndPaymentKey(paymentStatus, paymentKey);
+  }
+
+  @Override
+  public void updatePaymentStatusAndIdempotencyKeyById(Long paymentId, PaymentStatus paymentStatus, Long totalAmount, Long balanceAmount) {
+    getPaymentJpaEntity(paymentId).updatePaymentStatusAndAmountAndIdempotencyKey(paymentStatus, totalAmount, balanceAmount);
   }
 
   private PaymentJpaEntity getPaymentJpaEntity(Long paymentId) {

@@ -40,7 +40,7 @@ class RestTemplateTossConfirmPaymentTest {
         paymentId, paymentPublicId,
         null, idempotencyKey,
         userPublicId, paymentStatus, orderPublicId, orderName,
-        amount, confirmDeadline, cancelDeadLine);
+        amount, amount, confirmDeadline, cancelDeadLine);
 
     final String paymentKey = "tgen_20250107154634hYNt7";
     final String lastTransactionKey = "9C62B18EEF0DE3EB7F4422EB6D14BC6E";

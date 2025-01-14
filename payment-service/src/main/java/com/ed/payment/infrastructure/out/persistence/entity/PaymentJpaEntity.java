@@ -56,8 +56,11 @@ public class PaymentJpaEntity extends BaseTimeByJpaEntity {
   @Column(name = "ORDER_NAME", nullable = false)
   private String orderName;
 
-  @Column(name = "AMOUNT", nullable = false)
-  private Long amount;
+  @Column(name = "TOTAL_AMOUNT", nullable = false)
+  private Long totalAmount;
+
+  @Column(name = "BALANCE_AMOUNT", nullable = false)
+  private Long balanceAmount;
 
   @Column(name = "CONFIRM_DEADLINE", nullable = false)
   private LocalDateTime confirmDeadline;
@@ -76,7 +79,8 @@ public class PaymentJpaEntity extends BaseTimeByJpaEntity {
         .paymentStatus(READY)
         .orderPublicId(orderPublicId)
         .orderName(orderName)
-        .amount(amount)
+        .totalAmount(amount)
+        .balanceAmount(amount)
         .confirmDeadline(confirmDeadline)
         .cancelDeadLine(cancelDeadLine)
         .build();
@@ -91,6 +95,13 @@ public class PaymentJpaEntity extends BaseTimeByJpaEntity {
 
   public void updatePaymentStatusAndPaymentKey(PaymentStatus paymentStatus, String paymentKey) {
     this.paymentKey = paymentKey;
+    updatePaymentStatus(paymentStatus);
+  }
+
+  public void updatePaymentStatusAndAmountAndIdempotencyKey(PaymentStatus paymentStatus, Long totalAmount, Long balanceAmount) {
+    this.totalAmount = totalAmount;
+    this.balanceAmount = balanceAmount;
+    this.idempotencyKey = generatePublicId();
     updatePaymentStatus(paymentStatus);
   }
 

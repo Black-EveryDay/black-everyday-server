@@ -1,7 +1,7 @@
 package com.ed.payment.application.service;
 
 import static com.ed.payment.domain.PaymentStatus.CANCELED;
-import static com.ed.payment.domain.PaymentStatus.READY;
+import static com.ed.payment.domain.PaymentStatus.DONE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 import com.ed.OrderPaymentCancelRequest;
 import com.ed.OrderPaymentCancelResponse;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
-import com.ed.payment.application.port.out.persistence.ReadPaymentPort;
+import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.application.port.out.pg.CancelPaymentPort;
 import com.ed.payment.application.port.out.pg.PaymentCanceled;
@@ -33,10 +33,10 @@ class CancelPaymentServiceTest {
   private CancelPaymentService cancelPaymentService;
 
   @Mock
-  private CancelPaymentPort cancelPaymentPort;
+  private GetPaymentPort getPaymentPort;
 
   @Mock
-  private ReadPaymentPort readPaymentPort;
+  private CancelPaymentPort cancelPaymentPort;
 
   @Mock
   private UpdatePaymentPort updatePaymentPort;
@@ -50,8 +50,7 @@ class CancelPaymentServiceTest {
   @BeforeEach
   void setUp() {
     cancelPaymentService = new CancelPaymentService(
-        cancelPaymentPort, readPaymentPort, updatePaymentPort,
-        createPaymentHistoryPort, producer);
+        getPaymentPort, cancelPaymentPort, updatePaymentPort, createPaymentHistoryPort, producer);
   }
 
   @Test
@@ -73,7 +72,9 @@ class CancelPaymentServiceTest {
 
     OrderPaymentCancelRequest request = OrderPaymentCancelRequest.newBuilder()
         .setUserId(userPublicId)
+        .setOrderId(orderPublicId)
         .setPaymentId(paymentPublicId)
+        .setCancelAmount(cancelAmount)
         .setCancelReason(cancelReason)
         .setRequestDateTime(requestDateTime)
         .build();
@@ -81,18 +82,18 @@ class CancelPaymentServiceTest {
     PaymentCanceled paymentCanceled = getPaymentCanceled(paymentKey, orderPublicId, totalAmount, balanceAmount, cancelAmount, lastTransactionKey);
 
     // stubbing
-    when(readPaymentPort.getCancelablePayment(paymentPublicId, requestDateTime))
+    when(getPaymentPort.getPaymentByOrderPublicId(orderPublicId))
         .thenReturn(payment);
 
-    when(cancelPaymentPort.cancelPayment(paymentKey, idempotencyKey, cancelReason))
+    when(cancelPaymentPort.cancelPayment(paymentKey, idempotencyKey, cancelReason, cancelAmount))
         .thenReturn(paymentCanceled);
 
     doNothing().when(updatePaymentPort)
-        .updatePaymentStatusById(paymentId, CANCELED);
+        .updatePaymentStatusAndIdempotencyKeyById(paymentId, CANCELED, totalAmount, balanceAmount);
 
     doNothing().when(createPaymentHistoryPort)
         .createCancelSuccessPaymentHistory(paymentId, lastTransactionKey,
-            CANCELED,totalAmount, balanceAmount, cancelAmount, cancelReason);
+            CANCELED, totalAmount, balanceAmount, cancelAmount, cancelReason);
 
     when(producer.send(anyString(), any()))
         .thenReturn(true);
@@ -101,8 +102,8 @@ class CancelPaymentServiceTest {
     cancelPaymentService.cancelPayment(request);
 
     // then
-    verify(readPaymentPort).getCancelablePayment(anyString(), any());
-    verify(updatePaymentPort).updatePaymentStatusById(anyLong(), any());
+    verify(getPaymentPort).getPaymentByOrderPublicId(anyString());
+    verify(updatePaymentPort).updatePaymentStatusAndIdempotencyKeyById(anyLong(), any(), anyLong(), anyLong());
     verify(createPaymentHistoryPort).createCancelSuccessPaymentHistory(anyLong(), anyString(), any(), anyLong(), anyLong(), anyLong(), anyString());
     verify(producer).send(anyString(), any());
   }
@@ -112,7 +113,7 @@ class CancelPaymentServiceTest {
       String paymentPublicId, String userPublicId, String orderPublicId, String cancelReason) {
     return new Payment(
        paymentId, paymentPublicId, paymentKey, idempotencyKey,
-        userPublicId, READY, orderPublicId, cancelReason, 10000L,
+        userPublicId, DONE, orderPublicId, cancelReason, 10000L, 10000L,
         request.getRequestDateTime().plusDays(5), request.getRequestDateTime().plusDays(5));
   }
 

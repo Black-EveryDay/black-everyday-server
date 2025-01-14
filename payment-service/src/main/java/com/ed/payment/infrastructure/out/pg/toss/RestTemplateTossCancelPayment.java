@@ -23,7 +23,7 @@ public class RestTemplateTossCancelPayment implements TossCancelPayment {
 
   private static final String AUTHENTICATION_SCHEME = "Basic ";
 
-  private final PaymentPgMapper paymentPGMapper;
+  private final PaymentPgMapper paymentPgMapper;
 
   @Value("${pg.tosspayments.secret-key}")
   private String secretKey;
@@ -31,21 +31,22 @@ public class RestTemplateTossCancelPayment implements TossCancelPayment {
   private String baseUrl;
 
   @Override
-  public PaymentCanceled cancelPayment(String paymentKey, String idempotencyKey, String cancelReason) {
+  public PaymentCanceled cancelPayment(String paymentKey, String idempotencyKey, String cancelReason, Long cancelAmount) {
     RestTemplate restTemplate = new RestTemplate();
 
     URI url = URI.create(baseUrl + "/" + paymentKey + "/cancel");
     HttpHeaders headers = generateHeaders(idempotencyKey);
-    Map<String, Object> body = generateBody(cancelReason);
+    Map<String, Object> body = generateBody(cancelReason, cancelAmount);
 
     HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, headers);
-    return paymentPGMapper.mapCancelResponseToApplication(
+    return paymentPgMapper.mapCancelResponseToApplication(
         restTemplate.postForObject(url, httpEntity, TossPaymentCanceled.class));
   }
 
-  private Map<String, Object> generateBody(String cancelReason) {
+  private Map<String, Object> generateBody(String cancelReason, Long cancelAmount) {
     Map<String, Object> body = new HashMap<>();
     body.put("cancelReason", cancelReason);
+    body.put("cancelAmount", cancelAmount);
     return body;
   }
 

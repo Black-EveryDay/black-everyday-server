@@ -1,8 +1,7 @@
 package com.ed.payment.infrastructure.out.pg.toss;
 
-import static com.ed.payment.domain.PaymentStatus.ABORTED;
-import static com.ed.payment.domain.PaymentStatus.CANCELED;
-import static com.ed.payment.domain.PaymentStatus.DONE;
+import static com.ed.payment.domain.PaymentStatus.getCancelStatus;
+import static com.ed.payment.domain.PaymentStatus.getConfirmStatus;
 
 import com.ed.payment.application.port.out.pg.PaymentCanceled;
 import com.ed.payment.application.port.out.pg.PaymentDone;
@@ -17,19 +16,20 @@ class PaymentPgMapper {
         tossPaymentDone.getOrderId(),
         tossPaymentDone.getTotalAmount(),
         tossPaymentDone.getBalanceAmount(),
-        DONE.name().equalsIgnoreCase(tossPaymentDone.getStatus()) ? DONE : ABORTED,
+        getConfirmStatus(tossPaymentDone.getStatus()),
         tossPaymentDone.getLastTransactionKey());
   }
 
-  PaymentCanceled mapCancelResponseToApplication(TossPaymentCanceled tossPaymentCanceled) {
+  PaymentCanceled mapCancelResponseToApplication(
+      TossPaymentCanceled tossPaymentCanceled) {
     return PaymentCanceled.of(
         tossPaymentCanceled.getPaymentKey(),
         tossPaymentCanceled.getOrderId(),
         tossPaymentCanceled.getTotalAmount(),
         tossPaymentCanceled.getBalanceAmount(),
-        tossPaymentCanceled.getCancels().getFirst().getCancelAmount(),
-        tossPaymentCanceled.getCancels().getFirst().getCancelReason(),
-        CANCELED.name().equalsIgnoreCase(tossPaymentCanceled.getStatus()) ? CANCELED : ABORTED,
+        tossPaymentCanceled.getCancels().getLast().getCancelAmount(),
+        tossPaymentCanceled.getCancels().getLast().getCancelReason(),
+        getCancelStatus(tossPaymentCanceled.getStatus()),
         tossPaymentCanceled.getLastTransactionKey());
   }
 }

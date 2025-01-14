@@ -8,8 +8,16 @@
       "type": "string"
     },
     {
+      "name": "orderId",
+      "type": "string"
+    },
+    {
       "name": "paymentId",
       "type": "string"
+    },
+    {
+      "name": "cancelAmount",
+      "type": "long"
     },
     {
       "name": "cancelReason",

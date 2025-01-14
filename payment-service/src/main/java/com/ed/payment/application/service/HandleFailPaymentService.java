@@ -2,13 +2,13 @@ package com.ed.payment.application.service;
 
 import static com.ed.payment.domain.PaymentStatus.ABORTED;
 import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_CONFIRM_RESPONSE;
-import static com.ed.payment.libs.common.exception.ErrorCode.DUPLICATED_ORDER_REQUEST;
+import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_CONFIRM_NOT_ALLOWED;
 
 import com.ed.OrderPaymentConfirmResponse;
 import com.ed.payment.application.port.in.HandleFailPaymentCommand;
 import com.ed.payment.application.port.in.HandleFailPaymentUseCase;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
-import com.ed.payment.application.port.out.persistence.ReadPaymentPort;
+import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.application.port.out.pg.PaymentFail;
 import com.ed.payment.domain.Payment;
@@ -27,7 +27,7 @@ public class HandleFailPaymentService implements HandleFailPaymentUseCase {
 
   private static final String DUPLICATED_ORDER_ERROR = "DUPLICATED_ORDER_ID";
 
-  private final ReadPaymentPort readPaymentPort;
+  private final GetPaymentPort getPaymentPort;
   private final UpdatePaymentPort updatePaymentPort;
   private final CreatePaymentHistoryPort createPaymentHistoryPort;
   private final OrderPaymentResponse<OrderPaymentConfirmResponse> orderPaymentConfirmResponse;
@@ -36,10 +36,10 @@ public class HandleFailPaymentService implements HandleFailPaymentUseCase {
   @Override
   public PaymentFail handleFailPayment(HandleFailPaymentCommand command) {
     if (DUPLICATED_ORDER_ERROR.equalsIgnoreCase(command.getCode())) {
-      throw new CustomException(DUPLICATED_ORDER_REQUEST);
+      throw new CustomException(PAYMENT_CONFIRM_NOT_ALLOWED);
     }
 
-    Payment payment = readPaymentPort.getPaymentByOrderPublicId(command.getOrderId());
+    Payment payment = getPaymentPort.getPaymentByOrderPublicId(command.getOrderId());
     updatePaymentPort.updatePaymentStatusById(payment.getPaymentId(), ABORTED);
     createPaymentHistoryPort.createFailPaymentHistory(payment.getPaymentId(), ABORTED);
 

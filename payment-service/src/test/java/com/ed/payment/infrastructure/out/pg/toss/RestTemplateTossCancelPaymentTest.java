@@ -39,17 +39,13 @@ class RestTemplateTossCancelPaymentTest {
         cancelReason, paymentStatus, lastTransactionKey);
 
     // stubbing
-    when(mockRestTemplateTossCancelPayment.cancelPayment(paymentKey,
-        idempotencyKey, cancelReason))
+    when(mockRestTemplateTossCancelPayment.cancelPayment(paymentKey, idempotencyKey, cancelReason, cancelAmount))
         .thenReturn(response);
 
     // when
-    mockRestTemplateTossCancelPayment.cancelPayment(paymentKey, idempotencyKey,
-        cancelReason);
+    mockRestTemplateTossCancelPayment.cancelPayment(paymentKey, idempotencyKey, cancelReason, cancelAmount);
 
     // then
-    verify(mockRestTemplateTossCancelPayment).cancelPayment(paymentKey,
-        idempotencyKey, cancelReason);
+    verify(mockRestTemplateTossCancelPayment).cancelPayment(paymentKey, idempotencyKey, cancelReason, cancelAmount);
   }
-
 }

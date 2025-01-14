@@ -1,6 +1,6 @@
 package com.ed.payment.application.service;
 
-import static com.ed.payment.libs.common.exception.ErrorCode.DUPLICATED_ORDER_REQUEST;
+import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_CONFIRM_NOT_ALLOWED;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -14,7 +14,7 @@ import static org.mockito.Mockito.when;
 import com.ed.OrderPaymentConfirmResponse;
 import com.ed.payment.application.port.in.HandleFailPaymentCommand;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
-import com.ed.payment.application.port.out.persistence.ReadPaymentPort;
+import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
@@ -34,7 +34,7 @@ class HandleFailPaymentServiceTest {
   private HandleFailPaymentService handleFailPaymentService;
 
   @Mock
-  private ReadPaymentPort readPaymentPort;
+  private GetPaymentPort getPaymentPort;
 
   @Mock
   private UpdatePaymentPort updatePaymentPort;
@@ -48,7 +48,7 @@ class HandleFailPaymentServiceTest {
   @BeforeEach
   void setUp() {
     handleFailPaymentService = new HandleFailPaymentService(
-        readPaymentPort, updatePaymentPort, createPaymentHistoryPort, producer);
+        getPaymentPort, updatePaymentPort, createPaymentHistoryPort, producer);
   }
 
   @Test
@@ -61,7 +61,7 @@ class HandleFailPaymentServiceTest {
     HandleFailPaymentCommand request = HandleFailPaymentCommand.of(code,message, orderId);
 
     // stubbing
-    when(readPaymentPort.getPaymentByOrderPublicId(anyString()))
+    when(getPaymentPort.getPaymentByOrderPublicId(anyString()))
         .thenReturn(mock(Payment.class));
 
     doNothing()
@@ -79,7 +79,7 @@ class HandleFailPaymentServiceTest {
     handleFailPaymentService.handleFailPayment(request);
 
     // then
-    verify(readPaymentPort).getPaymentByOrderPublicId(anyString());
+    verify(getPaymentPort).getPaymentByOrderPublicId(anyString());
     verify(updatePaymentPort).updatePaymentStatusById(anyLong(), any(PaymentStatus.class));
     verify(createPaymentHistoryPort).createFailPaymentHistory(anyLong(),any(PaymentStatus.class));
     verify(producer).send(anyString(), any(OrderPaymentConfirmResponse.class));
@@ -98,9 +98,9 @@ class HandleFailPaymentServiceTest {
     assertThatThrownBy(
         () -> handleFailPaymentService.handleFailPayment(request))
         .isInstanceOf(CustomException.class)
-        .hasMessage(DUPLICATED_ORDER_REQUEST.getMessage());
+        .hasMessage(PAYMENT_CONFIRM_NOT_ALLOWED.getMessage());
 
-    verify(readPaymentPort, never()).getPaymentByOrderPublicId(anyString());
+    verify(getPaymentPort, never()).getPaymentByOrderPublicId(anyString());
     verify(updatePaymentPort, never()).updatePaymentStatusById(anyLong(), any(PaymentStatus.class));
     verify(createPaymentHistoryPort, never()).createFailPaymentHistory(anyLong(), any(PaymentStatus.class));
   }

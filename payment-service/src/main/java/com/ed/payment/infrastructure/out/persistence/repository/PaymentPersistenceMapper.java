@@ -14,7 +14,7 @@ class PaymentPersistenceMapper {
         paymentJpaEntity.getIdempotencyKey(),
         paymentJpaEntity.getOrderPublicId(),
         paymentJpaEntity.getOrderName(),
-        paymentJpaEntity.getAmount(),
+        paymentJpaEntity.getTotalAmount(),
         paymentJpaEntity.getConfirmDeadline(),
         paymentJpaEntity.getCancelDeadLine());
   }
@@ -29,7 +29,8 @@ class PaymentPersistenceMapper {
         paymentJpaEntity.getPaymentStatus(),
         paymentJpaEntity.getOrderPublicId(),
         paymentJpaEntity.getOrderName(),
-        paymentJpaEntity.getAmount(),
+        paymentJpaEntity.getTotalAmount(),
+        paymentJpaEntity.getBalanceAmount(),
         paymentJpaEntity.getConfirmDeadline(),
         paymentJpaEntity.getCancelDeadLine());
   }

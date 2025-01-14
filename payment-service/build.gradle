@@ -76,11 +76,9 @@ tasks.register("generateAvroJava", JavaExec) {
     description = "Compiles Avro schemas into Java classes"
     mainClass.set("org.apache.avro.tool.Main")
     classpath = configurations.avroTools
-    args = [
-            "compile", "-string", "schema",
-            "src/main/avro/**_v1.avsc",
-            "build/generated-src"
-    ]
+
+    def avroFiles = fileTree("src/main/avro").include("*.avsc")
+    args = ["compile", "-string", "schema"] + avroFiles.collect { it } + ["build/generated-src"]
 }
 
 tasks.named("compileJava") {

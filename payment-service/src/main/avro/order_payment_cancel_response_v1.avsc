@@ -16,6 +16,14 @@
       "type": "string"
     },
     {
+      "name": "cancelAmount",
+      "type": "long"
+    },
+    {
+      "name": "balanceAmount",
+      "type": "long"
+    },
+    {
       "name": "messageTimestamp",
       "type": {
         "type": "long",
