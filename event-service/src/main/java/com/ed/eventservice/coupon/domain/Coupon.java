@@ -2,6 +2,7 @@ package com.ed.eventservice.coupon.domain;
 
 import com.ed.eventservice.coupon.domain.enums.CouponState;
 import com.ed.eventservice.coupon.domain.enums.CouponStatusChangeReason;
+import com.ed.eventservice.coupon.domain.enums.CouponUsageTargetType;
 import com.ed.eventservice.coupon.domain.vo.CouponStatusChangeLog;
 import com.ed.eventservice.libs.exception.DomainException;
 import com.ed.eventservice.libs.exception.ExceptionStatus;
@@ -78,38 +79,14 @@ public class Coupon {
     }
   }
 
+  public CouponUsageTargetType getCouponUsageTargetType() {
+    
+    return this.couponTemplate.getCouponUsageTargetInfo().getCouponUsageTargetType();
+  }
+
   private void checkCouponUsageTarget(UUID brandId, UUID productId) {
 
-    switch (this.couponTemplate.getCouponUsageTargetInfo().getCouponUsageTargetType()) {
-
-      case ALL:
-        break;
-
-      case BRAND:
-        checkBrandCouponUsageTarget(brandId);
-        break;
-
-      case PRODUCT:
-        checkProductCouponUsageTarget(productId);
-        break;
-
-      default:
-        throw new DomainException(ExceptionStatus.COUPON_USAGE_TARGET_TYPE_NOT_SUPPORTED);
-    }
-  }
-
-  private void checkBrandCouponUsageTarget(UUID brandId) {
-
-    if (!this.couponTemplate.getCouponUsageTargetInfo().getCouponUsageTargetId().equals(brandId)) {
-
-      throw new DomainException(ExceptionStatus.COUPON_USAGE_TARGET_NOT_MATCHED);
-    }
-  }
-
-  private void checkProductCouponUsageTarget(UUID productId) {
-
-    if (productId.equals(
-        this.couponTemplate.getCouponUsageTargetInfo().getCouponUsageTargetId())) {
+    if (this.getCouponUsageTargetType().isNotTargetType(brandId, productId)) {
 
       throw new DomainException(ExceptionStatus.COUPON_USAGE_TARGET_NOT_MATCHED);
     }
