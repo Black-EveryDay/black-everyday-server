@@ -25,26 +25,28 @@ import lombok.NoArgsConstructor;
 public class CouponJpaEntity extends BaseJpaEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "COUPON_ID")
   private Long id;
 
-  @Column(unique = true, updatable = false, nullable = false, length = 36)
+  @Column(name = "COUPON_PUBLIC_ID", unique = true, updatable = false, nullable = false, length = 36)
   private String publicId;
 
-  @Column(nullable = false, length = 36)
+  @Column(name = "COUPON_TEMPLATE_ID", nullable = false, length = 36)
   private String couponTemplateId;
 
-  @Column(length = 36)
+  @Column(name = "USER_ID", length = 36)
   private String userId;
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "COUPON_STATE", nullable = false)
   private CouponState state;
 
-  @Column
+  @Column(name = "EXPIRATION_DATE")
   @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime expirationDate;
 
-  @Column
+  @Column(name = "ISSUED_AT")
   @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime issuedAt;
 

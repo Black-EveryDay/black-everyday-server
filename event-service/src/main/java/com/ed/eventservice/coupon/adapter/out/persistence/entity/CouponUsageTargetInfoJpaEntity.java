@@ -17,9 +17,10 @@ import lombok.NoArgsConstructor;
 public class CouponUsageTargetInfoJpaEntity {
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "COUPON_USAGE_TARGET_TYPE")
   private CouponUsageTargetType couponUsageTargetType;
 
-  @Column(length = 36)
+  @Column(name = "COUPON_USAGE_TARGET_ID", length = 36)
   private String couponUsageTargetId;
 
   @Builder

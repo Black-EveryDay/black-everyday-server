@@ -21,29 +21,32 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public abstract class BaseJpaEntity {
 
   @ColumnDefault("false")
+  @Column(name = "IS_DELETED")
   private Boolean isDeleted;
 
   @CreatedDate
-  @Column(updatable = false)
+  @Column(name = "CREATED_AT", updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime createdAt;
 
   @CreatedBy
-  @Column(updatable = false, length = 36)
+  @Column(name = "CREATED_BY", updatable = false, length = 36)
   private String createdBy;
 
   @LastModifiedDate
   @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "UPDATED_AT")
   private LocalDateTime updatedAt;
 
   @LastModifiedBy
-  @Column(length = 36)
+  @Column(name = "UPDATED_BY", length = 36)
   private String updatedBy;
 
   @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "DELETED_AT")
   private LocalDateTime deletedAt;
 
-  @Column(length = 36)
+  @Column(name = "DELETED_BY", length = 36)
   private String deletedBy;
 
   public void delete(UUID reqUserId) {

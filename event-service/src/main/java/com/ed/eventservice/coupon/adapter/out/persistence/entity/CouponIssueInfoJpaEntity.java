@@ -18,18 +18,20 @@ import lombok.NoArgsConstructor;
 public class CouponIssueInfoJpaEntity {
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "COUPON_ISSUANCE_TYPE", nullable = false)
   private CouponIssuanceType couponIssuanceType;
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "COUPON_ISSUER_TYPE", nullable = false)
   private CouponIssuerType couponIssuerType;
 
-  @Column(length = 36)
+  @Column(name = "COUPON_ISSUER_ID", length = 36)
   private String couponIssuerId;
 
-  @Column(nullable = false)
+  @Column(name = "IS_ISSUABLE", nullable = false)
   private Boolean isIssuable;
 
-  @Column
+  @Column(name = "MAX_ISSUANCE")
   private Integer maxIssuance;
 
   @Builder
@@ -40,7 +42,7 @@ public class CouponIssueInfoJpaEntity {
       Boolean isIssuable,
       Integer maxIssuance
   ) {
-    
+
     this.couponIssuanceType = couponIssuanceType;
     this.couponIssuerType = couponIssuerType;
     this.couponIssuerId = couponIssuerId == null ? null : couponIssuerId.toString();
