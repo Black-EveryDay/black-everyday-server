@@ -12,7 +12,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -61,7 +60,7 @@ public class CouponJpaEntity extends BaseJpaEntity {
   ) {
 
     this.id = id;
-    this.publicId = publicId == null ? UUID.randomUUID().toString() : publicId;
+    this.publicId = publicId;
     this.couponTemplateId = couponTemplateId;
     this.userId = userId;
     this.state = state;

@@ -6,6 +6,7 @@ import com.ed.eventservice.coupon.application.port.out.dto.CreateCouponTemplateR
 import com.ed.eventservice.coupon.domain.CouponTemplate;
 import com.ed.eventservice.coupon.domain.dto.CreateCouponTemplateDto;
 import java.time.Duration;
+import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -13,19 +14,19 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring", imports = {Duration.class})
 public interface CouponTemplateMapper {
 
-  @Mapping(target = "couponName", source = "couponName")
-  @Mapping(target = "couponIssueInfo.couponIssuanceType", source = "couponIssuanceType")
-  @Mapping(target = "couponIssueInfo.couponIssuerType", source = "couponIssuerType")
-  @Mapping(target = "couponIssueInfo.couponIssuerId", source = "couponIssuerId")
-  @Mapping(target = "couponIssueInfo.maxIssuance", source = "maxIssuance")
-  @Mapping(target = "couponIssueInfo.isIssuable", source = "isIssuable")
-  @Mapping(target = "couponUsageTargetInfo.couponUsageTargetType", source = "couponUsageTargetType")
-  @Mapping(target = "couponUsageTargetInfo.couponUsageTargetId", source = "couponUsageTargetId")
-  @Mapping(target = "couponDiscountInfo.discountType", source = "discountType")
-  @Mapping(target = "couponDiscountInfo.discountValue", source = "discountValue")
-  @Mapping(target = "couponExpirationInfo.expirationDays", source = "expirationDays", qualifiedByName = "toDuration")
-  @Mapping(target = "couponExpirationInfo.fixedExpirationDate", source = "expirationDate")
-  CreateCouponTemplateDto commandToCreateDto(CreateCouponTemplateCommand command);
+  @Mapping(target = "couponName", source = "command.couponName")
+  @Mapping(target = "couponIssueInfo.couponIssuanceType", source = "command.couponIssuanceType")
+  @Mapping(target = "couponIssueInfo.couponIssuerType", source = "command.couponIssuerType")
+  @Mapping(target = "couponIssueInfo.couponIssuerId", source = "command.couponIssuerId")
+  @Mapping(target = "couponIssueInfo.maxIssuance", source = "command.maxIssuance")
+  @Mapping(target = "couponIssueInfo.isIssuable", source = "command.isIssuable")
+  @Mapping(target = "couponUsageTargetInfo.couponUsageTargetType", source = "command.couponUsageTargetType")
+  @Mapping(target = "couponUsageTargetInfo.couponUsageTargetId", source = "command.couponUsageTargetId")
+  @Mapping(target = "couponDiscountInfo.discountType", source = "command.discountType")
+  @Mapping(target = "couponDiscountInfo.discountValue", source = "command.discountValue")
+  @Mapping(target = "couponExpirationInfo.expirationDays", source = "command.expirationDays", qualifiedByName = "toDuration")
+  @Mapping(target = "couponExpirationInfo.fixedExpirationDate", source = "command.expirationDate")
+  CreateCouponTemplateDto commandToCreateDto(CreateCouponTemplateCommand command, UUID publicId);
 
   @Named("toDuration")
   default Duration toDuration(Integer days) {
@@ -64,5 +65,5 @@ public interface CouponTemplateMapper {
   default Long toDays(Duration days) {
     return days.toDays();
   }
-  
+
 }

@@ -5,7 +5,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,9 +25,9 @@ public class CouponUsageTargetInfoJpaEntity {
   @Builder
   private CouponUsageTargetInfoJpaEntity(
       CouponUsageTargetType couponUsageTargetType,
-      UUID couponUsageTargetId
+      String couponUsageTargetId
   ) {
     this.couponUsageTargetType = couponUsageTargetType;
-    this.couponUsageTargetId = couponUsageTargetId == null ? null : couponUsageTargetId.toString();
+    this.couponUsageTargetId = couponUsageTargetId;
   }
 }

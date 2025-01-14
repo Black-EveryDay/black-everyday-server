@@ -6,7 +6,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +28,7 @@ public class CouponIssueInfoJpaEntity {
   private String couponIssuerId;
 
   @Column(name = "IS_ISSUABLE", nullable = false)
-  private Boolean isIssuable;
+  private boolean isIssuable;
 
   @Column(name = "MAX_ISSUANCE")
   private Integer maxIssuance;
@@ -38,15 +37,15 @@ public class CouponIssueInfoJpaEntity {
   private CouponIssueInfoJpaEntity(
       CouponIssuanceType couponIssuanceType,
       CouponIssuerType couponIssuerType,
-      UUID couponIssuerId,
-      Boolean isIssuable,
+      String couponIssuerId,
+      boolean isIssuable,
       Integer maxIssuance
   ) {
 
     this.couponIssuanceType = couponIssuanceType;
     this.couponIssuerType = couponIssuerType;
-    this.couponIssuerId = couponIssuerId == null ? null : couponIssuerId.toString();
-    this.isIssuable = isIssuable != null && isIssuable;
+    this.couponIssuerId = couponIssuerId;
+    this.isIssuable = isIssuable;
     this.maxIssuance = maxIssuance;
   }
 }

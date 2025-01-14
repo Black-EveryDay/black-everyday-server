@@ -88,7 +88,11 @@ public class CouponTemplate {
     LocalDateTime expirationDate = computeCouponExpiryDate(now);
 
     return IntStream.range(0, quantity).mapToObj(
-        i -> Coupon.builder().couponTemplate(this).issuedAt(now).expirationDate(expirationDate)
+        i -> Coupon.builder()
+            .publicId(UUID.randomUUID())
+            .couponTemplate(this)
+            .issuedAt(now)
+            .expirationDate(expirationDate)
             .build()).toList();
   }
 
