@@ -24,7 +24,7 @@ public class ProductQueryAdapter {
 
   public ProductInfoDto findById(String productPublicId) {
 
-    return productRepository.findByProductInfo(productPublicId)
+    return productRepository.findByProductWithPrice(productPublicId)
         .orElseThrow(() -> new ProductException(
             ErrorCode.PRODUCT_NOT_FOUND));
   }

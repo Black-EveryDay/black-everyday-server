@@ -11,12 +11,13 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
   @Query("SELECT new com.ed.productservice.domain.vo.ProductInfoDto(" +
       "p.productPublicId, p.color, p.image, p.category, p.description, " +
-      "p.name, p.price, b.brandName) " +
+      "p.name, pv.price, b.brandName) " +
       "FROM ProductEntity p " +
       "JOIN BrandEntity b ON p.brandId = b.brandId " +
+      "JOIN ProductPriceVersionEntity pv ON p.productId = pv.productId "+
       "WHERE p.productPublicId = :productPublicId " +
       "AND p.isDeleted is false")
-  Optional<ProductInfoDto> findByProductInfo(@Param("productPublicId") String productPublicId);
+  Optional<ProductInfoDto> findByProductWithPrice(@Param("productPublicId") String productPublicId);
 
   Optional<ProductEntity> findByProductPublicId(@Param("productPublicId") String productPublicId);
 }
