@@ -16,7 +16,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
       "JOIN BrandEntity b ON p.brandId = b.brandId " +
       "JOIN ProductPriceVersionEntity pv ON p.productId = pv.productId "+
       "WHERE p.productPublicId = :productPublicId " +
-      "AND p.isDeleted is false")
+      "AND p.isDeleted is false " +
+      "AND pv.isDeleted is false ")
   Optional<ProductInfoDto> findByProductWithPrice(@Param("productPublicId") String productPublicId);
 
   Optional<ProductEntity> findByProductPublicId(@Param("productPublicId") String productPublicId);
