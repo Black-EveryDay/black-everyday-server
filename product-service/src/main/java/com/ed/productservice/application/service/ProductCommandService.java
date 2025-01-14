@@ -58,7 +58,7 @@ public class ProductCommandService implements ProductUseCase {
     productOutPort.deleteOne(productPublicId);
   }
 
-  private Brand getBrandForCreate(Long bottomProduct) {
-    return brandOutPort.findOne(bottomProduct);
+  private Brand getBrandForCreate(Long brandId) {
+    return brandOutPort.findOne(brandId);
   }
 }
