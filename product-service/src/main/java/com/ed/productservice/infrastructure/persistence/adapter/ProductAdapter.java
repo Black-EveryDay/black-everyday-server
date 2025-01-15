@@ -38,7 +38,7 @@ public class ProductAdapter implements ProductOutPort {
     ProductEntity entity = productRepository.findByProductPublicId(productPublicId)
         .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
 
-    ProductPriceVersionEntity productPriceVersionEntity = getCurrentPrice(entity);
+    ProductPriceVersionEntity productPriceVersionEntity = getCurrentProductPriceVersionEntity(entity);
 
     return productMapper.toDomain(entity, productPriceVersionEntity.getPrice());
   }
@@ -77,34 +77,33 @@ public class ProductAdapter implements ProductOutPort {
 
   private ProductPriceVersionEntity updateProductPrice(ProductForUpdate productForUpdate,
       ProductEntity entity) {
-    var currentPrice = getCurrentPrice(entity);
+    var currentProductPriceVersionEntity = getCurrentProductPriceVersionEntity(entity);
 
-    if (isPriceChange(productForUpdate, currentPrice)) {
-
-      return createNewPriceVersion(productForUpdate, entity, currentPrice);
+    if (isNotChangedPrice(productForUpdate, currentProductPriceVersionEntity)) {
+      return currentProductPriceVersionEntity;
     }
 
-    return currentPrice;
+    return createNewPriceVersion(productForUpdate, entity, currentProductPriceVersionEntity);
   }
 
-  private ProductPriceVersionEntity getCurrentPrice(ProductEntity entity) {
+  private ProductPriceVersionEntity getCurrentProductPriceVersionEntity(ProductEntity entity) {
 
     return productPriceVersionRepository.findByProductId(entity.getProductId())
         .orElseThrow(() -> new ProductException(PRODUCT_PRICE_NOT_FOUND));
   }
 
-  private static boolean isPriceChange(ProductForUpdate productForUpdate,
-      ProductPriceVersionEntity currentPrice) {
+  private static boolean isNotChangedPrice(ProductForUpdate productForUpdate,
+      ProductPriceVersionEntity currentProductPriceVersionEntity) {
 
-    return productForUpdate.price() != currentPrice.getPrice();
+    return productForUpdate.price() == currentProductPriceVersionEntity.getPrice();
   }
 
   private ProductPriceVersionEntity createNewPriceVersion(ProductForUpdate productForUpdate,
-      ProductEntity entity, ProductPriceVersionEntity currentPrice) {
+      ProductEntity entity, ProductPriceVersionEntity currentProductPriceVersionEntity) {
     var newPrice = ProductPriceVersionEntity.of(entity.getProductId(), productForUpdate.price(),
-        currentPrice.getVersion());
+        currentProductPriceVersionEntity.getVersion());
 
-    currentPrice.deletedFrom();
+    currentProductPriceVersionEntity.deletedFrom();
 
     return productPriceVersionRepository.save(newPrice);
   }
