@@ -55,18 +55,18 @@ dependencies {
 }
 
 // Querydsl 설정
-def generated = 'src/main/generated'
-
-tasks.withType(JavaCompile) {
-    options.generatedSourceOutputDirectory = file(generated)
-}
+def querydslDir = "src/main/generated"
 
 sourceSets {
-    main.java.srcDirs += ["$projectDir/build/generated"]
+    main.java.srcDirs += [ querydslDir ]
+}
+
+tasks.withType(JavaCompile) {
+    options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
 }
 
 clean {
-    delete file(generated)
+    delete file(querydslDir)
 }
 
 tasks.named('test') {
