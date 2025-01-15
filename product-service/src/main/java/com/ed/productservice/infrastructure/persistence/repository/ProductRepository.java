@@ -17,8 +17,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
       "JOIN ProductPriceVersionEntity pv ON p.productId = pv.productId "+
       "WHERE p.productPublicId = :productPublicId " +
       "AND p.isDeleted is false " +
-      "AND pv.isDeleted is false ")
-  Optional<ProductInfoDto> findByProductWithPrice(@Param("productPublicId") String productPublicId);
+      "AND pv.isCurrentVersion is true ")
+  Optional<ProductInfoDto> findByProductAndCurrentPrice(@Param("productPublicId") String productPublicId);
 
   Optional<ProductEntity> findByProductPublicId(@Param("productPublicId") String productPublicId);
 
@@ -31,6 +31,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
       "WHERE p.productPublicId = :productPublicId " +
       "AND p.isDeleted is false " +
       "AND pv.version = :version ")
-  Optional<ProductInfoDto> findByProductWithPriceByVersion(@Param("productPublicId") String productPublicId,@Param("version") int version);
+  Optional<ProductInfoDto> findByProductAndPriceVersion(@Param("productPublicId") String productPublicId,@Param("version") int version);
 
 }

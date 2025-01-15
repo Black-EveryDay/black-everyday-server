@@ -58,7 +58,7 @@ public class ProductAdapter implements ProductOutPort {
     ProductEntity entity = productRepository.findByProductPublicId(productPublicId)
         .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
 
-    entity.deletedFrom();
+    entity.delete();
   }
 
   private ProductEntity createProductEntity(ProductForCreate productForCreate, Long brandId) {
@@ -83,7 +83,7 @@ public class ProductAdapter implements ProductOutPort {
       return currentProductPriceVersionEntity;
     }
 
-    return createNewPriceVersion(productForUpdate, entity, currentProductPriceVersionEntity);
+    return createNewPriceVersionAndArchivePreviousVersion(productForUpdate, entity, currentProductPriceVersionEntity);
   }
 
   private ProductPriceVersionEntity getCurrentProductPriceVersionEntity(ProductEntity entity) {
@@ -98,12 +98,12 @@ public class ProductAdapter implements ProductOutPort {
     return productForUpdate.price() == currentProductPriceVersionEntity.getPrice();
   }
 
-  private ProductPriceVersionEntity createNewPriceVersion(ProductForUpdate productForUpdate,
+  private ProductPriceVersionEntity createNewPriceVersionAndArchivePreviousVersion(ProductForUpdate productForUpdate,
       ProductEntity entity, ProductPriceVersionEntity currentProductPriceVersionEntity) {
     var newPrice = ProductPriceVersionEntity.of(entity.getProductId(), productForUpdate.price(),
         currentProductPriceVersionEntity.getVersion());
 
-    currentProductPriceVersionEntity.deletedFrom();
+    currentProductPriceVersionEntity.archivePreviousVersion();
 
     return productPriceVersionRepository.save(newPrice);
   }

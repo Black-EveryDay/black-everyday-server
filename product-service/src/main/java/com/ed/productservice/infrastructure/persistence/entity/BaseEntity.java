@@ -48,7 +48,7 @@ public class BaseEntity {
     this.updatedBy = updatedBy;
   }
 
-  public void deletedFrom() {
+  public void delete() {
     this.deletedAt = LocalDateTime.now();
     this.isDeleted = true;
   }
