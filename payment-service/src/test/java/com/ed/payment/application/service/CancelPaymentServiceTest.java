@@ -20,16 +20,17 @@ import com.ed.payment.domain.Payment;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class CancelPaymentServiceTest {
 
+  @InjectMocks
   private CancelPaymentService cancelPaymentService;
 
   @Mock
@@ -46,12 +47,6 @@ class CancelPaymentServiceTest {
 
   @Mock
   private OrderPaymentResponse<OrderPaymentCancelResponse> producer;
-
-  @BeforeEach
-  void setUp() {
-    cancelPaymentService = new CancelPaymentService(
-        getPaymentPort, cancelPaymentPort, updatePaymentPort, createPaymentHistoryPort, producer);
-  }
 
   @Test
   @DisplayName("cancelPayment: 주문 취소 시 발행한 취소 메시지를 기반으로 결제를 취소한다.")

@@ -20,16 +20,17 @@ import com.ed.payment.domain.PaymentStatus;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class ConfirmPaymentServiceTest {
 
+  @InjectMocks
   private ConfirmPaymentService confirmPaymentService;
 
   @Mock
@@ -46,13 +47,6 @@ class ConfirmPaymentServiceTest {
 
   @Mock
   private OrderPaymentResponse<OrderPaymentConfirmResponse> producer;
-
-  @BeforeEach
-  void setUp() {
-    confirmPaymentService = new ConfirmPaymentService(
-        getPaymentPort, confirmPaymentPort,
-        updatePaymentPort, createPaymentHistoryPort, producer);
-  }
 
   @Test
   @DisplayName("confirmPayment: 결제 승인 정보를 입력 받아 결제 승인을 요청한다.")

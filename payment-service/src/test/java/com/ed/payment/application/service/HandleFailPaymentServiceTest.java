@@ -21,16 +21,17 @@ import com.ed.payment.domain.PaymentStatus;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import com.ed.payment.libs.common.exception.CustomException;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class HandleFailPaymentServiceTest {
 
+  @InjectMocks
   private HandleFailPaymentService handleFailPaymentService;
 
   @Mock
@@ -44,12 +45,6 @@ class HandleFailPaymentServiceTest {
 
   @Mock
   private OrderPaymentResponse<OrderPaymentConfirmResponse> producer;
-
-  @BeforeEach
-  void setUp() {
-    handleFailPaymentService = new HandleFailPaymentService(
-        getPaymentPort, updatePaymentPort, createPaymentHistoryPort, producer);
-  }
 
   @Test
   @DisplayName("handleFailPayment: 결제 실패 정보를 입력 받아 결제 실패 원인을 반환한다.")

@@ -12,35 +12,30 @@ import static org.mockito.Mockito.when;
 import com.ed.OrderPaymentCreateRequest;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.CreatePaymentPort;
-import com.ed.payment.application.port.out.persistence.ReadPaymentPort;
+import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class CreatePaymentServiceTest {
 
+  @InjectMocks
   private CreatePaymentService createPaymentService;
 
   @Mock
-  private ReadPaymentPort readPaymentPort;
+  private GetPaymentPort getPaymentPort;
 
   @Mock
   private CreatePaymentPort createPaymentPort;
 
   @Mock
   private CreatePaymentHistoryPort createPaymentHistoryPort;
-
-  @BeforeEach
-  void setUp() {
-    createPaymentService = new CreatePaymentService(
-        readPaymentPort, createPaymentPort, createPaymentHistoryPort);
-  }
 
   @Test
   @DisplayName("createPayment: 주문 생성 시 발행한 주문 메시지를 기반으로 결제 데이터를 생성한다.")
@@ -65,22 +60,22 @@ class CreatePaymentServiceTest {
         .build();
 
     // stubbing
-    when(readPaymentPort.existsByOrderPublicId(orderId))
+    when(getPaymentPort.existsByOrderPublicId(orderId))
         .thenReturn(false);
 
     when(createPaymentPort.createPayment(anyString(), anyString(), anyString(), anyLong(), any(), any()))
         .thenReturn(mock());
 
     doNothing().when(createPaymentHistoryPort)
-        .createPaymentHistory(anyLong(), anyLong());
+        .createPaymentHistory(anyLong(), anyLong(), anyLong());
 
     // when
     createPaymentService.createPayment(orderPaymentCreateRequest);
 
   	// then
-    verify(readPaymentPort).existsByOrderPublicId(orderId);
+    verify(getPaymentPort).existsByOrderPublicId(orderId);
     verify(createPaymentPort).createPayment(anyString(), anyString(), anyString(), anyLong(), any(), any());
-    verify(createPaymentHistoryPort).createPaymentHistory(anyLong(), anyLong());
+    verify(createPaymentHistoryPort).createPaymentHistory(anyLong(), anyLong(), anyLong());
   }
 
   @Test
@@ -106,15 +101,15 @@ class CreatePaymentServiceTest {
         .build();
 
     // stubbing
-    when(readPaymentPort.existsByOrderPublicId(orderId))
+    when(getPaymentPort.existsByOrderPublicId(orderId))
         .thenReturn(true);
 
     // when
     createPaymentService.createPayment(orderPaymentCreateRequest);
 
     // then
-    verify(readPaymentPort).existsByOrderPublicId(orderId);
+    verify(getPaymentPort).existsByOrderPublicId(orderId);
     verify(createPaymentPort, never()).createPayment(anyString(), anyString(), anyString(), anyLong(), any(), any());
-    verify(createPaymentHistoryPort, never()).createPaymentHistory(anyLong(), anyLong());
+    verify(createPaymentHistoryPort, never()).createPaymentHistory(anyLong(), anyLong(), anyLong());
   }
 }
