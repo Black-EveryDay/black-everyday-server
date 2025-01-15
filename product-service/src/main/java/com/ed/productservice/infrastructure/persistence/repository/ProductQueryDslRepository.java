@@ -44,7 +44,6 @@ public class ProductQueryDslRepository {
             productEntity.category,
             productEntity.description,
             productEntity.name,
-            productEntity.price,
             brandEntity.brandName))
         .from(productEntity)
         .join(brandEntity).on(productEntity.brandId.eq(brandEntity.brandId))
@@ -52,8 +51,6 @@ public class ProductQueryDslRepository {
             nameContains(productName),
             colorEquals(color),
             categoryEquals(category),
-            priceGoe(minPrice),
-            priceLoe(maxPrice),
             brandNameEquals(brandName)
         );
 
@@ -71,8 +68,6 @@ public class ProductQueryDslRepository {
             nameContains(productName),
             colorEquals(color),
             categoryEquals(category),
-            priceGoe(minPrice),
-            priceLoe(maxPrice),
             brandNameEquals(brandName)
         )
         .fetchOne()).orElse(0L);
@@ -93,13 +88,6 @@ public class ProductQueryDslRepository {
     return category != null ? productEntity.category.eq(category) : null;
   }
 
-  private BooleanExpression priceGoe(Integer minPrice) {
-    return minPrice != null ? productEntity.price.goe(minPrice) : null;
-  }
-
-  private BooleanExpression priceLoe(Integer maxPrice) {
-    return maxPrice != null ? productEntity.price.loe(maxPrice) : null;
-  }
 
   private BooleanExpression brandNameEquals(String brandName) {
     return StringUtils.hasText(brandName) ? brandEntity.brandName.eq(brandName) : null;
@@ -113,10 +101,6 @@ public class ProductQueryDslRepository {
             return order.isAscending() ?
                 productEntity.createdAt.asc() :
                 productEntity.createdAt.desc();
-          case "price":
-            return order.isAscending() ?
-                productEntity.price.asc() :
-                productEntity.price.desc();
         }
       }
     }

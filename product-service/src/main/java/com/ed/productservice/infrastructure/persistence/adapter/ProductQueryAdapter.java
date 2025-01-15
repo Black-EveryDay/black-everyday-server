@@ -39,4 +39,11 @@ public class ProductQueryAdapter {
         condition.brandName(),
         pageable);
   }
+
+  public ProductInfoDto getProductByVersion(String productPublicId, int version) {
+
+    return productRepository.findByProductWithPriceByVersion(productPublicId, version)
+        .orElseThrow(() -> new ProductException(
+            ErrorCode.PRODUCT_NOT_FOUND));
+  }
 }
