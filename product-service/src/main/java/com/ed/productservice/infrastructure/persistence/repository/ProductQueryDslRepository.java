@@ -2,9 +2,11 @@ package com.ed.productservice.infrastructure.persistence.repository;
 
 import static com.ed.productservice.infrastructure.persistence.entity.QBrandEntity.brandEntity;
 import static com.ed.productservice.infrastructure.persistence.entity.QProductEntity.productEntity;
+import static com.ed.productservice.infrastructure.persistence.entity.QProductPriceVersionEntity.productPriceVersionEntity;
 
 import com.ed.productservice.domain.vo.ProductCategory;
 import com.ed.productservice.domain.vo.ProductInfoDto;
+import com.ed.productservice.infrastructure.persistence.entity.QProductPriceVersionEntity;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -44,14 +46,19 @@ public class ProductQueryDslRepository {
             productEntity.category,
             productEntity.description,
             productEntity.name,
+            productPriceVersionEntity.price,
             brandEntity.brandName))
         .from(productEntity)
         .join(brandEntity).on(productEntity.brandId.eq(brandEntity.brandId))
+        .join(productPriceVersionEntity)
+        .on(productEntity.productId.eq(productPriceVersionEntity.productId))
         .where(
             nameContains(productName),
             colorEquals(color),
             categoryEquals(category),
-            brandNameEquals(brandName)
+            brandNameEquals(brandName),
+            isNotDeletedPrice(),
+            priceBetween(minPrice, maxPrice)
         );
 
     List<ProductInfoDto> results = query
@@ -64,15 +71,40 @@ public class ProductQueryDslRepository {
         .select(productEntity.count())
         .from(productEntity)
         .join(brandEntity).on(productEntity.brandId.eq(brandEntity.brandId))
+        .join(productPriceVersionEntity)
+        .on(productEntity.productId.eq(productPriceVersionEntity.productId))
         .where(
             nameContains(productName),
             colorEquals(color),
             categoryEquals(category),
-            brandNameEquals(brandName)
+            brandNameEquals(brandName),
+            isNotDeletedPrice(),
+            priceBetween(minPrice, maxPrice)
         )
         .fetchOne()).orElse(0L);
 
     return new PageImpl<>(results, pageable, total);
+  }
+
+  private BooleanExpression isNotDeletedPrice() {
+    QProductPriceVersionEntity priceVersion = QProductPriceVersionEntity.productPriceVersionEntity;
+    return priceVersion.isDeleted.isFalse();
+  }
+
+  private BooleanExpression priceBetween(Integer minPrice, Integer maxPrice) {
+    if (minPrice == null && maxPrice == null) {
+      return null;
+    }
+
+    QProductPriceVersionEntity price = QProductPriceVersionEntity.productPriceVersionEntity;
+
+    if (minPrice == null) {
+      return price.price.loe(maxPrice);
+    }
+    if (maxPrice == null) {
+      return price.price.goe(minPrice);
+    }
+    return price.price.between(minPrice, maxPrice);
   }
 
 
@@ -101,6 +133,10 @@ public class ProductQueryDslRepository {
             return order.isAscending() ?
                 productEntity.createdAt.asc() :
                 productEntity.createdAt.desc();
+          case "price":
+            return order.isAscending() ?
+                productPriceVersionEntity.price.asc() :
+                productPriceVersionEntity.price.desc();
         }
       }
     }
