@@ -1,6 +1,6 @@
 package com.ed.payment.application.service;
 
-import static com.ed.payment.domain.PaymentStatus.isCancelSuccess;
+import static com.ed.payment.domain.PaymentStatus.isCanceled;
 import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_CANCEL_RESPONSE;
 
 import com.ed.OrderPaymentCancelRequest;
@@ -60,15 +60,19 @@ public class CancelPaymentService implements CancelPaymentUseCase {
   }
 
   private void sendOrderPaymentCancelResponse(
-      PaymentCanceledResponse paymentCanceledResponse, String paymentPublicId) {
-    orderPaymentCancelProducer.send(ORDER_PAYMENT_CANCEL_RESPONSE,
-        OrderPaymentCancelResponse.newBuilder()
-            .setIsSuccess(isCancelSuccess(paymentCanceledResponse.getPaymentStatus()))
-            .setOrderId(paymentCanceledResponse.getOrderId())
-            .setPaymentId(paymentPublicId)
-            .setCancelAmount(paymentCanceledResponse.getCancelAmount())
-            .setBalanceAmount(paymentCanceledResponse.getBalanceAmount())
-            .setMessageTimestamp(LocalDateTime.now())
-            .build());
+      PaymentCanceledResponse response, String paymentPublicId) {
+    orderPaymentCancelProducer.send(ORDER_PAYMENT_CANCEL_RESPONSE, createPaymentCancelMessage(response, paymentPublicId));
+  }
+
+  private OrderPaymentCancelResponse createPaymentCancelMessage(
+      PaymentCanceledResponse response, String paymentPublicId) {
+    return OrderPaymentCancelResponse.newBuilder()
+        .setIsSuccess(isCanceled(response.getPaymentStatus()))
+        .setOrderId(response.getOrderId())
+        .setPaymentId(paymentPublicId)
+        .setCancelAmount(response.getCancelAmount())
+        .setBalanceAmount(response.getBalanceAmount())
+        .setMessageTimestamp(LocalDateTime.now())
+        .build();
   }
 }

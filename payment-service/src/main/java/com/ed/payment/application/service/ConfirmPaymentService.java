@@ -1,6 +1,6 @@
 package com.ed.payment.application.service;
 
-import static com.ed.payment.domain.PaymentStatus.isConfirmSuccess;
+import static com.ed.payment.domain.PaymentStatus.isConfirmed;
 import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_CONFIRM_RESPONSE;
 
 import com.ed.OrderPaymentConfirmResponse;
@@ -61,13 +61,17 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
   }
 
   private void sendOrderPaymentConfirmResponse(
-      PaymentDoneResponse paymentDoneResponse, String paymentPublicId) {
-    orderPaymentConfirmProducer.send(ORDER_PAYMENT_CONFIRM_RESPONSE,
-        OrderPaymentConfirmResponse.newBuilder()
-            .setIsSuccess(isConfirmSuccess(paymentDoneResponse.getPaymentStatus()))
-            .setOrderId(paymentDoneResponse.getOrderId())
-            .setPaymentId(paymentPublicId)
-            .setMessageTimestamp(LocalDateTime.now())
-            .build());
+      PaymentDoneResponse response, String paymentPublicId) {
+    orderPaymentConfirmProducer.send(ORDER_PAYMENT_CONFIRM_RESPONSE, createPaymentConfirmMessage(response, paymentPublicId));
+  }
+
+  private OrderPaymentConfirmResponse createPaymentConfirmMessage(
+      PaymentDoneResponse response, String paymentPublicId) {
+    return OrderPaymentConfirmResponse.newBuilder()
+        .setIsSuccess(isConfirmed(response.getPaymentStatus()))
+        .setOrderId(response.getOrderId())
+        .setPaymentId(paymentPublicId)
+        .setMessageTimestamp(LocalDateTime.now())
+        .build();
   }
 }
