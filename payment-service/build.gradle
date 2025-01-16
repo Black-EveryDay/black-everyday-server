@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.1'
@@ -29,33 +31,31 @@ repositories {
 
 dependencies {
     // web
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}"
 
     // db
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'com.mysql:mysql-connector-j'
-
-    // gson
-    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
+    runtimeOnly "com.mysql:mysql-connector-j:${mysqlConnectorVersion}"
 
     // kafka
-    implementation 'org.springframework.kafka:spring-kafka'
-    testImplementation 'org.springframework.kafka:spring-kafka-test'
-    avroTools 'org.apache.avro:avro-tools:1.12.0'
-    implementation 'io.confluent:kafka-avro-serializer:7.8.0'
+    implementation "com.google.code.gson:gson:${gsonVersion}"
+    implementation "org.springframework.kafka:spring-kafka:${springKafkaVersion}"
+    testImplementation "org.springframework.kafka:spring-kafka-test:${springKafkaVersion}"
+    avroTools "org.apache.avro:avro-tools:${avroToolsVersion}"
+    implementation "io.confluent:kafka-avro-serializer:${kafkaAvroSerializerVersion}"
 
     // eureka
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${springCloudVersion}"
 
     // lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     // test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
 }
 
 tasks.named('test') {
@@ -71,6 +71,39 @@ sourceSets {
     }
 }
 
+tasks.register("fetchSchemas") {
+    group = "build"
+    description = "Downloads AVSC files from Confluent Schema Registry with wildcard filtering"
+
+    def schemaRegistryUrl = "http://localhost:8081"
+    def subjectPattern = ~/^order_payment_.*-value$/
+    def outputDir = file("src/main/avro")
+
+    inputs.property("schemaRegistryUrl", schemaRegistryUrl)
+    inputs.property("subjectPattern", subjectPattern.toString())
+    outputs.dir(outputDir)
+
+    doLast {
+        outputDir.mkdirs()
+
+        def allSubjects = new URL("${schemaRegistryUrl}/subjects").text
+        def subjectList = new JsonSlurper().parseText(allSubjects)
+
+        def matchedSubjects = subjectList.findAll { it ==~ subjectPattern }
+        println "Matched subjects: ${matchedSubjects}"
+
+        matchedSubjects.each { subject ->
+            def schemaUrl = "${schemaRegistryUrl}/subjects/${subject}/versions/latest"
+            def response = new URL(schemaUrl).text
+            def schema = new JsonSlurper().parseText(response).schema
+
+            def fileName = subject.replaceAll('-value$', "") + ".avsc"
+            def avscFile = new File(outputDir, fileName)
+            avscFile.text = schema
+        }
+    }
+}
+
 tasks.register("generateAvroJava", JavaExec) {
     group = "build"
     description = "Compiles Avro schemas into Java classes"
@@ -79,6 +112,7 @@ tasks.register("generateAvroJava", JavaExec) {
 
     def avroFiles = fileTree("src/main/avro").include("*.avsc")
     args = ["compile", "-string", "schema"] + avroFiles.collect { it } + ["build/generated-src"]
+    dependsOn("fetchSchemas")
 }
 
 tasks.named("compileJava") {
