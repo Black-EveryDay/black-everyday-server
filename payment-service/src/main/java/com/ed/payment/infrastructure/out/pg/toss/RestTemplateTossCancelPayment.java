@@ -4,7 +4,9 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import com.ed.payment.application.port.out.pg.PaymentCanceled;
+import com.ed.payment.application.port.out.pg.dtos.CancelPaymentRequest;
+import com.ed.payment.application.port.out.pg.dtos.PaymentCanceledResponse;
+import com.ed.payment.infrastructure.out.pg.toss.dtos.TossPaymentCanceledResponse;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -31,16 +33,16 @@ public class RestTemplateTossCancelPayment implements TossCancelPayment {
   private String baseUrl;
 
   @Override
-  public PaymentCanceled cancelPayment(String paymentKey, String idempotencyKey, String cancelReason, Long cancelAmount) {
+  public PaymentCanceledResponse cancelPayment(CancelPaymentRequest request) {
     RestTemplate restTemplate = new RestTemplate();
 
-    URI url = URI.create(baseUrl + "/" + paymentKey + "/cancel");
-    HttpHeaders headers = generateHeaders(idempotencyKey);
-    Map<String, Object> body = generateBody(cancelReason, cancelAmount);
+    URI url = URI.create(baseUrl + "/" + request.getPaymentKey() + "/cancel");
+    HttpHeaders headers = generateHeaders(request.getIdempotencyKey());
+    Map<String, Object> body = generateBody(request.getCancelReason(), request.getCancelAmount());
 
     HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, headers);
-    return paymentPgMapper.mapCancelResponseToApplication(
-        restTemplate.postForObject(url, httpEntity, TossPaymentCanceled.class));
+    return paymentPgMapper.cancelResponseToApplication(
+        restTemplate.postForObject(url, httpEntity, TossPaymentCanceledResponse.class));
   }
 
   private Map<String, Object> generateBody(String cancelReason, Long cancelAmount) {

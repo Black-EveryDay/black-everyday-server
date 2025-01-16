@@ -1,4 +1,4 @@
-package com.ed.payment.application.port.out.pg;
+package com.ed.payment.application.port.out.pg.dtos;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -9,13 +9,14 @@ import lombok.Getter;
 @Getter
 @Builder(access = PRIVATE)
 @AllArgsConstructor(access = PRIVATE)
-public class PaymentFail {
+public class PaymentFailResponse {
+
   private String code;
   private String message;
   private String orderId;
 
-  public static PaymentFail of(String code, String message, String orderId) {
-    return PaymentFail.builder()
+  public static PaymentFailResponse of(String code, String message, String orderId) {
+    return PaymentFailResponse.builder()
         .code(code)
         .message(message)
         .orderId(orderId)

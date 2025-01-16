@@ -1,7 +1,8 @@
 package com.ed.payment.application.port.in;
 
-import com.ed.payment.application.port.out.pg.PaymentDone;
+import com.ed.payment.application.port.in.command.ConfirmPaymentCommand;
+import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
 
 public interface ConfirmPaymentUseCase {
-  PaymentDone confirmPayment(ConfirmPaymentCommand command);
+  PaymentDoneResponse confirmPayment(ConfirmPaymentCommand command);
 }

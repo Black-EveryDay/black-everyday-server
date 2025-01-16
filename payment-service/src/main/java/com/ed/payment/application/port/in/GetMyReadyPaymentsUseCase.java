@@ -1,6 +1,6 @@
 package com.ed.payment.application.port.in;
 
-import com.ed.payment.application.port.out.persistence.PaymentResponse;
+import com.ed.payment.application.port.out.persistence.dtos.PaymentResponse;
 import java.util.List;
 
 public interface GetMyReadyPaymentsUseCase {

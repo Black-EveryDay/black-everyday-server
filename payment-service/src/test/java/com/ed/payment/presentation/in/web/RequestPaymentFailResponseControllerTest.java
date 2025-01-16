@@ -6,9 +6,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.ed.payment.application.port.in.HandleFailPaymentCommand;
+import com.ed.payment.application.port.in.command.HandleFailPaymentCommand;
 import com.ed.payment.application.port.in.HandleFailPaymentUseCase;
-import com.ed.payment.application.port.out.pg.PaymentFail;
+import com.ed.payment.application.port.out.pg.dtos.PaymentFailResponse;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 @WebMvcTest(RequestPaymentFailController.class)
-class RequestPaymentFailControllerTest {
+class RequestPaymentFailResponseControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -43,7 +43,7 @@ class RequestPaymentFailControllerTest {
     queryParams.add("message", message);
     queryParams.add("orderId", orderId);
 
-    PaymentFail response = PaymentFail.of(code, message, orderId);
+    PaymentFailResponse response = PaymentFailResponse.of(code, message, orderId);
 
     // stubbing
     when(handleFailPaymentUseCase.handleFailPayment(any(HandleFailPaymentCommand.class)))

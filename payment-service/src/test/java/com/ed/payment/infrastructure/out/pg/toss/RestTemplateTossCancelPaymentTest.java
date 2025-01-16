@@ -4,8 +4,8 @@ import static com.ed.payment.domain.PaymentStatus.CANCELED;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ed.payment.application.port.out.pg.PaymentCanceled;
-import com.ed.payment.domain.PaymentStatus;
+import com.ed.payment.application.port.out.pg.dtos.CancelPaymentRequest;
+import com.ed.payment.application.port.out.pg.dtos.PaymentCanceledResponse;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,26 +26,47 @@ class RestTemplateTossCancelPaymentTest {
     final String paymentKey = "tgen_20250107154634hYNt7";
     final String idempotencyKey = UUID.randomUUID().toString();
     final String cancelReason = "단순 변심";
-
-    final String orderId = UUID.randomUUID().toString();
-    final Long totalAmount = 10000L;
-    final Long balanceAmount = 0L;
     final Long cancelAmount = 10000L;
-    final PaymentStatus paymentStatus = CANCELED;
-    final String lastTransactionKey = "9C62B18EEF0DE3EB7F4422EB6D14BC6E";
 
-    PaymentCanceled response = PaymentCanceled.of(
-        paymentKey, orderId, totalAmount, balanceAmount, cancelAmount,
-        cancelReason, paymentStatus, lastTransactionKey);
+    CancelPaymentRequest request = createRequest(
+        paymentKey, idempotencyKey, cancelReason, cancelAmount);
+
+    PaymentCanceledResponse response = createResponse(
+        paymentKey, cancelAmount, cancelReason);
 
     // stubbing
-    when(mockRestTemplateTossCancelPayment.cancelPayment(paymentKey, idempotencyKey, cancelReason, cancelAmount))
+    when(mockRestTemplateTossCancelPayment.cancelPayment(request))
         .thenReturn(response);
 
     // when
-    mockRestTemplateTossCancelPayment.cancelPayment(paymentKey, idempotencyKey, cancelReason, cancelAmount);
+    mockRestTemplateTossCancelPayment.cancelPayment(request);
 
     // then
-    verify(mockRestTemplateTossCancelPayment).cancelPayment(paymentKey, idempotencyKey, cancelReason, cancelAmount);
+    verify(mockRestTemplateTossCancelPayment).cancelPayment(request);
+  }
+
+  private CancelPaymentRequest createRequest(
+      String paymentKey, String idempotencyKey,
+      String cancelReason, Long cancelAmount) {
+    return CancelPaymentRequest.builder()
+        .paymentKey(paymentKey)
+        .idempotencyKey(idempotencyKey)
+        .cancelReason(cancelReason)
+        .cancelAmount(cancelAmount)
+        .build();
+  }
+
+  private PaymentCanceledResponse createResponse(
+      String paymentKey, Long cancelAmount, String cancelReason) {
+    return PaymentCanceledResponse.builder()
+        .paymentKey(paymentKey)
+        .orderId(UUID.randomUUID().toString())
+        .totalAmount(10000L)
+        .balanceAmount(0L)
+        .cancelAmount(cancelAmount)
+        .cancelReason(cancelReason)
+        .paymentStatus(CANCELED)
+        .lastTransactionKey("9C62B18EEF0DE3EB7F4422EB6D14BC6E")
+        .build();
   }
 }

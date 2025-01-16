@@ -1,5 +1,6 @@
 package com.ed.payment.application.port.out.persistence;
 
+import com.ed.payment.application.port.out.persistence.dtos.PaymentResponse;
 import com.ed.payment.domain.Payment;
 import java.util.List;
 

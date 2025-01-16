@@ -1,6 +1,7 @@
 package com.ed.payment.infrastructure.out.persistence.repository;
 
-import com.ed.payment.application.port.out.persistence.PaymentResponse;
+import com.ed.payment.application.port.out.persistence.dtos.CreatePaymentRequest;
+import com.ed.payment.application.port.out.persistence.dtos.PaymentResponse;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.infrastructure.out.persistence.entity.PaymentJpaEntity;
 import org.springframework.stereotype.Component;
@@ -8,30 +9,43 @@ import org.springframework.stereotype.Component;
 @Component
 class PaymentPersistenceMapper {
 
-  PaymentResponse mapToApplication(PaymentJpaEntity paymentJpaEntity) {
-    return PaymentResponse.of(
-        paymentJpaEntity.getPaymentPublicId(),
-        paymentJpaEntity.getIdempotencyKey(),
-        paymentJpaEntity.getOrderPublicId(),
-        paymentJpaEntity.getOrderName(),
-        paymentJpaEntity.getTotalAmount(),
-        paymentJpaEntity.getConfirmDeadline(),
-        paymentJpaEntity.getCancelDeadLine());
+  PaymentJpaEntity createRequestToJpaEntity(CreatePaymentRequest request) {
+    return PaymentJpaEntity.createPayment()
+        .userPublicId(request.getUserPublicId())
+        .orderPublicId(request.getOrderPublicId())
+        .orderName(request.getOrderName())
+        .amount(request.getAmount())
+        .confirmDeadline(request.getConfirmDeadline())
+        .cancelDeadLine(request.getCancelDeadLine())
+        .build();
   }
 
-  Payment mapToDomain(PaymentJpaEntity paymentJpaEntity) {
-    return new Payment(
-        paymentJpaEntity.getId(),
-        paymentJpaEntity.getPaymentPublicId(),
-        paymentJpaEntity.getPaymentKey(),
-        paymentJpaEntity.getIdempotencyKey(),
-        paymentJpaEntity.getUserPublicId(),
-        paymentJpaEntity.getPaymentStatus(),
-        paymentJpaEntity.getOrderPublicId(),
-        paymentJpaEntity.getOrderName(),
-        paymentJpaEntity.getTotalAmount(),
-        paymentJpaEntity.getBalanceAmount(),
-        paymentJpaEntity.getConfirmDeadline(),
-        paymentJpaEntity.getCancelDeadLine());
+  PaymentResponse mapToApplication(PaymentJpaEntity entity) {
+    return PaymentResponse.builder()
+        .paymentPublicId(entity.getUserPublicId())
+        .idempotencyKey(entity.getIdempotencyKey())
+        .orderPublicId(entity.getOrderPublicId())
+        .orderName(entity.getOrderName())
+        .amount(entity.getTotalAmount())
+        .confirmDeadline(entity.getConfirmDeadline())
+        .cancelDeadLine(entity.getCancelDeadLine())
+        .build();
+  }
+
+  Payment mapToDomain(PaymentJpaEntity entity) {
+    return Payment.builder()
+        .paymentId(entity.getId())
+        .paymentPublicId(entity.getPaymentPublicId())
+        .paymentKey(entity.getPaymentKey())
+        .idempotencyKey(entity.getIdempotencyKey())
+        .userId(entity.getUserPublicId())
+        .paymentStatus(entity.getPaymentStatus())
+        .orderPublicId(entity.getOrderPublicId())
+        .orderName(entity.getOrderName())
+        .totalAmount(entity.getTotalAmount())
+        .balanceAmount(entity.getBalanceAmount())
+        .confirmDeadline(entity.getConfirmDeadline())
+        .cancelDeadLine(entity.getCancelDeadLine())
+        .build();
   }
 }

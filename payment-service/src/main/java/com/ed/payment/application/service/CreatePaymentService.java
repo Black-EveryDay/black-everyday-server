@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CreatePaymentService implements CreatePaymentUseCase {
 
+  private final OutPortPersistenceMapper outPortPersistenceMapper;
   private final GetPaymentPort getPaymentPort;
   private final CreatePaymentPort createPaymentPort;
   private final CreatePaymentHistoryPort createPaymentHistoryPort;
@@ -33,16 +34,10 @@ public class CreatePaymentService implements CreatePaymentUseCase {
 
   private void createPaymentAndPaymentHistory(OrderPaymentCreateRequest request) {
     Payment payment = createPaymentPort.createPayment(
-        request.getUserId(),
-        request.getOrderId(),
-        request.getOrderName(),
-        request.getTotalAmount(),
-        request.getPaymentDeadline(),
-        request.getOrderCancelDeadline());
+        outPortPersistenceMapper.createPaymentToPersistence(request));
 
     createPaymentHistoryPort.createPaymentHistory(
-        payment.getPaymentId(),
-        payment.getTotalAmount(), payment.getBalanceAmount());
+        payment.getPaymentId(), payment.getTotalAmount());
   }
 
   private void logBadPaymentRequest(OrderPaymentCreateRequest request) {

@@ -11,8 +11,9 @@ import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.application.port.out.pg.CancelPaymentPort;
-import com.ed.payment.application.port.out.pg.PaymentCanceled;
+import com.ed.payment.application.port.out.pg.dtos.PaymentCanceledResponse;
 import com.ed.payment.domain.Payment;
+import com.ed.payment.libs.common.validator.PaymentCancelValidator;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CancelPaymentService implements CancelPaymentUseCase {
 
+  private final OutPortPersistenceMapper outPortPersistenceMapper;
+  private final OutPortPgMapper outPortPgMapper;
   private final GetPaymentPort getPaymentPort;
   private final CancelPaymentPort cancelPaymentPort;
   private final UpdatePaymentPort updatePaymentPort;
@@ -35,31 +38,29 @@ public class CancelPaymentService implements CancelPaymentUseCase {
   public void cancelPayment(OrderPaymentCancelRequest request) {
     Payment payment = getPaymentPort.getPaymentByOrderPublicId(request.getOrderId());
 
-    payment.validateCancelablePayment(request.getRequestDateTime(), request.getCancelAmount());
+    payment.validatePayment(new PaymentCancelValidator(), request.getRequestDateTime(), request.getCancelAmount());
 
-    PaymentCanceled paymentCanceled = cancelPaymentPort.cancelPayment(
-        payment.getPaymentKey(), payment.getIdempotencyKey(), request.getCancelReason(), request.getCancelAmount());
+    PaymentCanceledResponse paymentCanceledResponse = cancelPaymentPort.cancelPayment(outPortPgMapper.cancelPaymentToPg(payment, request));
 
     updatePaymentPort.updatePaymentStatusAndIdempotencyKeyById(
-        payment.getPaymentId(), paymentCanceled.getPaymentStatus(),
-        paymentCanceled.getTotalAmount(), paymentCanceled.getBalanceAmount());
+        outPortPersistenceMapper.updateCancelPaymentToPersistence(payment.getPaymentId(), paymentCanceledResponse));
 
-    createPaymentHistoryPort.createCancelSuccessPaymentHistory(
-        payment.getPaymentId(), paymentCanceled.getLastTransactionKey(), paymentCanceled.getPaymentStatus(),
-        paymentCanceled.getTotalAmount(), paymentCanceled.getBalanceAmount(), paymentCanceled.getCancelAmount(),
-        paymentCanceled.getCancelReason());
+    createPaymentHistoryPort.createCancelPaymentHistory(
+        outPortPersistenceMapper.cancelHistoryToPersistence(payment.getPaymentId(), paymentCanceledResponse));
 
-    sendOrderPaymentCancelResponse(paymentCanceled, payment.getPaymentPublicId());
+    sendOrderPaymentCancelResponse(paymentCanceledResponse, payment.getPaymentPublicId());
   }
 
-  private void sendOrderPaymentCancelResponse(PaymentCanceled paymentCanceled, String paymentPublicId) {
-    orderPaymentCancelProducer.send(ORDER_PAYMENT_CANCEL_RESPONSE, OrderPaymentCancelResponse.newBuilder()
-        .setIsSuccess(isCancelSuccess(paymentCanceled.getPaymentStatus()))
-        .setOrderId(paymentCanceled.getOrderId())
-        .setPaymentId(paymentPublicId)
-        .setCancelAmount(paymentCanceled.getCancelAmount())
-        .setBalanceAmount(paymentCanceled.getBalanceAmount())
-        .setMessageTimestamp(LocalDateTime.now())
-        .build());
+  private void sendOrderPaymentCancelResponse(
+      PaymentCanceledResponse paymentCanceledResponse, String paymentPublicId) {
+    orderPaymentCancelProducer.send(ORDER_PAYMENT_CANCEL_RESPONSE,
+        OrderPaymentCancelResponse.newBuilder()
+            .setIsSuccess(isCancelSuccess(paymentCanceledResponse.getPaymentStatus()))
+            .setOrderId(paymentCanceledResponse.getOrderId())
+            .setPaymentId(paymentPublicId)
+            .setCancelAmount(paymentCanceledResponse.getCancelAmount())
+            .setBalanceAmount(paymentCanceledResponse.getBalanceAmount())
+            .setMessageTimestamp(LocalDateTime.now())
+            .build());
   }
 }

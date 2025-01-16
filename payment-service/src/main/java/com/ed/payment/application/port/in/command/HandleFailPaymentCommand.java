@@ -1,4 +1,4 @@
-package com.ed.payment.application.port.in;
+package com.ed.payment.application.port.in.command;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -15,8 +15,7 @@ public class HandleFailPaymentCommand {
   private String message;
   private String orderId;
 
-  public static HandleFailPaymentCommand of(
-      String code, String message, String orderId) {
+  public static HandleFailPaymentCommand of(String code, String message, String orderId) {
     return HandleFailPaymentCommand.builder()
         .code(code)
         .message(message)

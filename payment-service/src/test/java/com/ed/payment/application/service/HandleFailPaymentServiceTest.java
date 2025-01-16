@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ed.OrderPaymentConfirmResponse;
-import com.ed.payment.application.port.in.HandleFailPaymentCommand;
+import com.ed.payment.application.port.in.command.HandleFailPaymentCommand;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
@@ -65,7 +65,7 @@ class HandleFailPaymentServiceTest {
 
     doNothing()
         .when(createPaymentHistoryPort)
-        .createFailPaymentHistory(anyLong(), any((PaymentStatus.class)));
+        .createFailPaymentHistory(anyLong());
 
     when(producer.send(anyString(), any(OrderPaymentConfirmResponse.class)))
         .thenReturn(true);
@@ -76,7 +76,7 @@ class HandleFailPaymentServiceTest {
     // then
     verify(getPaymentPort).getPaymentByOrderPublicId(anyString());
     verify(updatePaymentPort).updatePaymentStatusById(anyLong(), any(PaymentStatus.class));
-    verify(createPaymentHistoryPort).createFailPaymentHistory(anyLong(),any(PaymentStatus.class));
+    verify(createPaymentHistoryPort).createFailPaymentHistory(anyLong());
     verify(producer).send(anyString(), any(OrderPaymentConfirmResponse.class));
   }
 
@@ -97,6 +97,6 @@ class HandleFailPaymentServiceTest {
 
     verify(getPaymentPort, never()).getPaymentByOrderPublicId(anyString());
     verify(updatePaymentPort, never()).updatePaymentStatusById(anyLong(), any(PaymentStatus.class));
-    verify(createPaymentHistoryPort, never()).createFailPaymentHistory(anyLong(), any(PaymentStatus.class));
+    verify(createPaymentHistoryPort, never()).createFailPaymentHistory(anyLong());
   }
 }

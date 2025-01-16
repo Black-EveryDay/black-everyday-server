@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "ED_PAYMENT")
-@Builder(access = PRIVATE)
 @AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor(access = PROTECTED)
 public class PaymentJpaEntity extends BaseTimeByJpaEntity {
@@ -68,25 +67,21 @@ public class PaymentJpaEntity extends BaseTimeByJpaEntity {
   @Column(name = "CANCEL_DEADLINE", nullable = false)
   private LocalDateTime cancelDeadLine;
 
-  public static PaymentJpaEntity createPayment(
-      String userPublicId, String orderPublicId, String orderName, Long amount,
-      LocalDateTime confirmDeadline, LocalDateTime cancelDeadLine) {
-
-    PaymentJpaEntity entity = PaymentJpaEntity.builder()
-        .paymentPublicId(generatePublicId())
-        .idempotencyKey(generatePublicId())
-        .userPublicId(userPublicId)
-        .paymentStatus(READY)
-        .orderPublicId(orderPublicId)
-        .orderName(orderName)
-        .totalAmount(amount)
-        .balanceAmount(amount)
-        .confirmDeadline(confirmDeadline)
-        .cancelDeadLine(cancelDeadLine)
-        .build();
-    entity.createBy(userPublicId);
-
-    return entity;
+  @Builder(builderMethodName = "createPayment", builderClassName = "CreatePayment")
+  private PaymentJpaEntity(
+      String userPublicId, String orderPublicId, String orderName,
+      Long amount, LocalDateTime confirmDeadline, LocalDateTime cancelDeadLine) {
+    this.paymentPublicId = generatePublicId();
+    this.idempotencyKey = generatePublicId();
+    this.userPublicId = userPublicId;
+    this.paymentStatus = READY;
+    this.orderPublicId = orderPublicId;
+    this.orderName = orderName;
+    this.totalAmount = amount;
+    this.balanceAmount = amount;
+    this.confirmDeadline = confirmDeadline;
+    this.cancelDeadLine = cancelDeadLine;
+    super.createBy(userPublicId);
   }
 
   public void updatePaymentStatus(PaymentStatus newPaymentStatus) {
@@ -98,8 +93,7 @@ public class PaymentJpaEntity extends BaseTimeByJpaEntity {
     updatePaymentStatus(paymentStatus);
   }
 
-  public void updatePaymentStatusAndAmountAndIdempotencyKey(PaymentStatus paymentStatus, Long totalAmount, Long balanceAmount) {
-    this.totalAmount = totalAmount;
+  public void updatePaymentStatusAndAmountAndIdempotencyKey(PaymentStatus paymentStatus, Long balanceAmount) {
     this.balanceAmount = balanceAmount;
     this.idempotencyKey = generatePublicId();
     updatePaymentStatus(paymentStatus);

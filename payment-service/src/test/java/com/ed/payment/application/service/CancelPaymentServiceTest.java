@@ -3,7 +3,6 @@ package com.ed.payment.application.service;
 import static com.ed.payment.domain.PaymentStatus.CANCELED;
 import static com.ed.payment.domain.PaymentStatus.DONE;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
@@ -14,8 +13,11 @@ import com.ed.OrderPaymentCancelResponse;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
+import com.ed.payment.application.port.out.persistence.dtos.CreateCancelPaymentHistoryRequest;
+import com.ed.payment.application.port.out.persistence.dtos.UpdateCancelPaymentRequest;
 import com.ed.payment.application.port.out.pg.CancelPaymentPort;
-import com.ed.payment.application.port.out.pg.PaymentCanceled;
+import com.ed.payment.application.port.out.pg.dtos.CancelPaymentRequest;
+import com.ed.payment.application.port.out.pg.dtos.PaymentCanceledResponse;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import java.time.LocalDateTime;
@@ -32,6 +34,12 @@ class CancelPaymentServiceTest {
 
   @InjectMocks
   private CancelPaymentService cancelPaymentService;
+
+  @Mock
+  private OutPortPersistenceMapper outPortPersistenceMapper;
+
+  @Mock
+  private OutPortPgMapper outPortPgMapper;
 
   @Mock
   private GetPaymentPort getPaymentPort;
@@ -54,69 +62,100 @@ class CancelPaymentServiceTest {
   	// given
     final String userPublicId = UUID.randomUUID().toString();
     final String paymentPublicId = UUID.randomUUID().toString();
-    final String cancelReason = "단순 변심";
-    final LocalDateTime requestDateTime = LocalDateTime.now();
     final Long paymentId = 1L;
     final String paymentKey ="tgen_20250107154634hYNt7";
-    final String idempotencyKey = UUID.randomUUID().toString();
     final String orderPublicId = UUID.randomUUID().toString();
     final Long totalAmount = 10000L;
-    final Long balanceAmount = 0L;
+    final Long balanceAmount = 10000L;
     final Long cancelAmount = 10000L;
-    final String lastTransactionKey = "9C62B18EEF0DE3EB7F4422EB6D14BC6E";
 
-    OrderPaymentCancelRequest request = OrderPaymentCancelRequest.newBuilder()
-        .setUserId(userPublicId)
-        .setOrderId(orderPublicId)
-        .setPaymentId(paymentPublicId)
-        .setCancelAmount(cancelAmount)
-        .setCancelReason(cancelReason)
-        .setRequestDateTime(requestDateTime)
-        .build();
-    Payment payment = getPayment(request, paymentId, paymentKey, idempotencyKey, paymentPublicId, userPublicId, orderPublicId, cancelReason);
-    PaymentCanceled paymentCanceled = getPaymentCanceled(paymentKey, orderPublicId, totalAmount, balanceAmount, cancelAmount, lastTransactionKey);
+    OrderPaymentCancelRequest cancelRequest = createCancelRequest(
+        userPublicId, orderPublicId, paymentPublicId, cancelAmount);
+
+    Payment payment = createPayment(
+        paymentPublicId, paymentKey, userPublicId,
+        orderPublicId, totalAmount, balanceAmount);
+
+    PaymentCanceledResponse cancelResponse = createPaymentResponse(
+        paymentKey, orderPublicId, totalAmount, balanceAmount, cancelAmount);
+
+    CancelPaymentRequest cancelPaymentRequest = outPortPgMapper.cancelPaymentToPg(payment, cancelRequest);
+
+    UpdateCancelPaymentRequest updateCancelPaymentRequest = outPortPersistenceMapper.updateCancelPaymentToPersistence(
+        paymentId, cancelResponse);
+
+    CreateCancelPaymentHistoryRequest cancelPaymentHistoryRequest = outPortPersistenceMapper.cancelHistoryToPersistence(
+        paymentId, cancelResponse);
 
     // stubbing
     when(getPaymentPort.getPaymentByOrderPublicId(orderPublicId))
         .thenReturn(payment);
 
-    when(cancelPaymentPort.cancelPayment(paymentKey, idempotencyKey, cancelReason, cancelAmount))
-        .thenReturn(paymentCanceled);
+    when(cancelPaymentPort.cancelPayment(cancelPaymentRequest))
+        .thenReturn(cancelResponse);
 
     doNothing().when(updatePaymentPort)
-        .updatePaymentStatusAndIdempotencyKeyById(paymentId, CANCELED, totalAmount, balanceAmount);
+        .updatePaymentStatusAndIdempotencyKeyById(updateCancelPaymentRequest);
 
     doNothing().when(createPaymentHistoryPort)
-        .createCancelSuccessPaymentHistory(paymentId, lastTransactionKey,
-            CANCELED, totalAmount, balanceAmount, cancelAmount, cancelReason);
+        .createCancelPaymentHistory(cancelPaymentHistoryRequest);
 
     when(producer.send(anyString(), any()))
         .thenReturn(true);
 
     // when
-    cancelPaymentService.cancelPayment(request);
+    cancelPaymentService.cancelPayment(cancelRequest);
 
     // then
     verify(getPaymentPort).getPaymentByOrderPublicId(anyString());
-    verify(updatePaymentPort).updatePaymentStatusAndIdempotencyKeyById(anyLong(), any(), anyLong(), anyLong());
-    verify(createPaymentHistoryPort).createCancelSuccessPaymentHistory(anyLong(), anyString(), any(), anyLong(), anyLong(), anyLong(), anyString());
+    verify(updatePaymentPort).updatePaymentStatusAndIdempotencyKeyById(updateCancelPaymentRequest);
+    verify(createPaymentHistoryPort).createCancelPaymentHistory(cancelPaymentHistoryRequest);
     verify(producer).send(anyString(), any());
   }
 
-  private Payment getPayment(
-      OrderPaymentCancelRequest request, Long paymentId, String paymentKey, String idempotencyKey,
-      String paymentPublicId, String userPublicId, String orderPublicId, String cancelReason) {
-    return new Payment(
-       paymentId, paymentPublicId, paymentKey, idempotencyKey,
-        userPublicId, DONE, orderPublicId, cancelReason, 10000L, 10000L,
-        request.getRequestDateTime().plusDays(5), request.getRequestDateTime().plusDays(5));
+  private Payment createPayment(
+      String paymentPublicId, String paymentKey, String userPublicId,
+      String orderPublicId, Long totalAmount, Long balanceAmount) {
+    return Payment.builder()
+        .paymentId(1L)
+        .paymentPublicId(paymentPublicId)
+        .paymentKey(paymentKey)
+        .idempotencyKey(UUID.randomUUID().toString())
+        .userId(userPublicId)
+        .paymentStatus(DONE)
+        .orderPublicId(orderPublicId)
+        .orderName("피자맛 호빵")
+        .totalAmount(totalAmount)
+        .balanceAmount(balanceAmount)
+        .confirmDeadline(LocalDateTime.now().plusDays(5))
+        .cancelDeadLine(LocalDateTime.now().plusDays(5))
+        .build();
   }
 
-  private PaymentCanceled getPaymentCanceled(
-      String paymentKey, String orderPublicId,
-      Long totalAmount, Long balanceAmount, Long cancelAmount, String lastTransactionKey) {
-    return PaymentCanceled.of(
-        paymentKey, orderPublicId, totalAmount, balanceAmount, cancelAmount,
-        "단순 변심", CANCELED, lastTransactionKey);
+  private OrderPaymentCancelRequest createCancelRequest(
+      String userPublicId, String orderPublicId, String paymentPublicId,
+      Long cancelAmount) {
+    return OrderPaymentCancelRequest.newBuilder()
+        .setUserId(userPublicId)
+        .setOrderId(orderPublicId)
+        .setPaymentId(paymentPublicId)
+        .setCancelAmount(cancelAmount)
+        .setCancelReason("단순 변심")
+        .setRequestDateTime(LocalDateTime.now())
+        .build();
+  }
+
+  private PaymentCanceledResponse createPaymentResponse(
+      String paymentKey, String orderPublicId, Long totalAmount,
+      Long balanceAmount, Long cancelAmount) {
+    return PaymentCanceledResponse.builder()
+        .paymentKey(paymentKey)
+        .orderId(orderPublicId)
+        .totalAmount(totalAmount)
+        .balanceAmount(balanceAmount)
+        .cancelAmount(cancelAmount)
+        .paymentStatus(CANCELED)
+        .lastTransactionKey("9C62B18EEF0DE3EB7F4422EB6D14BC6E")
+        .build();
   }
 }

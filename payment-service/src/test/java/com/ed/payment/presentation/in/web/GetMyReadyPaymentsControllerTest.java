@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.ed.payment.application.port.in.GetMyReadyPaymentsUseCase;
-import com.ed.payment.application.port.out.persistence.PaymentResponse;
+import com.ed.payment.application.port.out.persistence.dtos.PaymentResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -42,9 +42,15 @@ class GetMyReadyPaymentsControllerTest {
     final Long amount = 10000L;
     final LocalDateTime confirmDeadline = LocalDateTime.now().plusDays(5);
     final LocalDateTime cancelDeadLine = LocalDateTime.now().plusDays(5);
-    List<PaymentResponse> response = List.of(PaymentResponse.of(
-        paymentPublicId, idempotencyKey, orderPublicId, orderName, amount,
-        confirmDeadline, cancelDeadLine));
+    List<PaymentResponse> response = List.of(PaymentResponse.builder()
+        .paymentPublicId(paymentPublicId)
+        .idempotencyKey(idempotencyKey)
+        .orderPublicId(orderPublicId)
+        .orderName(orderName)
+        .amount(amount)
+        .confirmDeadline(confirmDeadline)
+        .cancelDeadLine(cancelDeadLine)
+        .build());
 
     // stubbing
     when(getMyReadyPaymentsUseCase.getMyReadyPayments(userPublicId))

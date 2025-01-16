@@ -1,7 +1,7 @@
 package com.ed.payment.application.service;
 
+import static com.ed.payment.domain.PaymentStatus.DONE;
 import static com.ed.payment.domain.PaymentStatus.READY;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -9,14 +9,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ed.OrderPaymentConfirmResponse;
-import com.ed.payment.application.port.in.ConfirmPaymentCommand;
+import com.ed.payment.application.port.in.command.ConfirmPaymentCommand;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
+import com.ed.payment.application.port.out.persistence.dtos.CreateConfirmPaymentHistoryRequest;
 import com.ed.payment.application.port.out.pg.ConfirmPaymentPort;
-import com.ed.payment.application.port.out.pg.PaymentDone;
+import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
 import com.ed.payment.domain.Payment;
-import com.ed.payment.domain.PaymentStatus;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -32,6 +32,9 @@ class ConfirmPaymentServiceTest {
 
   @InjectMocks
   private ConfirmPaymentService confirmPaymentService;
+
+  @Mock
+  private OutPortPersistenceMapper outPortPersistenceMapper;
 
   @Mock
   private GetPaymentPort getPaymentPort;
@@ -52,63 +55,73 @@ class ConfirmPaymentServiceTest {
   @DisplayName("confirmPayment: 결제 승인 정보를 입력 받아 결제 승인을 요청한다.")
   void confirmPayment_success() {
     // given
-    final String paymentType = "NORMAL";
     final String paymentKey = "tgen_20250107154634hYNt7";
     final String orderPublicId = UUID.randomUUID().toString();
-    final Long sameRequestAmount = 10000L;
-    ConfirmPaymentCommand request = ConfirmPaymentCommand.of(paymentType,
-        paymentKey, orderPublicId, sameRequestAmount);
+    final Long amount = 10000L;
 
-    final Long paymentId = 1L;
-    final String paymentPublicId = UUID.randomUUID().toString();
-    final String idempotencyKey = UUID.randomUUID().toString();
-    final String userPublicId = UUID.randomUUID().toString();
-    final PaymentStatus paymentStatus = READY;
-    final String orderName = "피자맛 호빵";
-    final Long originAmount = 10000L;
-    final LocalDateTime confirmDeadline = request.getRequestDateTime().plusDays(5);
-    final LocalDateTime cancelDeadLine = request.getRequestDateTime().plusDays(5);
-    Payment payment = new Payment(
-        paymentId, paymentPublicId,
-        paymentKey, idempotencyKey,
-        userPublicId, paymentStatus, orderPublicId, orderName,
-        originAmount, originAmount, confirmDeadline, cancelDeadLine);
+    ConfirmPaymentCommand confirmRequest = createConfirmRequest(paymentKey, orderPublicId, amount);
+    Payment payment = createPayment(paymentKey, orderPublicId, amount);
+    PaymentDoneResponse confirmResponse = createConfirmResponse(paymentKey, orderPublicId, amount);
 
-    final String lastTransactionKey = "9C62B18EEF0DE3EB7F4422EB6D14BC6E";
-    PaymentDone response = PaymentDone.of(paymentKey, orderPublicId,
-        originAmount, originAmount, paymentStatus, lastTransactionKey);
+    CreateConfirmPaymentHistoryRequest confirmPaymentHistoryRequest = outPortPersistenceMapper
+        .confirmHistoryToPersistence(payment.getPaymentId(), confirmResponse);
 
     // stubbing
     when(getPaymentPort.getPaymentByOrderPublicId(orderPublicId))
         .thenReturn(payment);
 
     when(confirmPaymentPort.confirmPayment(payment, paymentKey))
-        .thenReturn(response);
+        .thenReturn(confirmResponse);
 
-    doNothing()
-        .when(updatePaymentPort)
-        .updatePaymentStatusAndPaymentKeyById(paymentId, paymentStatus,
-            paymentKey);
+    doNothing().when(updatePaymentPort)
+        .updatePaymentStatusAndPaymentKeyById(payment.getPaymentId(), confirmResponse.getPaymentStatus(), paymentKey);
 
     doNothing().when(createPaymentHistoryPort)
-        .createConfirmSuccessPaymentHistory(paymentId, lastTransactionKey,
-            paymentStatus, originAmount, originAmount);
+        .createConfirmPaymentHistory(confirmPaymentHistoryRequest);
 
     when(producer.send(anyString(), any(OrderPaymentConfirmResponse.class)))
         .thenReturn(true);
 
     // when
-    PaymentDone result = confirmPaymentService.confirmPayment(request);
+    confirmPaymentService.confirmPayment(confirmRequest);
 
     // then
-    assertThat(result).isEqualTo(response);
     verify(getPaymentPort).getPaymentByOrderPublicId(orderPublicId);
     verify(confirmPaymentPort).confirmPayment(payment, paymentKey);
-    verify(updatePaymentPort).updatePaymentStatusAndPaymentKeyById(paymentId,
-        paymentStatus, paymentKey);
-    verify(createPaymentHistoryPort).createConfirmSuccessPaymentHistory(
-        paymentId, lastTransactionKey, paymentStatus, originAmount,
-        originAmount);
+    verify(updatePaymentPort).updatePaymentStatusAndPaymentKeyById(payment.getPaymentId(), confirmResponse.getPaymentStatus(), paymentKey);
+    verify(createPaymentHistoryPort).createConfirmPaymentHistory(confirmPaymentHistoryRequest);
     verify(producer).send(anyString(), any(OrderPaymentConfirmResponse.class));
+  }
+
+  private ConfirmPaymentCommand createConfirmRequest(String paymentKey, String orderPublicId, Long amount) {
+    return ConfirmPaymentCommand.of("NORMAL", paymentKey, orderPublicId, amount);
+  }
+
+  private Payment createPayment(String paymentKey, String orderPublicId, Long amount) {
+    return Payment.builder()
+        .paymentId(1L)
+        .paymentPublicId(UUID.randomUUID().toString())
+        .paymentKey(paymentKey)
+        .idempotencyKey(UUID.randomUUID().toString())
+        .userId(UUID.randomUUID().toString())
+        .paymentStatus(READY)
+        .orderPublicId(orderPublicId)
+        .orderName("피자맛 호빵")
+        .totalAmount(amount)
+        .balanceAmount(amount)
+        .confirmDeadline(LocalDateTime.now().plusDays(5))
+        .cancelDeadLine(LocalDateTime.now().plusDays(5))
+        .build();
+  }
+
+  private PaymentDoneResponse createConfirmResponse(String paymentKey, String orderPublicId, Long amount) {
+    return PaymentDoneResponse.builder()
+        .paymentKey(paymentKey)
+        .orderId(orderPublicId)
+        .totalAmount(amount)
+        .balanceAmount(amount)
+        .paymentStatus(DONE)
+        .lastTransactionKey("9C62B18EEF0DE3EB7F4422EB6D14BC6E")
+        .build();
   }
 }

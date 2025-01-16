@@ -5,12 +5,12 @@ import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_CONF
 import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_CONFIRM_NOT_ALLOWED;
 
 import com.ed.OrderPaymentConfirmResponse;
-import com.ed.payment.application.port.in.HandleFailPaymentCommand;
+import com.ed.payment.application.port.in.command.HandleFailPaymentCommand;
 import com.ed.payment.application.port.in.HandleFailPaymentUseCase;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
-import com.ed.payment.application.port.out.pg.PaymentFail;
+import com.ed.payment.application.port.out.pg.dtos.PaymentFailResponse;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import com.ed.payment.libs.common.exception.CustomException;
@@ -34,18 +34,18 @@ public class HandleFailPaymentService implements HandleFailPaymentUseCase {
 
   @Transactional
   @Override
-  public PaymentFail handleFailPayment(HandleFailPaymentCommand command) {
+  public PaymentFailResponse handleFailPayment(HandleFailPaymentCommand command) {
     if (DUPLICATED_ORDER_ERROR.equalsIgnoreCase(command.getCode())) {
       throw new CustomException(PAYMENT_CONFIRM_NOT_ALLOWED);
     }
 
     Payment payment = getPaymentPort.getPaymentByOrderPublicId(command.getOrderId());
     updatePaymentPort.updatePaymentStatusById(payment.getPaymentId(), ABORTED);
-    createPaymentHistoryPort.createFailPaymentHistory(payment.getPaymentId(), ABORTED);
+    createPaymentHistoryPort.createFailPaymentHistory(payment.getPaymentId());
 
     sendOrderPaymentConfirmResponse(command.getOrderId());
 
-    return PaymentFail.of(command.getCode(), command.getMessage(), command.getOrderId());
+    return PaymentFailResponse.of(command.getCode(), command.getMessage(), command.getOrderId());
   }
 
   private void sendOrderPaymentConfirmResponse(String orderId) {
