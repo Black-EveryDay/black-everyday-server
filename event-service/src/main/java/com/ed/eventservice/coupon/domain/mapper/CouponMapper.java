@@ -2,6 +2,7 @@ package com.ed.eventservice.coupon.domain.mapper;
 
 import com.ed.eventservice.coupon.adapter.out.persistence.entity.CouponJpaEntity;
 import com.ed.eventservice.coupon.adapter.out.persistence.entity.CouponStatusChangeLogJpaEntity;
+import com.ed.eventservice.coupon.application.port.out.dto.IssueCouponResponse;
 import com.ed.eventservice.coupon.application.port.out.dto.UseCouponResponse;
 import com.ed.eventservice.coupon.domain.Coupon;
 import com.ed.eventservice.coupon.domain.CouponTemplate;
@@ -30,4 +31,9 @@ public interface CouponMapper {
   @Mapping(target = "couponTemplate.discountType", source = "coupon.couponTemplate.couponDiscountInfo.discountType")
   @Mapping(target = "couponTemplate.discountValue", source = "coupon.couponTemplate.couponDiscountInfo.discountValue")
   UseCouponResponse couponToUseCouponResponse(Coupon coupon);
+
+  @Mapping(target = "couponId", source = "coupon.publicId")
+  @Mapping(target = "couponTemplate", source = "coupon.couponTemplate")
+  @Mapping(target = "couponTemplate.templateId", source = "coupon.couponTemplate.publicId")
+  IssueCouponResponse couponToIssueCouponResponse(Coupon coupon);
 }

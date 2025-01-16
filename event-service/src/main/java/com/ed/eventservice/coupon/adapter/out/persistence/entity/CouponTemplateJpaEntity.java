@@ -20,13 +20,14 @@ import lombok.NoArgsConstructor;
 public class CouponTemplateJpaEntity extends BaseJpaEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "COUPON_TEMPLATE_ID")
   private Long id;
 
-  @Column(unique = true, updatable = false, nullable = false, length = 36)
+  @Column(name = "COUPON_TEMPLATE_PUBLIC_ID", unique = true, updatable = false, nullable = false, length = 36)
   private String publicId = UUID.randomUUID().toString();
 
-  @Column(nullable = false)
+  @Column(name = "COUPON_NAME", nullable = false)
   private String couponName;
 
   @Embedded
@@ -49,7 +50,7 @@ public class CouponTemplateJpaEntity extends BaseJpaEntity {
       CouponDiscountInfoJpaEntity couponDiscountInfoJpaEntity,
       CouponExpirationInfoJpaEntity couponExpirationInfoJpaEntity
   ) {
-    
+
     this.id = id;
     this.couponName = couponName;
     this.couponIssueInfoJpaEntity = couponIssueInfoJpaEntity;

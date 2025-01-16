@@ -28,28 +28,29 @@ import lombok.NoArgsConstructor;
 public class CouponStatusChangeLogJpaEntity extends BaseJpaEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "COUPON_STATUS_CHANGE_LOG_ID")
   private Long id;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false, updatable = false)
+  @Column(name = "BEFORE_STATUS", nullable = false, updatable = false)
   private CouponState beforeStatus;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false, updatable = false)
+  @Column(name = "AFTER_STATUS", nullable = false, updatable = false)
   private CouponState afterStatus;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false, updatable = false)
+  @Column(name = "REASON", nullable = false, updatable = false)
   private CouponStatusChangeReason reason;
 
-  @Column(nullable = false, updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "CHANGED_AT", nullable = false, updatable = false)
   private LocalDateTime changedAt;
 
-  @Column(updatable = false, length = 18)
+  @Column(name = "ORDER_ID", updatable = false, length = 18)
   private String orderId;
 
-  @Column(nullable = false, updatable = false)
+  @Column(name = "COUPON_ID", nullable = false, updatable = false)
   private Long couponId;
 }

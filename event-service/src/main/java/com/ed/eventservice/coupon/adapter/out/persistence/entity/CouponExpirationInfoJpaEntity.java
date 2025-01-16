@@ -1,5 +1,6 @@
 package com.ed.eventservice.coupon.adapter.out.persistence.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -15,10 +16,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CouponExpirationInfoJpaEntity {
 
-  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "EXPIRATION_DAYS")
   private Duration expirationDays;
 
   @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "FIXED_EXPIRATION_DATE")
   private LocalDateTime fixedExpirationDate;
 
   @Builder
@@ -26,7 +28,7 @@ public class CouponExpirationInfoJpaEntity {
       Duration expirationDays,
       LocalDateTime fixedExpirationDate
   ) {
-    
+
     this.expirationDays = expirationDays;
     this.fixedExpirationDate = fixedExpirationDate;
   }
