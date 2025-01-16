@@ -20,6 +20,7 @@ import com.ed.payment.application.port.out.pg.dtos.CancelPaymentRequest;
 import com.ed.payment.application.port.out.pg.dtos.PaymentCanceledResponse;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
+import com.ed.payment.libs.common.validator.PaymentCancelValidator;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -43,6 +44,9 @@ class CancelPaymentServiceTest {
 
   @Mock
   private GetPaymentPort getPaymentPort;
+
+  @Mock
+  private PaymentCancelValidator cancelValidator;
 
   @Mock
   private CancelPaymentPort cancelPaymentPort;

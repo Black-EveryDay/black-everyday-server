@@ -27,6 +27,7 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
 
   private final OutPortPersistenceMapper outPortPersistenceMapper;
   private final GetPaymentPort getPaymentPort;
+  private final PaymentConfirmValidator confirmValidator;
   private final ConfirmPaymentPort confirmPaymentPort;
   private final UpdatePaymentPort updatePaymentPort;
   private final CreatePaymentHistoryPort createPaymentHistoryPort;
@@ -37,7 +38,7 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
   public PaymentDoneResponse confirmPayment(ConfirmPaymentCommand command) {
     Payment payment = getPaymentPort.getPaymentByOrderPublicId(command.getOrderId());
 
-    payment.validatePayment(new PaymentConfirmValidator(), command.getRequestDateTime(), command.getAmount());
+    payment.validatePayment(confirmValidator, command.getRequestDateTime(), command.getAmount());
 
     PaymentDoneResponse paymentDoneResponse = confirmPaymentPort.confirmPayment(payment, command.getPaymentKey());
 

@@ -28,6 +28,7 @@ public class CancelPaymentService implements CancelPaymentUseCase {
   private final OutPortPersistenceMapper outPortPersistenceMapper;
   private final OutPortPgMapper outPortPgMapper;
   private final GetPaymentPort getPaymentPort;
+  private final PaymentCancelValidator cancelValidator;
   private final CancelPaymentPort cancelPaymentPort;
   private final UpdatePaymentPort updatePaymentPort;
   private final CreatePaymentHistoryPort createPaymentHistoryPort;
@@ -38,7 +39,7 @@ public class CancelPaymentService implements CancelPaymentUseCase {
   public void cancelPayment(OrderPaymentCancelRequest request) {
     Payment payment = getPaymentPort.getPaymentByOrderPublicId(request.getOrderId());
 
-    payment.validatePayment(new PaymentCancelValidator(), request.getRequestDateTime(), request.getCancelAmount());
+    payment.validatePayment(cancelValidator, request.getRequestDateTime(), request.getCancelAmount());
 
     PaymentCanceledResponse paymentCanceledResponse = cancelPaymentPort.cancelPayment(outPortPgMapper.cancelPaymentToPg(payment, request));
 

@@ -10,7 +10,9 @@ import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
 import com.ed.payment.libs.common.exception.CustomException;
 import java.time.LocalDateTime;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PaymentCancelValidator implements PaymentValidator {
 
   @Override

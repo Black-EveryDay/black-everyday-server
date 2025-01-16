@@ -18,6 +18,7 @@ import com.ed.payment.application.port.out.pg.ConfirmPaymentPort;
 import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
+import com.ed.payment.libs.common.validator.PaymentConfirmValidator;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -38,6 +39,9 @@ class ConfirmPaymentServiceTest {
 
   @Mock
   private GetPaymentPort getPaymentPort;
+
+  @Mock
+  private PaymentConfirmValidator confirmValidator;
 
   @Mock
   private ConfirmPaymentPort confirmPaymentPort;
