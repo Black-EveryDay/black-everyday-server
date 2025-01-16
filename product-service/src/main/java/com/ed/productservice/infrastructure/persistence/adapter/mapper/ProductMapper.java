@@ -27,18 +27,17 @@ public class ProductMapper {
   }
 
   public Product toDomain(ProductEntity entity, int price) {
-    return new Product(
-        entity.getProductId(),
-        entity.getProductPublicId(),
-        entity.getBrandId(),
-        entity.getName(),
-        price,
-        entity.getDescription(),
-        entity.getColor(),
-        entity.getImage(),
-        entity.getStatus(),
-        entity.getCategory(),
-        entity.getCreatedAt()
-    );
+    return Product.builder()
+        .productId(entity.getProductId())
+        .productPublicId(entity.getProductPublicId())
+        .brandId(entity.getBrandId())
+        .name(entity.getName())
+        .price(price)
+        .description(entity.getDescription())
+        .color(entity.getColor())
+        .image(entity.getImage())
+        .status(entity.getStatus())
+        .category(entity.getCategory())
+        .createdAt(entity.getCreatedAt()).build();
   }
 }

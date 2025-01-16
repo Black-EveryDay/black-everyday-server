@@ -36,7 +36,7 @@ public class ProductQueryController {
   }
 
   @GetMapping()
-  public Page<ProductDetailResponse> getShopList(ProductSearchCondition condition,
+  public Page<ProductDetailResponse> getProductList(ProductSearchCondition condition,
       Pageable pageable) {
 
     return productQueryAdapter.search(condition, pageable)

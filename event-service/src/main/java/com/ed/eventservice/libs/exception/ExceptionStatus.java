@@ -23,7 +23,10 @@ public enum ExceptionStatus {
   COUPON_NOT_USABLE(HttpStatus.BAD_REQUEST, "c005", "Coupon not usable"),
   COUPON_EXPIRED(HttpStatus.BAD_REQUEST, "c006", "Coupon expired"),
   COUPON_NOT_REDEEMED(HttpStatus.BAD_REQUEST, "c007", "Coupon not redeemed"),
+  COUPON_NOT_ISSUABLE(HttpStatus.BAD_REQUEST, "c008", "Coupon not issuable"),
+  COUPON_ALREADY_ASSIGNED(HttpStatus.BAD_REQUEST, "c009", "Coupon already assigned"),
   ;
+
 
   private final HttpStatus status;
   private final String customCode;

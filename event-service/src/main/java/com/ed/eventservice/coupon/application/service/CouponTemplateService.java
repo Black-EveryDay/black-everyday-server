@@ -10,6 +10,7 @@ import com.ed.eventservice.coupon.domain.Coupon;
 import com.ed.eventservice.coupon.domain.CouponTemplate;
 import com.ed.eventservice.coupon.domain.mapper.CouponTemplateMapper;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,10 +29,13 @@ public class CouponTemplateService implements CouponTemplateUseCase {
       CreateCouponTemplateCommand createCouponTemplateCommand
   ) {
 
+    UUID newCouponTemplatePublicId = UUID.randomUUID();
+
     CouponTemplate newCouponTemplate =
         CouponTemplate.builder()
             .createCouponTemplateDto(
-                couponTemplateMapper.commandToCreateDto(createCouponTemplateCommand))
+                couponTemplateMapper.commandToCreateDto(createCouponTemplateCommand,
+                    newCouponTemplatePublicId))
             .build();
 
     CouponTemplate savedCouponTemplate =

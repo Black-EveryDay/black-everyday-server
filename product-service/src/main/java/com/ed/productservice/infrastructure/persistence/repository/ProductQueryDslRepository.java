@@ -57,7 +57,7 @@ public class ProductQueryDslRepository {
             colorEquals(color),
             categoryEquals(category),
             brandNameEquals(brandName),
-            isNotDeletedPrice(),
+            isCurrentVersion(),
             priceBetween(minPrice, maxPrice)
         );
 
@@ -78,7 +78,7 @@ public class ProductQueryDslRepository {
             colorEquals(color),
             categoryEquals(category),
             brandNameEquals(brandName),
-            isNotDeletedPrice(),
+            isCurrentVersion(),
             priceBetween(minPrice, maxPrice)
         )
         .fetchOne()).orElse(0L);
@@ -86,9 +86,8 @@ public class ProductQueryDslRepository {
     return new PageImpl<>(results, pageable, total);
   }
 
-  private BooleanExpression isNotDeletedPrice() {
-    QProductPriceVersionEntity priceVersion = QProductPriceVersionEntity.productPriceVersionEntity;
-    return priceVersion.isDeleted.isFalse();
+  private BooleanExpression isCurrentVersion() {
+    return QProductPriceVersionEntity.productPriceVersionEntity.isCurrentVersion.isTrue();
   }
 
   private BooleanExpression priceBetween(Integer minPrice, Integer maxPrice) {

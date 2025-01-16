@@ -4,7 +4,6 @@ import static com.ed.productservice.libs.common.ErrorCode.*;
 
 import com.ed.productservice.domain.vo.ProductReservationInfoDomain;
 import com.ed.productservice.domain.vo.StockDecreaseHistoryStatus;
-import com.ed.productservice.infrastructure.persistence.entity.BaseEntity;
 import com.ed.productservice.infrastructure.persistence.entity.StockDecreaseHistoryEntity;
 import com.ed.productservice.infrastructure.persistence.repository.StockDecreaseHistoryRepository;
 import com.ed.productservice.libs.common.ProductException;
@@ -41,7 +40,7 @@ public class StockAdapter {
   public void deleteStockHistory(String transactionId) {
     stockDecreaseHistoryRepository.findAllByTransactionId(
         transactionId).forEach(history -> {
-      history.deletedFrom();
+      history.delete();
       history.setStatus(StockDecreaseHistoryStatus.ROLLBACK);
     });
   }

@@ -32,11 +32,15 @@ public class ProductPriceVersionEntity extends BaseEntity {
   @Column(name = "VERSION")
   private int version;
 
+  @Column(name = "IS_CURRENT_VERSION", nullable = false)
+  private boolean isCurrentVersion;
+
   public static ProductPriceVersionEntity of(Long productId, int price, int version) {
     return ProductPriceVersionEntity.builder()
         .productId(productId)
         .price(price)
         .version(version + 1)
+        .isCurrentVersion(true)
         .build();
   }
 
@@ -45,6 +49,11 @@ public class ProductPriceVersionEntity extends BaseEntity {
         .productId(productId)
         .price(price)
         .version(1)
+        .isCurrentVersion(true)
         .build();
+  }
+
+  public void archivePreviousVersion() {
+    this.isCurrentVersion = false;
   }
 }

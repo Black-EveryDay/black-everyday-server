@@ -12,7 +12,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,26 +24,28 @@ import lombok.NoArgsConstructor;
 public class CouponJpaEntity extends BaseJpaEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "COUPON_ID")
   private Long id;
 
-  @Column(unique = true, updatable = false, nullable = false, length = 36)
+  @Column(name = "COUPON_PUBLIC_ID", unique = true, updatable = false, nullable = false, length = 36)
   private String publicId;
 
-  @Column(nullable = false, length = 36)
+  @Column(name = "COUPON_TEMPLATE_ID", nullable = false, length = 36)
   private String couponTemplateId;
 
-  @Column(length = 36)
+  @Column(name = "USER_ID", length = 36)
   private String userId;
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "COUPON_STATE", nullable = false)
   private CouponState state;
 
-  @Column
+  @Column(name = "EXPIRATION_DATE")
   @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime expirationDate;
 
-  @Column
+  @Column(name = "ISSUED_AT")
   @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime issuedAt;
 
@@ -59,7 +60,7 @@ public class CouponJpaEntity extends BaseJpaEntity {
   ) {
 
     this.id = id;
-    this.publicId = publicId == null ? UUID.randomUUID().toString() : publicId;
+    this.publicId = publicId;
     this.couponTemplateId = couponTemplateId;
     this.userId = userId;
     this.state = state;

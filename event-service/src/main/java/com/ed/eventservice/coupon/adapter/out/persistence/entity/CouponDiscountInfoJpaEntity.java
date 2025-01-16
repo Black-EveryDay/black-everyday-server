@@ -17,14 +17,15 @@ import lombok.NoArgsConstructor;
 public class CouponDiscountInfoJpaEntity {
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "DISCOUNT_TYPE")
   private DiscountType discountType;
 
-  @Column(precision = 10, scale = 2)
+  @Column(name = "DISCOUNT_VALUE", precision = 10, scale = 2)
   private BigDecimal discountValue;
 
   @Builder
   private CouponDiscountInfoJpaEntity(DiscountType discountType, BigDecimal discountValue) {
-    
+
     this.discountType = discountType;
     this.discountValue = discountValue;
   }
