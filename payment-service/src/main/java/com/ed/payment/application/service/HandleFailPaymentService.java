@@ -5,7 +5,7 @@ import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_CONF
 import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_CONFIRM_NOT_ALLOWED;
 
 import com.ed.OrderPaymentConfirmResponse;
-import com.ed.payment.application.port.in.command.HandleFailPaymentCommand;
+import com.ed.payment.application.port.in.command.PaymentRequestFailCommand;
 import com.ed.payment.application.port.in.HandleFailPaymentUseCase;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
@@ -34,7 +34,7 @@ public class HandleFailPaymentService implements HandleFailPaymentUseCase {
 
   @Transactional
   @Override
-  public PaymentFailResponse handleFailPayment(HandleFailPaymentCommand command) {
+  public PaymentFailResponse handleFailPayment(PaymentRequestFailCommand command) {
     if (DUPLICATED_ORDER_ERROR.equalsIgnoreCase(command.getCode())) {
       throw new CustomException(PAYMENT_CONFIRM_NOT_ALLOWED);
     }
@@ -43,16 +43,20 @@ public class HandleFailPaymentService implements HandleFailPaymentUseCase {
     updatePaymentPort.updatePaymentStatusById(payment.getPaymentId(), ABORTED);
     createPaymentHistoryPort.createFailPaymentHistory(payment.getPaymentId());
 
-    sendOrderPaymentConfirmResponse(command.getOrderId());
+    sendOrderPaymentRequestFailResponse(command.getOrderId());
 
     return PaymentFailResponse.of(command.getCode(), command.getMessage(), command.getOrderId());
   }
 
-  private void sendOrderPaymentConfirmResponse(String orderId) {
-    orderPaymentConfirmResponse.send(ORDER_PAYMENT_CONFIRM_RESPONSE, OrderPaymentConfirmResponse.newBuilder()
+  private void sendOrderPaymentRequestFailResponse(String orderId) {
+    orderPaymentConfirmResponse.send(ORDER_PAYMENT_CONFIRM_RESPONSE, createFailMessage(orderId));
+  }
+
+  private OrderPaymentConfirmResponse createFailMessage(String orderId) {
+    return OrderPaymentConfirmResponse.newBuilder()
         .setIsSuccess(false)
         .setOrderId(orderId)
         .setMessageTimestamp(LocalDateTime.now())
-        .build());
+        .build();
   }
 }

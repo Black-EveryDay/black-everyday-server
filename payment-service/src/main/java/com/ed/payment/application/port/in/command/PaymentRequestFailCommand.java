@@ -7,19 +7,11 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder(access = PRIVATE)
+@Builder
 @AllArgsConstructor(access = PRIVATE)
-public class HandleFailPaymentCommand {
+public class PaymentRequestFailCommand {
 
   private String code;
   private String message;
   private String orderId;
-
-  public static HandleFailPaymentCommand of(String code, String message, String orderId) {
-    return HandleFailPaymentCommand.builder()
-        .code(code)
-        .message(message)
-        .orderId(orderId)
-        .build();
-  }
 }

@@ -2,7 +2,6 @@ package com.ed.payment.presentation.in.web;
 
 import static org.springframework.http.ResponseEntity.ok;
 
-import com.ed.payment.application.port.in.command.HandleFailPaymentCommand;
 import com.ed.payment.application.port.in.HandleFailPaymentUseCase;
 import com.ed.payment.application.port.out.pg.dtos.PaymentFailResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RequestPaymentFailController {
 
+  private final InPortMapper inPortMapper;
   private final HandleFailPaymentUseCase handleFailPaymentUseCase;
   
   @GetMapping("/api/v1/payments/fail")
   public ResponseEntity<PaymentFailResponse> requestPaymentFail(
       @RequestParam String code, @RequestParam String message, @RequestParam String orderId) {
     return ok(handleFailPaymentUseCase.handleFailPayment(
-        HandleFailPaymentCommand.of(code, message, orderId)));
+        inPortMapper.failPaymentToInPort(code, message, orderId)));
   }
 }

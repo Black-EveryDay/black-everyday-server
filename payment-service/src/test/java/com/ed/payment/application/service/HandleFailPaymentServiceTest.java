@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ed.OrderPaymentConfirmResponse;
-import com.ed.payment.application.port.in.command.HandleFailPaymentCommand;
+import com.ed.payment.application.port.in.command.PaymentRequestFailCommand;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
@@ -51,9 +51,7 @@ class HandleFailPaymentServiceTest {
   void handleFailPayment() {
     // given
     final String code = "FAILED_CARD_COMPANY";
-    final String message = "카드사 점검 중으로 다른 카드를 이용해 주세요.";
-    final String orderId = UUID.randomUUID().toString();
-    HandleFailPaymentCommand request = HandleFailPaymentCommand.of(code,message, orderId);
+    PaymentRequestFailCommand command = createFailPaymentCommand(code);
 
     // stubbing
     when(getPaymentPort.getPaymentByOrderPublicId(anyString()))
@@ -71,7 +69,7 @@ class HandleFailPaymentServiceTest {
         .thenReturn(true);
 
     // when
-    handleFailPaymentService.handleFailPayment(request);
+    handleFailPaymentService.handleFailPayment(command);
 
     // then
     verify(getPaymentPort).getPaymentByOrderPublicId(anyString());
@@ -85,18 +83,24 @@ class HandleFailPaymentServiceTest {
   void handleFailPayment_duplicated_order_case() {
     // given
     final String code = "DUPLICATED_ORDER_ID";
-    final String message = "이미 승인 및 취소가 진행된 중복된 주문번호 입니다. 다른 주문번호로 진행해주세요.";
-    final String orderId = UUID.randomUUID().toString();
-    HandleFailPaymentCommand request = HandleFailPaymentCommand.of(code, message, orderId);
+    PaymentRequestFailCommand command = createFailPaymentCommand(code);
 
     // expected
     assertThatThrownBy(
-        () -> handleFailPaymentService.handleFailPayment(request))
+        () -> handleFailPaymentService.handleFailPayment(command))
         .isInstanceOf(CustomException.class)
         .hasMessage(PAYMENT_CONFIRM_NOT_ALLOWED.getMessage());
 
     verify(getPaymentPort, never()).getPaymentByOrderPublicId(anyString());
     verify(updatePaymentPort, never()).updatePaymentStatusById(anyLong(), any(PaymentStatus.class));
     verify(createPaymentHistoryPort, never()).createFailPaymentHistory(anyLong());
+  }
+
+  private PaymentRequestFailCommand createFailPaymentCommand(String code) {
+    return PaymentRequestFailCommand.builder()
+        .code(code)
+        .message("카드사 점검 중으로 다른 카드를 이용해 주세요.")
+        .orderId(UUID.randomUUID().toString())
+        .build();
   }
 }
