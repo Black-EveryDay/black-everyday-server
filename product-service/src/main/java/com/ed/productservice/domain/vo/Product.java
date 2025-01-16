@@ -1,15 +1,10 @@
 package com.ed.productservice.domain.vo;
 
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
 public class Product {
 
@@ -25,16 +20,16 @@ public class Product {
   private ProductCategory category;
   private LocalDateTime createdAt;
 
-  public Product update(ProductForUpdate request) {
-    this.brandId = request.brandId();
-    this.name = request.name();
-    this.price = request.price();
-    this.description = request.description();
-    this.color = request.color();
-    this.image = request.image();
-    this.status = request.status();
-    this.category = request.category();
-
-    return this;
+  public static Product from(ProductForUpdate productForUpdate) {
+    return Product.builder()
+        .brandId(productForUpdate.brandId())
+        .name(productForUpdate.name())
+        .price(productForUpdate.price())
+        .description(productForUpdate.description())
+        .color(productForUpdate.color())
+        .image(productForUpdate.image())
+        .status(productForUpdate.status())
+        .category(productForUpdate.category())
+        .build();
   }
 }

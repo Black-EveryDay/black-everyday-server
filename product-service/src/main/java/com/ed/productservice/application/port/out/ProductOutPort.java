@@ -2,6 +2,7 @@ package com.ed.productservice.application.port.out;
 
 import com.ed.productservice.domain.ProductForCreate;
 import com.ed.productservice.domain.vo.Product;
+import com.ed.productservice.domain.vo.ProductForUpdate;
 
 public interface ProductOutPort {
 
@@ -9,7 +10,7 @@ public interface ProductOutPort {
 
   Product findOne(String productPublicId);
 
-  Product update(Product product);
+  Product update(ProductForUpdate product);
 
   void deleteOne(String productPublicId);
 }

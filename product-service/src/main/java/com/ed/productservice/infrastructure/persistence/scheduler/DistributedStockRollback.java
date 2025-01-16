@@ -24,7 +24,7 @@ public class DistributedStockRollback {
   public void scheduleDistributedStockRollback() {
     RLock lock = redissonClient.getLock("stock-rollback-lock");
     try {
-      boolean isLocked = lock.tryLock(10, 10, TimeUnit.SECONDS);
+      boolean isLocked = lock.tryLock(1, 5, TimeUnit.SECONDS);
 
       if (isLocked) {
         try {
