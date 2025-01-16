@@ -46,8 +46,8 @@ public class SearchProduct {
   @Field(name = "category", type = FieldType.Keyword)
   private String category;
 
-  @Field(name = "price", type = FieldType.Long)
-  private Long price;
+  @Field(name = "price", type = FieldType.Integer)
+  private int price;
 
   @Field(name = "created_at", type = FieldType.Date)
   private LocalDateTime createdAt;
