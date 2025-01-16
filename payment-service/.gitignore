@@ -38,3 +38,6 @@ out/
 
 ## env ##
 .env
+
+## avro ##
+./src/main/avro/
