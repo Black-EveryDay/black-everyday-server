@@ -28,10 +28,10 @@ ext {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
 
     // Eureka
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     // DevTools
     developmentOnly 'org.springframework.boot:spring-boot-devtools:3.4.1'
@@ -53,6 +53,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
 
+    // Feign
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 }
 
 dependencyManagement {

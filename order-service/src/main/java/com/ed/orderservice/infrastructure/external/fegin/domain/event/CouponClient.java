@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "event-service", configuration = FeignClientConfig.class)
+@FeignClient(name = "coupon-service", configuration = FeignClientConfig.class)
 public interface CouponClient {
 
   @PostMapping("/api/v1/internal/coupons/{couponPublicId}/orderInfo")

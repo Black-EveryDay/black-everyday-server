@@ -1,4 +1,4 @@
-package com.ed.eventservice.coupon.domain.enums;
+package com.ed.couponservice.coupon.domain.enums;
 
 public enum DiscountType {
   PERCENTAGE,

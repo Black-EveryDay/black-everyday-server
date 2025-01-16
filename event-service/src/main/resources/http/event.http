@@ -1,0 +1,11 @@
+### 이벤트 생성 API
+POST localhost:19097/api/v1/events
+Content-Type: application/json
+
+{
+  "name": "event1",
+  "type": "RUSH_EVENT",
+  "startAt": "2021-08-01T00:00:00",
+  "endAt": "2021-08-31T23:59:59",
+  "couponTemplateId": "c0f1b1b1-1b1b-1b1b-1b1b-1b1b1b1b1b1b"
+}
