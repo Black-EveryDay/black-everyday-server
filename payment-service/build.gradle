@@ -1,9 +1,18 @@
 import groovy.json.JsonSlurper
+import io.github.cdimascio.dotenv.Dotenv
+import org.apache.http.client.utils.URIBuilder
+
+buildscript {
+    dependencies {
+        classpath "io.github.cdimascio:dotenv-java:${dotenvVersion}"
+        classpath "org.apache.httpcomponents:httpclient:${apacheHttpclientVersion}"
+    }
+}
 
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.1'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${dependencyManagementVersion}"
 }
 
 group = 'com.ed'
@@ -27,6 +36,14 @@ repositories {
     maven {
         url = uri("https://packages.confluent.io/maven")
     }
+}
+
+tasks.named("compileJava") {
+    dependsOn("generateAvroJava")
+}
+
+tasks.named("build") {
+    dependsOn("generateAvroJava")
 }
 
 dependencies {
@@ -71,11 +88,25 @@ sourceSets {
     }
 }
 
-tasks.register("fetchSchemas") {
+def loadEnv() {
+    return Dotenv.configure()
+            .directory(project.rootDir.absolutePath)
+            .ignoreIfMissing()
+            .load()
+}
+
+tasks.register("downloadAvroSchema") {
     group = "build"
     description = "Downloads AVSC files from Confluent Schema Registry with wildcard filtering"
 
-    def schemaRegistryUrl = "http://localhost:8081"
+    def dotenv = loadEnv()
+    def schemaRegistryUrls = [
+            dev  : dotenv.get("DEV_SCHEMA_REGISTRY_URL"),
+            prod : dotenv.get("PROD_SCHEMA_REGISTRY_URL")
+    ]
+    def activeProfile = System.getProperty("spring.profiles.active") ?: "dev"
+
+    def schemaRegistryUrl = schemaRegistryUrls[activeProfile]
     def subjectPattern = ~/^order_payment_.*-value$/
     def outputDir = file("src/main/avro")
 
@@ -86,15 +117,23 @@ tasks.register("fetchSchemas") {
     doLast {
         outputDir.mkdirs()
 
-        def allSubjects = new URL("${schemaRegistryUrl}/subjects").text
+        def subjectsUrl = new URIBuilder(schemaRegistryUrl)
+                .setPath("/subjects")
+                .build()
+                .toURL()
+
+        def allSubjects = subjectsUrl.text
         def subjectList = new JsonSlurper().parseText(allSubjects)
 
         def matchedSubjects = subjectList.findAll { it ==~ subjectPattern }
-        println "Matched subjects: ${matchedSubjects}"
 
         matchedSubjects.each { subject ->
-            def schemaUrl = "${schemaRegistryUrl}/subjects/${subject}/versions/latest"
-            def response = new URL(schemaUrl).text
+            def schemaUrl = new URIBuilder(schemaRegistryUrl)
+                    .setPath("/subjects/${subject}/versions/latest")
+                    .build()
+                    .toURL()
+
+            def response = schemaUrl.text
             def schema = new JsonSlurper().parseText(response).schema
 
             def fileName = subject.replaceAll('-value$', "") + ".avsc"
@@ -112,11 +151,7 @@ tasks.register("generateAvroJava", JavaExec) {
 
     def avroFiles = fileTree("src/main/avro").include("*.avsc")
     args = ["compile", "-string", "schema"] + avroFiles.collect { it } + ["build/generated-src"]
-    dependsOn("fetchSchemas")
-}
-
-tasks.named("compileJava") {
-    dependsOn("generateAvroJava")
+    dependsOn("downloadAvroSchema")
 }
 
 ext {
