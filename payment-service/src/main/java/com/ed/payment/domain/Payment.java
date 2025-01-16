@@ -3,6 +3,7 @@ package com.ed.payment.domain;
 import static lombok.AccessLevel.PRIVATE;
 
 import com.ed.payment.libs.common.validator.PaymentValidator;
+import com.ed.payment.libs.common.validator.dtos.PaymentValidatorRequest;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +29,7 @@ public class Payment {
   private LocalDateTime confirmDeadline;
   private LocalDateTime cancelDeadLine;
 
-  public void validatePayment(PaymentValidator paymentValidator, LocalDateTime requestDateTime, Long requestAmount) {
-    paymentValidator.validate(this, requestDateTime, requestAmount);
+  public void validatePayment(PaymentValidator paymentValidator, PaymentValidatorRequest request) {
+    paymentValidator.validate(request);
   }
 }

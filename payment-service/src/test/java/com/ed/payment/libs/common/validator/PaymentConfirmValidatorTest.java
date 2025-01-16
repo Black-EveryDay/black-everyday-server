@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
 import com.ed.payment.libs.common.exception.CustomException;
+import com.ed.payment.libs.common.validator.dtos.PaymentValidatorRequest;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
@@ -33,10 +34,11 @@ class PaymentConfirmValidatorTest {
 
     LocalDateTime requestDateTime = LocalDateTime.now();
     final Long sameRequestAmount = 10000L;
+    PaymentValidatorRequest request = PaymentValidatorRequest.of(payment, requestDateTime, sameRequestAmount);
 
     // expected
     Assertions.assertDoesNotThrow(() ->
-        confirmValidator.validate(payment, requestDateTime, sameRequestAmount));
+        confirmValidator.validate(request));
   }
 
   @Test
@@ -51,10 +53,11 @@ class PaymentConfirmValidatorTest {
 
     LocalDateTime requestDateTime = LocalDateTime.now();
     final Long sameRequestAmount = 10000L;
+    PaymentValidatorRequest request = PaymentValidatorRequest.of(payment, requestDateTime, sameRequestAmount);
 
     // expected
     assertThatThrownBy(
-        () -> confirmValidator.validate(payment, requestDateTime, sameRequestAmount))
+        () -> confirmValidator.validate(request))
         .isInstanceOf(CustomException.class)
         .hasMessage(PAYMENT_CONFIRM_NOT_ALLOWED.getMessage());
   }
@@ -71,10 +74,11 @@ class PaymentConfirmValidatorTest {
 
     LocalDateTime requestDateTime = LocalDateTime.now();
     final Long sameRequestAmount = 10000L;
+    PaymentValidatorRequest request = PaymentValidatorRequest.of(payment, requestDateTime, sameRequestAmount);
 
     // expected
     assertThatThrownBy(
-        () -> confirmValidator.validate(payment, requestDateTime, sameRequestAmount))
+        () -> confirmValidator.validate(request))
         .isInstanceOf(CustomException.class)
         .hasMessage(PAYMENT_CONFIRM_NOT_ALLOWED.getMessage());
   }
@@ -91,10 +95,11 @@ class PaymentConfirmValidatorTest {
 
     LocalDateTime laterThanDeadline = LocalDateTime.now().plusDays(6);
     final Long sameRequestAmount = 10000L;
+    PaymentValidatorRequest request = PaymentValidatorRequest.of(payment, laterThanDeadline, sameRequestAmount);
 
     // expected
     assertThatThrownBy(
-        () -> confirmValidator.validate(payment, laterThanDeadline, sameRequestAmount))
+        () -> confirmValidator.validate(request))
         .isInstanceOf(CustomException.class)
         .hasMessage(EXPIRED_PAYMENT_CONFIRM_REQUEST.getMessage());
   }
@@ -111,10 +116,11 @@ class PaymentConfirmValidatorTest {
 
     LocalDateTime requestDateTime = LocalDateTime.now();
     final Long differentAmount = 1000L;
+    PaymentValidatorRequest request = PaymentValidatorRequest.of(payment, requestDateTime, differentAmount);
 
     // expected
     assertThatThrownBy(
-        () -> confirmValidator.validate(payment, requestDateTime, differentAmount))
+        () -> confirmValidator.validate(request))
         .isInstanceOf(CustomException.class)
         .hasMessage(INVALID_PAYMENT_CONFIRM_AMOUNT.getMessage());
   }

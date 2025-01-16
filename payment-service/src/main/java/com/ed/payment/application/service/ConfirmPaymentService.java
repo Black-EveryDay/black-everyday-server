@@ -14,6 +14,7 @@ import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import com.ed.payment.libs.common.validator.PaymentConfirmValidator;
+import com.ed.payment.libs.common.validator.dtos.PaymentValidatorRequest;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,7 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
   public PaymentDoneResponse confirmPayment(ConfirmPaymentCommand command) {
     Payment payment = getPaymentPort.getPaymentByOrderPublicId(command.getOrderId());
 
-    payment.validatePayment(confirmValidator, command.getRequestDateTime(), command.getAmount());
+    payment.validatePayment(confirmValidator, createPaymentValidatorRequest(payment, command));
 
     PaymentDoneResponse paymentDoneResponse = confirmPaymentPort.confirmPayment(payment, command.getPaymentKey());
 
@@ -51,6 +52,12 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
     sendOrderPaymentConfirmResponse(paymentDoneResponse, payment.getPaymentPublicId());
 
     return paymentDoneResponse;
+  }
+
+  private PaymentValidatorRequest createPaymentValidatorRequest(
+      Payment payment, ConfirmPaymentCommand command) {
+    return PaymentValidatorRequest.of(
+        payment, command.getRequestDateTime(), command.getAmount());
   }
 
   private void sendOrderPaymentConfirmResponse(

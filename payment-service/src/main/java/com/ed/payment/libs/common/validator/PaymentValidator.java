@@ -1,8 +1,7 @@
 package com.ed.payment.libs.common.validator;
 
-import com.ed.payment.domain.Payment;
-import java.time.LocalDateTime;
+import com.ed.payment.libs.common.validator.dtos.PaymentValidatorRequest;
 
 public interface PaymentValidator {
-  void validate(Payment payment, LocalDateTime requestDateTime, Long requestAmount);
+  void validate(PaymentValidatorRequest request);
 }

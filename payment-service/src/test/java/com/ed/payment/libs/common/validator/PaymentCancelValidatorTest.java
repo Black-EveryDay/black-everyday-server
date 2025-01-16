@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
 import com.ed.payment.libs.common.exception.CustomException;
+import com.ed.payment.libs.common.validator.dtos.PaymentValidatorRequest;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
@@ -32,10 +33,11 @@ class PaymentCancelValidatorTest {
 
     LocalDateTime requestDateTime = LocalDateTime.now();
     final Long sameRequestAmount = 10000L;
+    PaymentValidatorRequest request = PaymentValidatorRequest.of(payment, requestDateTime, sameRequestAmount);
 
     // expected
     Assertions.assertDoesNotThrow(() ->
-        cancelValidator.validate(payment, requestDateTime, sameRequestAmount));
+        cancelValidator.validate(request));
   }
 
   @Test
@@ -50,10 +52,11 @@ class PaymentCancelValidatorTest {
 
     LocalDateTime requestDateTime = LocalDateTime.now();
     final Long sameRequestAmount = 10000L;
+    PaymentValidatorRequest request = PaymentValidatorRequest.of(payment, requestDateTime, sameRequestAmount);
 
     // expected
     assertThatThrownBy(
-        () -> cancelValidator.validate(payment, requestDateTime, sameRequestAmount))
+        () -> cancelValidator.validate(request))
         .isInstanceOf(CustomException.class)
         .hasMessage(PAYMENT_CANCEL_NOT_ALLOWED.getMessage());
   }
@@ -70,10 +73,11 @@ class PaymentCancelValidatorTest {
 
     LocalDateTime laterThanDeadline = LocalDateTime.now().plusDays(6);
     final Long sameRequestAmount = 10000L;
+    PaymentValidatorRequest request = PaymentValidatorRequest.of(payment, laterThanDeadline, sameRequestAmount);
 
     // expected
     assertThatThrownBy(
-        () -> cancelValidator.validate(payment, laterThanDeadline, sameRequestAmount))
+        () -> cancelValidator.validate(request))
         .isInstanceOf(CustomException.class)
         .hasMessage(EXPIRED_PAYMENT_CANCEL_REQUEST.getMessage());
   }
@@ -90,10 +94,11 @@ class PaymentCancelValidatorTest {
 
     LocalDateTime requestDateTime = LocalDateTime.now();
     final Long greaterThanBalanceAmount = 20000L;
+    PaymentValidatorRequest request = PaymentValidatorRequest.of(payment, requestDateTime, greaterThanBalanceAmount);
 
     // expected
     assertThatThrownBy(
-        () -> cancelValidator.validate(payment, requestDateTime, greaterThanBalanceAmount))
+        () -> cancelValidator.validate(request))
         .isInstanceOf(CustomException.class)
         .hasMessage(INVALID_PAYMENT_CANCEL_AMOUNT.getMessage());
   }

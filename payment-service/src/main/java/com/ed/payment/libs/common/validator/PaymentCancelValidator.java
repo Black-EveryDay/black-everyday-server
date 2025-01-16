@@ -9,6 +9,7 @@ import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_CANCEL_NOT_
 import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
 import com.ed.payment.libs.common.exception.CustomException;
+import com.ed.payment.libs.common.validator.dtos.PaymentValidatorRequest;
 import java.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
@@ -16,10 +17,11 @@ import org.springframework.stereotype.Component;
 public class PaymentCancelValidator implements PaymentValidator {
 
   @Override
-  public void validate(Payment payment, LocalDateTime requestDateTime, Long requestAmount) {
+  public void validate(PaymentValidatorRequest request) {
+    Payment payment = request.getPayment();
     validateCancelablePaymentStatus(payment.getPaymentStatus());
-    validateCancelableDeadline(payment.getCancelDeadLine(), requestDateTime);
-    validateCancelAmount(payment.getBalanceAmount(), requestAmount);
+    validateCancelableDeadline(payment.getCancelDeadLine(), request.getRequestDateTime());
+    validateCancelAmount(payment.getBalanceAmount(), request.getRequestAmount());
   }
 
   private void validateCancelablePaymentStatus(PaymentStatus paymentStatus) {

@@ -14,6 +14,7 @@ import com.ed.payment.application.port.out.pg.CancelPaymentPort;
 import com.ed.payment.application.port.out.pg.dtos.PaymentCanceledResponse;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.libs.common.validator.PaymentCancelValidator;
+import com.ed.payment.libs.common.validator.dtos.PaymentValidatorRequest;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +40,7 @@ public class CancelPaymentService implements CancelPaymentUseCase {
   public void cancelPayment(OrderPaymentCancelRequest request) {
     Payment payment = getPaymentPort.getPaymentByOrderPublicId(request.getOrderId());
 
-    payment.validatePayment(cancelValidator, request.getRequestDateTime(), request.getCancelAmount());
+    payment.validatePayment(cancelValidator, createPaymentValidatorRequest(payment, request));
 
     PaymentCanceledResponse paymentCanceledResponse = cancelPaymentPort.cancelPayment(outPortPgMapper.cancelPaymentToPg(payment, request));
 
@@ -50,6 +51,12 @@ public class CancelPaymentService implements CancelPaymentUseCase {
         outPortPersistenceMapper.cancelHistoryToPersistence(payment.getPaymentId(), paymentCanceledResponse));
 
     sendOrderPaymentCancelResponse(paymentCanceledResponse, payment.getPaymentPublicId());
+  }
+
+  private PaymentValidatorRequest createPaymentValidatorRequest(
+      Payment payment, OrderPaymentCancelRequest request) {
+    return PaymentValidatorRequest.of(
+        payment, request.getRequestDateTime(), request.getCancelAmount());
   }
 
   private void sendOrderPaymentCancelResponse(
