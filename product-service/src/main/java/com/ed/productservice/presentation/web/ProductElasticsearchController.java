@@ -20,12 +20,13 @@ public class ProductElasticsearchController {
   private final ProductElasticQueryAdapter productElasticQueryAdapter;
 
   @GetMapping("/{productPublicId}")
-  public SearchProduct getProducts(@PathVariable("productPublicId") String productPublicId) {
+  public SearchProduct getProductByProductPublicId(@PathVariable("productPublicId") String productPublicId) {
+
     return productElasticQueryAdapter.findOne(productPublicId);
   }
 
   @GetMapping
-  public Page<ProductDetailResponse> getProductList(ProductSearchCondition condition,
+  public Page<ProductDetailResponse> searchProducts(ProductSearchCondition condition,
       Pageable pageable) {
 
     return productElasticQueryAdapter.search(condition, pageable)
