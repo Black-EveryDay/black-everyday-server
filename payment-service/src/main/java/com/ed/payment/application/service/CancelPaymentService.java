@@ -3,8 +3,8 @@ package com.ed.payment.application.service;
 import static com.ed.payment.domain.PaymentStatus.isCanceled;
 import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_CANCEL_RESPONSE;
 
-import com.ed.OrderPaymentCancelRequest;
-import com.ed.OrderPaymentCancelResponse;
+import com.ed.OrderPaymentCancelRequestEvent;
+import com.ed.OrderPaymentCancelResponseEvent;
 import com.ed.payment.application.port.in.CancelPaymentUseCase;
 import com.ed.payment.application.port.out.mq.Producer;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
@@ -33,11 +33,11 @@ public class CancelPaymentService implements CancelPaymentUseCase {
   private final CancelPaymentPort cancelPaymentPort;
   private final UpdatePaymentPort updatePaymentPort;
   private final CreatePaymentHistoryPort createPaymentHistoryPort;
-  private final Producer<OrderPaymentCancelResponse> orderPaymentCancelProducer;
+  private final Producer<OrderPaymentCancelResponseEvent> orderPaymentCancelProducer;
 
   @Transactional
   @Override
-  public void cancelPayment(OrderPaymentCancelRequest request) {
+  public void cancelPayment(OrderPaymentCancelRequestEvent request) {
     Payment payment = getPaymentPort.getPaymentByOrderPublicId(request.getOrderId());
 
     payment.validatePayment(cancelValidator, createPaymentValidatorRequest(payment, request));
@@ -54,7 +54,7 @@ public class CancelPaymentService implements CancelPaymentUseCase {
   }
 
   private PaymentValidatorRequest createPaymentValidatorRequest(
-      Payment payment, OrderPaymentCancelRequest request) {
+      Payment payment, OrderPaymentCancelRequestEvent request) {
     return PaymentValidatorRequest.of(
         payment, request.getRequestDateTime(), request.getCancelAmount());
   }
@@ -64,9 +64,9 @@ public class CancelPaymentService implements CancelPaymentUseCase {
     orderPaymentCancelProducer.send(ORDER_PAYMENT_CANCEL_RESPONSE, createPaymentCancelMessage(response, paymentPublicId));
   }
 
-  private OrderPaymentCancelResponse createPaymentCancelMessage(
+  private OrderPaymentCancelResponseEvent createPaymentCancelMessage(
       PaymentCanceledResponse response, String paymentPublicId) {
-    return OrderPaymentCancelResponse.newBuilder()
+    return OrderPaymentCancelResponseEvent.newBuilder()
         .setIsSuccess(isCanceled(response.getPaymentStatus()))
         .setOrderId(response.getOrderId())
         .setPaymentId(paymentPublicId)

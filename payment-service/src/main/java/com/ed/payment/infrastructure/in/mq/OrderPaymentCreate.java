@@ -2,7 +2,7 @@ package com.ed.payment.infrastructure.in.mq;
 
 import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_CREATE_REQUEST;
 
-import com.ed.OrderPaymentCreateRequest;
+import com.ed.OrderPaymentCreateRequestEvent;
 import com.ed.payment.application.port.in.CreatePaymentUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +18,13 @@ public class OrderPaymentCreate {
   private final CreatePaymentUseCase createPaymentUseCase;
 
   @KafkaListener(topics = ORDER_PAYMENT_CREATE_REQUEST)
-  public void receiveOrderCreated(ConsumerRecord<String, OrderPaymentCreateRequest> consumerRecord) {
-    OrderPaymentCreateRequest request = consumerRecord.value();
+  public void receiveOrderCreated(ConsumerRecord<String, OrderPaymentCreateRequestEvent> consumerRecord) {
+    OrderPaymentCreateRequestEvent request = consumerRecord.value();
     logConsumerRecord(request);
     createPaymentUseCase.createPayment(request);
   }
 
-  private void logConsumerRecord(OrderPaymentCreateRequest request) {
+  private void logConsumerRecord(OrderPaymentCreateRequestEvent request) {
     log.info("Received Request = userId: {}, orderId: {}, orderName: {}, paymentDeadline: {}, orderCancelDeadline: {}, totalAmount: {}, messageTimestamp: {}",
         request.getUserId(),
         request.getOrderId(),

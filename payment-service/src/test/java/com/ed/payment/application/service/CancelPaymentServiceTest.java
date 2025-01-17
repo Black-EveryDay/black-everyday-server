@@ -8,8 +8,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ed.OrderPaymentCancelRequest;
-import com.ed.OrderPaymentCancelResponse;
+import com.ed.OrderPaymentCancelRequestEvent;
+import com.ed.OrderPaymentCancelResponseEvent;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
@@ -58,7 +58,7 @@ class CancelPaymentServiceTest {
   private CreatePaymentHistoryPort createPaymentHistoryPort;
 
   @Mock
-  private OrderPaymentResponse<OrderPaymentCancelResponse> producer;
+  private OrderPaymentResponse<OrderPaymentCancelResponseEvent> producer;
 
   @Test
   @DisplayName("cancelPayment: 주문 취소 시 발행한 취소 메시지를 기반으로 결제를 취소한다.")
@@ -73,7 +73,7 @@ class CancelPaymentServiceTest {
     final Long balanceAmount = 10000L;
     final Long cancelAmount = 10000L;
 
-    OrderPaymentCancelRequest cancelRequest = createCancelRequest(
+    OrderPaymentCancelRequestEvent cancelRequest = createCancelRequest(
         userPublicId, orderPublicId, paymentPublicId, cancelAmount);
 
     Payment payment = createPayment(
@@ -136,10 +136,10 @@ class CancelPaymentServiceTest {
         .build();
   }
 
-  private OrderPaymentCancelRequest createCancelRequest(
+  private OrderPaymentCancelRequestEvent createCancelRequest(
       String userPublicId, String orderPublicId, String paymentPublicId,
       Long cancelAmount) {
-    return OrderPaymentCancelRequest.newBuilder()
+    return OrderPaymentCancelRequestEvent.newBuilder()
         .setUserId(userPublicId)
         .setOrderId(orderPublicId)
         .setPaymentId(paymentPublicId)

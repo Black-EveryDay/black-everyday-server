@@ -4,9 +4,9 @@ import static com.ed.payment.domain.PaymentStatus.ABORTED;
 import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_CONFIRM_RESPONSE;
 import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_CONFIRM_NOT_ALLOWED;
 
-import com.ed.OrderPaymentConfirmResponse;
-import com.ed.payment.application.port.in.command.PaymentRequestFailCommand;
+import com.ed.OrderPaymentConfirmResponseEvent;
 import com.ed.payment.application.port.in.HandleFailPaymentUseCase;
+import com.ed.payment.application.port.in.command.PaymentRequestFailCommand;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
@@ -30,7 +30,7 @@ public class HandleFailPaymentService implements HandleFailPaymentUseCase {
   private final GetPaymentPort getPaymentPort;
   private final UpdatePaymentPort updatePaymentPort;
   private final CreatePaymentHistoryPort createPaymentHistoryPort;
-  private final OrderPaymentResponse<OrderPaymentConfirmResponse> orderPaymentConfirmResponse;
+  private final OrderPaymentResponse<OrderPaymentConfirmResponseEvent> orderPaymentConfirmResponse;
 
   @Transactional
   @Override
@@ -52,8 +52,8 @@ public class HandleFailPaymentService implements HandleFailPaymentUseCase {
     orderPaymentConfirmResponse.send(ORDER_PAYMENT_CONFIRM_RESPONSE, createFailMessage(orderId));
   }
 
-  private OrderPaymentConfirmResponse createFailMessage(String orderId) {
-    return OrderPaymentConfirmResponse.newBuilder()
+  private OrderPaymentConfirmResponseEvent createFailMessage(String orderId) {
+    return OrderPaymentConfirmResponseEvent.newBuilder()
         .setIsSuccess(false)
         .setOrderId(orderId)
         .setMessageTimestamp(LocalDateTime.now())

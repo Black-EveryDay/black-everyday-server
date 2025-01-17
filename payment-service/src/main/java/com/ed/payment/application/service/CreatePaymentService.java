@@ -1,6 +1,6 @@
 package com.ed.payment.application.service;
 
-import com.ed.OrderPaymentCreateRequest;
+import com.ed.OrderPaymentCreateRequestEvent;
 import com.ed.payment.application.port.in.CreatePaymentUseCase;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.CreatePaymentPort;
@@ -23,7 +23,7 @@ public class CreatePaymentService implements CreatePaymentUseCase {
 
   @Transactional
   @Override
-  public void createPayment(OrderPaymentCreateRequest request) {
+  public void createPayment(OrderPaymentCreateRequestEvent request) {
     if (getPaymentPort.existsByOrderPublicId(request.getOrderId())) {
       logBadPaymentRequest(request);
       return;
@@ -32,7 +32,7 @@ public class CreatePaymentService implements CreatePaymentUseCase {
     createPaymentAndPaymentHistory(request);
   }
 
-  private void createPaymentAndPaymentHistory(OrderPaymentCreateRequest request) {
+  private void createPaymentAndPaymentHistory(OrderPaymentCreateRequestEvent request) {
     Payment payment = createPaymentPort.createPayment(
         outPortPersistenceMapper.createPaymentToPersistence(request));
 
@@ -40,7 +40,7 @@ public class CreatePaymentService implements CreatePaymentUseCase {
         payment.getPaymentId(), payment.getTotalAmount());
   }
 
-  private void logBadPaymentRequest(OrderPaymentCreateRequest request) {
+  private void logBadPaymentRequest(OrderPaymentCreateRequestEvent request) {
     log.info("Bad Request = payment based on userId: {}, orderId: {} is already exist",
         request.getUserId(), request.getOrderId());
   }

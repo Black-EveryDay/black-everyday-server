@@ -7,7 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ed.OrderPaymentCreateRequest;
+import com.ed.OrderPaymentCreateRequestEvent;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.CreatePaymentPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
@@ -45,7 +45,7 @@ class CreatePaymentServiceTest {
   	// given
     final String orderId = UUID.randomUUID().toString();
 
-    OrderPaymentCreateRequest createOrderPaymentRequest = createCreateOrderPaymentRequest(orderId);
+    OrderPaymentCreateRequestEvent createOrderPaymentRequest = createCreateOrderPaymentRequest(orderId);
     CreatePaymentRequest createPaymentRequest = outPortPersistenceMapper.createPaymentToPersistence(createOrderPaymentRequest);
 
     // stubbing
@@ -73,7 +73,7 @@ class CreatePaymentServiceTest {
     // given
     final String orderId = UUID.randomUUID().toString();
 
-    OrderPaymentCreateRequest createOrderPaymentRequest = createCreateOrderPaymentRequest(orderId);
+    OrderPaymentCreateRequestEvent createOrderPaymentRequest = createCreateOrderPaymentRequest(orderId);
     CreatePaymentRequest createPaymentRequest = outPortPersistenceMapper.createPaymentToPersistence(createOrderPaymentRequest);
 
     // stubbing
@@ -89,8 +89,8 @@ class CreatePaymentServiceTest {
     verify(createPaymentHistoryPort, never()).createPaymentHistory(anyLong(), anyLong());
   }
 
-  private OrderPaymentCreateRequest createCreateOrderPaymentRequest(String orderId) {
-    return OrderPaymentCreateRequest.newBuilder()
+  private OrderPaymentCreateRequestEvent createCreateOrderPaymentRequest(String orderId) {
+    return OrderPaymentCreateRequestEvent.newBuilder()
         .setUserId(UUID.randomUUID().toString())
         .setOrderId(orderId)
         .setOrderName("피자맛 호빵")

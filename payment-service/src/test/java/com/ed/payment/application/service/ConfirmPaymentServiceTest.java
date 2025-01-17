@@ -8,7 +8,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ed.OrderPaymentConfirmResponse;
+import com.ed.OrderPaymentConfirmResponseEvent;
 import com.ed.payment.application.port.in.command.ConfirmPaymentCommand;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
@@ -53,7 +53,7 @@ class ConfirmPaymentServiceTest {
   private CreatePaymentHistoryPort createPaymentHistoryPort;
 
   @Mock
-  private OrderPaymentResponse<OrderPaymentConfirmResponse> producer;
+  private OrderPaymentResponse<OrderPaymentConfirmResponseEvent> producer;
 
   @Test
   @DisplayName("confirmPayment: 결제 승인 정보를 입력 받아 결제 승인을 요청한다.")
@@ -83,7 +83,7 @@ class ConfirmPaymentServiceTest {
     doNothing().when(createPaymentHistoryPort)
         .createConfirmPaymentHistory(confirmPaymentHistoryRequest);
 
-    when(producer.send(anyString(), any(OrderPaymentConfirmResponse.class)))
+    when(producer.send(anyString(), any(OrderPaymentConfirmResponseEvent.class)))
         .thenReturn(true);
 
     // when
@@ -94,7 +94,7 @@ class ConfirmPaymentServiceTest {
     verify(confirmPaymentPort).confirmPayment(payment, paymentKey);
     verify(updatePaymentPort).updatePaymentStatusAndPaymentKeyById(payment.getPaymentId(), confirmResponse.getPaymentStatus(), paymentKey);
     verify(createPaymentHistoryPort).createConfirmPaymentHistory(confirmPaymentHistoryRequest);
-    verify(producer).send(anyString(), any(OrderPaymentConfirmResponse.class));
+    verify(producer).send(anyString(), any(OrderPaymentConfirmResponseEvent.class));
   }
 
   private ConfirmPaymentCommand createConfirmRequest(String paymentKey, String orderPublicId, Long amount) {

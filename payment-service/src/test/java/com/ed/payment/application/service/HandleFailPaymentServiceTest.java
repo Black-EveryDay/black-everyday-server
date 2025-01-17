@@ -11,7 +11,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ed.OrderPaymentConfirmResponse;
+import com.ed.OrderPaymentConfirmResponseEvent;
 import com.ed.payment.application.port.in.command.PaymentRequestFailCommand;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
@@ -44,7 +44,7 @@ class HandleFailPaymentServiceTest {
   private CreatePaymentHistoryPort createPaymentHistoryPort;
 
   @Mock
-  private OrderPaymentResponse<OrderPaymentConfirmResponse> producer;
+  private OrderPaymentResponse<OrderPaymentConfirmResponseEvent> producer;
 
   @Test
   @DisplayName("handleFailPayment: 결제 실패 정보를 입력 받아 결제 실패 원인을 반환한다.")
@@ -65,7 +65,7 @@ class HandleFailPaymentServiceTest {
         .when(createPaymentHistoryPort)
         .createFailPaymentHistory(anyLong());
 
-    when(producer.send(anyString(), any(OrderPaymentConfirmResponse.class)))
+    when(producer.send(anyString(), any(OrderPaymentConfirmResponseEvent.class)))
         .thenReturn(true);
 
     // when
@@ -75,7 +75,7 @@ class HandleFailPaymentServiceTest {
     verify(getPaymentPort).getPaymentByOrderPublicId(anyString());
     verify(updatePaymentPort).updatePaymentStatusById(anyLong(), any(PaymentStatus.class));
     verify(createPaymentHistoryPort).createFailPaymentHistory(anyLong());
-    verify(producer).send(anyString(), any(OrderPaymentConfirmResponse.class));
+    verify(producer).send(anyString(), any(OrderPaymentConfirmResponseEvent.class));
   }
 
   @Test

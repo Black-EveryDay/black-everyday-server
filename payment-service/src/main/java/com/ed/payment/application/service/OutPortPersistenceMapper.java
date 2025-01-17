@@ -1,6 +1,6 @@
 package com.ed.payment.application.service;
 
-import com.ed.OrderPaymentCreateRequest;
+import com.ed.OrderPaymentCreateRequestEvent;
 import com.ed.payment.application.port.out.persistence.dtos.CreateCancelPaymentHistoryRequest;
 import com.ed.payment.application.port.out.persistence.dtos.CreateConfirmPaymentHistoryRequest;
 import com.ed.payment.application.port.out.persistence.dtos.CreatePaymentRequest;
@@ -12,7 +12,8 @@ import org.springframework.stereotype.Component;
 @Component
 class OutPortPersistenceMapper {
 
-  CreatePaymentRequest createPaymentToPersistence(OrderPaymentCreateRequest request) {
+  CreatePaymentRequest createPaymentToPersistence(
+      OrderPaymentCreateRequestEvent request) {
     return CreatePaymentRequest.builder()
         .userPublicId(request.getUserId())
         .orderPublicId(request.getOrderId())
