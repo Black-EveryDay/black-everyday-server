@@ -22,7 +22,7 @@ public abstract class BaseJpaEntity {
 
   @ColumnDefault("false")
   @Column(name = "IS_DELETED")
-  private Boolean isDeleted;
+  private boolean isDeleted;
 
   @CreatedDate
   @Column(name = "CREATED_AT", updatable = false)

@@ -2,15 +2,23 @@ package com.ed.couponservice.coupon.adapter.in.web;
 
 import static com.ed.couponservice.libs.common.ApiResponseUtils.created;
 
+import com.ed.couponservice.coupon.adapter.in.web.dto.CouponSearchCondition;
 import com.ed.couponservice.coupon.adapter.in.web.dto.CreateCouponRequest;
 import com.ed.couponservice.coupon.adapter.in.web.dto.CreateCouponTemplateRequest;
 import com.ed.couponservice.coupon.application.port.in.CouponTemplateUseCase;
-import com.ed.couponservice.coupon.application.port.in.CreateCouponCommand;
-import com.ed.couponservice.coupon.application.port.out.dto.CreateCouponTemplateResponse;
+import com.ed.couponservice.coupon.application.port.in.command.CreateCouponCommand;
+import com.ed.couponservice.coupon.application.port.in.command.SearchCouponTemplatesCommand;
+import com.ed.couponservice.coupon.application.port.in.command.mapper.CommandMapper;
+import com.ed.couponservice.coupon.application.port.out.dto.CouponTemplateDetailResponse;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,9 +31,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class CouponTemplateController {
 
   private final CouponTemplateUseCase couponTemplateUseCase;
+  private final CommandMapper commandMapper;
 
   @PostMapping
-  public ResponseEntity<CreateCouponTemplateResponse> createCouponTemplate(
+  public ResponseEntity<CouponTemplateDetailResponse> createCouponTemplate(
       @Valid @RequestBody CreateCouponTemplateRequest createCouponTemplateRequest
   ) {
     return created(
@@ -43,4 +52,23 @@ public class CouponTemplateController {
         .build());
     return created(null);
   }
+
+  @GetMapping
+  public PagedModel<CouponTemplateDetailResponse> searchCouponTemplates(
+      CouponSearchCondition couponSearchCondition,
+      @PageableDefault Pageable pageable
+  ) {
+
+    SearchCouponTemplatesCommand searchCouponTemplateCommand =
+        commandMapper.searchCouponTemplateRequestToSearchCouponTemplateCommand(
+            couponSearchCondition,
+            pageable
+        );
+
+    Page<CouponTemplateDetailResponse> couponTemplates =
+        couponTemplateUseCase.searchCouponTemplates(searchCouponTemplateCommand);
+
+    return new PagedModel<>(couponTemplates);
+  }
+
 }

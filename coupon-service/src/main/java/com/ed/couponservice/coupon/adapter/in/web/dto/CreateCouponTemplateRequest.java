@@ -1,6 +1,6 @@
 package com.ed.couponservice.coupon.adapter.in.web.dto;
 
-import com.ed.couponservice.coupon.application.port.in.CreateCouponTemplateCommand;
+import com.ed.couponservice.coupon.application.port.in.command.CreateCouponTemplateCommand;
 import com.ed.couponservice.coupon.domain.enums.CouponIssuanceType;
 import com.ed.couponservice.coupon.domain.enums.CouponIssuerType;
 import com.ed.couponservice.coupon.domain.enums.CouponUsageTargetType;

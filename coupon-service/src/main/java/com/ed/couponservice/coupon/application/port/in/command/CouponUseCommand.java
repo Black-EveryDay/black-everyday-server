@@ -1,4 +1,4 @@
-package com.ed.couponservice.coupon.application.port.in;
+package com.ed.couponservice.coupon.application.port.in.command;
 
 import java.util.UUID;
 import lombok.Builder;

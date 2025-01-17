@@ -11,8 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.ed.couponservice.coupon.adapter.in.web.dto.CreateCouponRequest;
 import com.ed.couponservice.coupon.adapter.in.web.dto.CreateCouponTemplateRequest;
 import com.ed.couponservice.coupon.application.port.in.CouponTemplateUseCase;
-import com.ed.couponservice.coupon.application.port.in.CreateCouponTemplateCommand;
-import com.ed.couponservice.coupon.application.port.out.dto.CreateCouponTemplateResponse;
+import com.ed.couponservice.coupon.application.port.in.command.CreateCouponTemplateCommand;
+import com.ed.couponservice.coupon.application.port.out.dto.CouponTemplateDetailResponse;
 import com.ed.couponservice.coupon.domain.enums.CouponIssuanceType;
 import com.ed.couponservice.coupon.domain.enums.CouponIssuerType;
 import com.ed.couponservice.coupon.domain.enums.CouponUsageTargetType;
@@ -67,7 +67,7 @@ class CouponTemplateControllerTest {
           .discountValue(BigDecimal.valueOf(10.5))
           .build();
 
-      CreateCouponTemplateResponse createCouponTemplateResponse = CreateCouponTemplateResponse.builder()
+      CouponTemplateDetailResponse couponTemplateDetailResponse = CouponTemplateDetailResponse.builder()
           .id(1L)
           .publicId(UUID.randomUUID())
           .couponName("couponName")
@@ -85,7 +85,7 @@ class CouponTemplateControllerTest {
           .build();
 
       given(couponTemplateUseCase.createCouponTemplate(any(CreateCouponTemplateCommand.class)))
-          .willReturn(createCouponTemplateResponse);
+          .willReturn(couponTemplateDetailResponse);
       // when
       ResultActions resultActions = mockMvc.perform(post(uri)
           .contentType(MediaType.APPLICATION_JSON)
@@ -94,26 +94,26 @@ class CouponTemplateControllerTest {
       // then
       resultActions.andExpect(status().isCreated())
           .andExpect(jsonPath("$.success").value(true))
-          .andExpect(jsonPath("$.body.id").value(createCouponTemplateResponse.getId()))
+          .andExpect(jsonPath("$.body.id").value(couponTemplateDetailResponse.getId()))
           .andExpect(jsonPath("$.body.publicId").isNotEmpty())
           .andExpect(
-              jsonPath("$.body.couponName").value(createCouponTemplateResponse.getCouponName()))
+              jsonPath("$.body.couponName").value(couponTemplateDetailResponse.getCouponName()))
           .andExpect(jsonPath("$.body.couponIssuanceType").value(
-              createCouponTemplateResponse.getCouponIssuanceType().toString()))
+              couponTemplateDetailResponse.getCouponIssuanceType().toString()))
           .andExpect(jsonPath("$.body.couponIssuerType").value(
-              createCouponTemplateResponse.getCouponIssuerType().toString()))
+              couponTemplateDetailResponse.getCouponIssuerType().toString()))
           .andExpect(jsonPath("$.body.couponIssuerId").isEmpty())
           .andExpect(jsonPath("$.body.maxIssuance").isEmpty())
           .andExpect(
-              jsonPath("$.body.isIssuable").value(createCouponTemplateResponse.getIsIssuable()))
+              jsonPath("$.body.isIssuable").value(couponTemplateDetailResponse.getIsIssuable()))
           .andExpect(jsonPath("$.body.couponUsageTargetType").value(
-              createCouponTemplateResponse.getCouponUsageTargetType().toString()))
+              couponTemplateDetailResponse.getCouponUsageTargetType().toString()))
           .andExpect(jsonPath("$.body.couponUsageTargetId").isEmpty())
           .andExpect(
               jsonPath("$.body.discountType").value(
-                  createCouponTemplateResponse.getDiscountType().toString()))
+                  couponTemplateDetailResponse.getDiscountType().toString()))
           .andExpect(jsonPath("$.body.discountValue").value(
-              createCouponTemplateResponse.getDiscountValue()))
+              couponTemplateDetailResponse.getDiscountValue()))
           .andExpect(jsonPath("$.body.expirationDays").isEmpty())
           .andExpect(jsonPath("$.body.expirationDate").isEmpty());
 

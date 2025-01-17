@@ -1,4 +1,4 @@
-package com.ed.couponservice.coupon.application.port.out.dto;
+package com.ed.couponservice.coupon.application.port.in.command;
 
 import com.ed.couponservice.coupon.domain.enums.CouponIssuanceType;
 import com.ed.couponservice.coupon.domain.enums.CouponIssuerType;
@@ -12,20 +12,18 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class CreateCouponTemplateResponse {
+public class CreateCouponTemplateCommand {
 
-  private Long id;
-  private UUID publicId;
   private String couponName;
   private CouponIssuanceType couponIssuanceType;
   private CouponIssuerType couponIssuerType;
   private UUID couponIssuerId;
   private Integer maxIssuance;
-  private Boolean isIssuable;
   private CouponUsageTargetType couponUsageTargetType;
   private UUID couponUsageTargetId;
   private DiscountType discountType;
   private BigDecimal discountValue;
   private Long expirationDays;
   private LocalDateTime expirationDate;
+  private Boolean isIssuable;
 }

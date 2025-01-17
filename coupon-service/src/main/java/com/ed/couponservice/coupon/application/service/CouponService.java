@@ -1,9 +1,9 @@
 package com.ed.couponservice.coupon.application.service;
 
-import com.ed.couponservice.coupon.application.port.in.CouponCancelUseCommand;
 import com.ed.couponservice.coupon.application.port.in.CouponUseCase;
-import com.ed.couponservice.coupon.application.port.in.CouponUseCommand;
-import com.ed.couponservice.coupon.application.port.in.IssueCouponCommand;
+import com.ed.couponservice.coupon.application.port.in.command.CouponCancelUseCommand;
+import com.ed.couponservice.coupon.application.port.in.command.CouponUseCommand;
+import com.ed.couponservice.coupon.application.port.in.command.IssueCouponCommand;
 import com.ed.couponservice.coupon.application.port.out.CouponPersistencePort;
 import com.ed.couponservice.coupon.application.port.out.dto.IssueCouponResponse;
 import com.ed.couponservice.coupon.application.port.out.dto.UseCouponResponse;

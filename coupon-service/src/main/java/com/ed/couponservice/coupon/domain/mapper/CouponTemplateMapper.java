@@ -1,11 +1,12 @@
 package com.ed.couponservice.coupon.domain.mapper;
 
 import com.ed.couponservice.coupon.adapter.out.persistence.entity.CouponTemplateJpaEntity;
-import com.ed.couponservice.coupon.application.port.in.CreateCouponTemplateCommand;
-import com.ed.couponservice.coupon.application.port.out.dto.CreateCouponTemplateResponse;
+import com.ed.couponservice.coupon.application.port.in.command.CreateCouponTemplateCommand;
+import com.ed.couponservice.coupon.application.port.out.dto.CouponTemplateDetailResponse;
 import com.ed.couponservice.coupon.domain.CouponTemplate;
 import com.ed.couponservice.coupon.domain.dto.CreateCouponTemplateDto;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -26,7 +27,24 @@ public interface CouponTemplateMapper {
   @Mapping(target = "couponDiscountInfo.discountValue", source = "command.discountValue")
   @Mapping(target = "couponExpirationInfo.expirationDays", source = "command.expirationDays", qualifiedByName = "toDuration")
   @Mapping(target = "couponExpirationInfo.fixedExpirationDate", source = "command.expirationDate")
-  CreateCouponTemplateDto commandToCreateDto(CreateCouponTemplateCommand command, UUID publicId);
+  CreateCouponTemplateDto createCouponTemplateCommandToCreateCouponTemplateDto(
+      CreateCouponTemplateCommand command,
+      UUID publicId);
+
+  @Mapping(target = "createCouponTemplateDto.couponName", source = "command.couponName")
+  @Mapping(target = "createCouponTemplateDto.couponIssueInfo.couponIssuanceType", source = "command.couponIssuanceType")
+  @Mapping(target = "createCouponTemplateDto.couponIssueInfo.couponIssuerType", source = "command.couponIssuerType")
+  @Mapping(target = "createCouponTemplateDto.couponIssueInfo.couponIssuerId", source = "command.couponIssuerId")
+  @Mapping(target = "createCouponTemplateDto.couponIssueInfo.maxIssuance", source = "command.maxIssuance")
+  @Mapping(target = "createCouponTemplateDto.couponIssueInfo.isIssuable", source = "command.isIssuable")
+  @Mapping(target = "createCouponTemplateDto.couponUsageTargetInfo.couponUsageTargetType", source = "command.couponUsageTargetType")
+  @Mapping(target = "createCouponTemplateDto.couponUsageTargetInfo.couponUsageTargetId", source = "command.couponUsageTargetId")
+  @Mapping(target = "createCouponTemplateDto.couponDiscountInfo.discountType", source = "command.discountType")
+  @Mapping(target = "createCouponTemplateDto.couponDiscountInfo.discountValue", source = "command.discountValue")
+  @Mapping(target = "createCouponTemplateDto.couponExpirationInfo.expirationDays", source = "command.expirationDays", qualifiedByName = "toDuration")
+  @Mapping(target = "createCouponTemplateDto.couponExpirationInfo.fixedExpirationDate", source = "command.expirationDate")
+  CouponTemplate createCouponTemplateCommandToDomain(CreateCouponTemplateCommand command,
+      UUID publicId);
 
   @Named("toDuration")
   default Duration toDuration(Integer days) {
@@ -59,11 +77,23 @@ public interface CouponTemplateMapper {
   @Mapping(target = "discountValue", source = "couponDiscountInfo.discountValue")
   @Mapping(target = "expirationDays", source = "couponExpirationInfo.expirationDays", qualifiedByName = "toDays")
   @Mapping(target = "expirationDate", source = "couponExpirationInfo.fixedExpirationDate")
-  CreateCouponTemplateResponse domainToResponse(CouponTemplate couponTemplate);
+  CouponTemplateDetailResponse domainToCouponTemplateDetailResponse(CouponTemplate couponTemplate);
 
   @Named("toDays")
   default Long toDays(Duration days) {
+    if (Objects.isNull(days)) {
+      return null;
+    }
+
     return days.toDays();
   }
 
+  @Mapping(target = "createCouponTemplateDto.id", source = "couponTemplateJpaEntity.id")
+  @Mapping(target = "createCouponTemplateDto.publicId", source = "couponTemplateJpaEntity.publicId")
+  @Mapping(target = "createCouponTemplateDto.couponName", source = "couponTemplateJpaEntity.couponName")
+  @Mapping(target = "createCouponTemplateDto.couponIssueInfo", source = "couponTemplateJpaEntity.couponIssueInfoJpaEntity")
+  @Mapping(target = "createCouponTemplateDto.couponUsageTargetInfo", source = "couponTemplateJpaEntity.couponUsageTargetInfoJpaEntity")
+  @Mapping(target = "createCouponTemplateDto.couponDiscountInfo", source = "couponTemplateJpaEntity.couponDiscountInfoJpaEntity")
+  @Mapping(target = "createCouponTemplateDto.couponExpirationInfo", source = "couponTemplateJpaEntity.couponExpirationInfoJpaEntity")
+  CouponTemplate jpaEntityToDomain(CouponTemplateJpaEntity couponTemplateJpaEntity);
 }

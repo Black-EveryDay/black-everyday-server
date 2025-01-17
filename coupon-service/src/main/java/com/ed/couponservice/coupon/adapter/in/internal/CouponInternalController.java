@@ -1,9 +1,9 @@
 package com.ed.couponservice.coupon.adapter.in.internal;
 
 import com.ed.couponservice.coupon.adapter.in.internal.dto.UseCouponRequest;
-import com.ed.couponservice.coupon.application.port.in.CouponCancelUseCommand;
 import com.ed.couponservice.coupon.application.port.in.CouponUseCase;
-import com.ed.couponservice.coupon.application.port.in.CouponUseCommand;
+import com.ed.couponservice.coupon.application.port.in.command.CouponCancelUseCommand;
+import com.ed.couponservice.coupon.application.port.in.command.CouponUseCommand;
 import com.ed.couponservice.coupon.application.port.out.dto.UseCouponResponse;
 import jakarta.validation.Valid;
 import java.util.UUID;

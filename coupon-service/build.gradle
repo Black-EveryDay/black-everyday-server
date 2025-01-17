@@ -25,6 +25,7 @@ repositories {
 
 ext {
     set('springCloudVersion', "2024.0.0")
+    set('querydslVersion', "5.0.0")
 }
 
 dependencies {
@@ -53,6 +54,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
 
+
+    // QueryDsl
+    implementation "com.querydsl:querydsl-jpa:${querydslVersion}:jakarta"
+    annotationProcessor "com.querydsl:querydsl-apt:${querydslVersion}:jakarta"
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 }
 
 dependencyManagement {
@@ -63,4 +70,18 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+def querydslDir = "src/main/generated"
+
+sourceSets {
+    main.java.srcDirs += [querydslDir]
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
+}
+
+clean.doLast {
+    file(querydslDir).deleteDir()
 }

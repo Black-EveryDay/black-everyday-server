@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.ed.couponservice.coupon.adapter.in.web.dto.IssueCouponRequest;
 import com.ed.couponservice.coupon.application.port.in.CouponUseCase;
-import com.ed.couponservice.coupon.application.port.in.IssueCouponCommand;
+import com.ed.couponservice.coupon.application.port.in.command.IssueCouponCommand;
 import com.ed.couponservice.coupon.application.port.out.dto.IssueCouponResponse;
 import com.ed.couponservice.coupon.domain.enums.CouponState;
 import com.fasterxml.jackson.databind.ObjectMapper;

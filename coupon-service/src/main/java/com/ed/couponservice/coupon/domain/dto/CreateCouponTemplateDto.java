@@ -5,13 +5,10 @@ import com.ed.couponservice.coupon.domain.vo.CouponExpirationInfo;
 import com.ed.couponservice.coupon.domain.vo.CouponIssueInfo;
 import com.ed.couponservice.coupon.domain.vo.CouponUsageTargetInfo;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
-@AllArgsConstructor
 public class CreateCouponTemplateDto {
 
   Long id;
@@ -21,4 +18,23 @@ public class CreateCouponTemplateDto {
   CouponUsageTargetInfo couponUsageTargetInfo;
   CouponDiscountInfo couponDiscountInfo;
   CouponExpirationInfo couponExpirationInfo;
+
+  @Builder
+  private CreateCouponTemplateDto(
+      Long id,
+      UUID publicId,
+      String couponName,
+      CouponIssueInfo couponIssueInfo,
+      CouponUsageTargetInfo couponUsageTargetInfo,
+      CouponDiscountInfo couponDiscountInfo,
+      CouponExpirationInfo couponExpirationInfo
+  ) {
+    this.id = id;
+    this.publicId = publicId;
+    this.couponName = couponName;
+    this.couponIssueInfo = couponIssueInfo;
+    this.couponUsageTargetInfo = couponUsageTargetInfo;
+    this.couponDiscountInfo = couponDiscountInfo;
+    this.couponExpirationInfo = couponExpirationInfo;
+  }
 }

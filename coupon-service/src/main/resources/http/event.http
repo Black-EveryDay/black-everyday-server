@@ -47,3 +47,8 @@ Content-Type: application/json
 
 ### 쿠폰 사용 취소 API
 POST http://localhost:19096/api/v1/internal/coupons/{{couponPublicId}}/orderInfo/cancel
+
+### 쿠폰 템플릿 검색 API
+GET http://localhost:19096/api/v1/coupon-templates?page=0&size=10&
+    publicId=c3ed1201-04ce-4a10-b610-a5b189ea1724
+Content-Type: application/json

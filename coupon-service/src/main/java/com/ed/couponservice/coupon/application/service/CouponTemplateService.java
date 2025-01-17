@@ -1,17 +1,19 @@
 package com.ed.couponservice.coupon.application.service;
 
 import com.ed.couponservice.coupon.application.port.in.CouponTemplateUseCase;
-import com.ed.couponservice.coupon.application.port.in.CreateCouponCommand;
-import com.ed.couponservice.coupon.application.port.in.CreateCouponTemplateCommand;
+import com.ed.couponservice.coupon.application.port.in.command.CreateCouponCommand;
+import com.ed.couponservice.coupon.application.port.in.command.CreateCouponTemplateCommand;
+import com.ed.couponservice.coupon.application.port.in.command.SearchCouponTemplatesCommand;
 import com.ed.couponservice.coupon.application.port.out.CouponPersistencePort;
 import com.ed.couponservice.coupon.application.port.out.CouponTemplatePersistencePort;
-import com.ed.couponservice.coupon.application.port.out.dto.CreateCouponTemplateResponse;
+import com.ed.couponservice.coupon.application.port.out.dto.CouponTemplateDetailResponse;
 import com.ed.couponservice.coupon.domain.Coupon;
 import com.ed.couponservice.coupon.domain.CouponTemplate;
 import com.ed.couponservice.coupon.domain.mapper.CouponTemplateMapper;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,23 +27,23 @@ public class CouponTemplateService implements CouponTemplateUseCase {
 
   @Override
   @Transactional
-  public CreateCouponTemplateResponse createCouponTemplate(
+  public CouponTemplateDetailResponse createCouponTemplate(
       CreateCouponTemplateCommand createCouponTemplateCommand
   ) {
 
     UUID newCouponTemplatePublicId = UUID.randomUUID();
 
     CouponTemplate newCouponTemplate =
-        CouponTemplate.builder()
-            .createCouponTemplateDto(
-                couponTemplateMapper.commandToCreateDto(createCouponTemplateCommand,
-                    newCouponTemplatePublicId))
-            .build();
+        couponTemplateMapper
+            .createCouponTemplateCommandToDomain(
+                createCouponTemplateCommand,
+                newCouponTemplatePublicId
+            );
 
     CouponTemplate savedCouponTemplate =
         couponTemplatePersistencePort.saveCouponTemplate(newCouponTemplate);
 
-    return couponTemplateMapper.domainToResponse(savedCouponTemplate);
+    return couponTemplateMapper.domainToCouponTemplateDetailResponse(savedCouponTemplate);
   }
 
   @Override
@@ -55,4 +57,17 @@ public class CouponTemplateService implements CouponTemplateUseCase {
 
     couponPersistencePort.saveNewCoupons(newCoupons);
   }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Page<CouponTemplateDetailResponse> searchCouponTemplates(
+      SearchCouponTemplatesCommand command) {
+
+    Page<CouponTemplateDetailResponse> searchCouponTemplateResponsePage =
+        couponTemplatePersistencePort.searchCouponTemplates(command)
+            .map(couponTemplateMapper::domainToCouponTemplateDetailResponse);
+
+    return searchCouponTemplateResponsePage;
+  }
+
 }
