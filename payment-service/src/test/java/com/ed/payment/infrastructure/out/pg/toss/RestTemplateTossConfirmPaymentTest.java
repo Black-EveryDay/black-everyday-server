@@ -5,9 +5,8 @@ import static com.ed.payment.domain.PaymentStatus.READY;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ed.payment.application.port.out.pg.PaymentDone;
+import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
 import com.ed.payment.domain.Payment;
-import com.ed.payment.domain.PaymentStatus;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -26,25 +25,20 @@ class RestTemplateTossConfirmPaymentTest {
   @DisplayName("confirmPayment: 결제 정보를 입력 받아 Tosspayments 의 결제 승인 외부 API 를 요청한다.")
   void confirmPayment() {
     // given
-    final Long paymentId = 1L;
-    final String paymentPublicId = UUID.randomUUID().toString();
-    final String idempotencyKey = UUID.randomUUID().toString();
-    final String userPublicId = UUID.randomUUID().toString();
-    final PaymentStatus paymentStatus = READY;
     final String orderPublicId = UUID.randomUUID().toString();
-    final String orderName = "피자맛 호빵";
     final Long amount = 10000L;
-    final LocalDateTime confirmDeadline = LocalDateTime.now().plusDays(5);
-    final LocalDateTime cancelDeadLine = LocalDateTime.now().plusDays(5);
-    Payment payment = new Payment(
-        paymentId, paymentPublicId,
-        null, idempotencyKey,
-        userPublicId, paymentStatus, orderPublicId, orderName,
-        amount, confirmDeadline, cancelDeadLine);
+    Payment payment = createPayment(orderPublicId, amount);
 
     final String paymentKey = "tgen_20250107154634hYNt7";
     final String lastTransactionKey = "9C62B18EEF0DE3EB7F4422EB6D14BC6E";
-    PaymentDone response = PaymentDone.of(paymentKey, orderPublicId, amount, amount, DONE, lastTransactionKey);
+    PaymentDoneResponse response = PaymentDoneResponse.builder()
+        .paymentKey(paymentKey)
+        .orderId(orderPublicId)
+        .totalAmount(amount)
+        .balanceAmount(amount)
+        .paymentStatus(DONE)
+        .lastTransactionKey(lastTransactionKey)
+        .build();
 
     // stubbing
     when(mockRestTemplateTossConfirmPayment.confirmPayment(payment, paymentKey))
@@ -56,5 +50,22 @@ class RestTemplateTossConfirmPaymentTest {
     // then
     verify(mockRestTemplateTossConfirmPayment)
         .confirmPayment(payment, paymentKey);
+  }
+
+  private Payment createPayment(String orderPublicId, Long amount) {
+    return Payment.builder()
+        .paymentId(1L)
+        .paymentPublicId(UUID.randomUUID().toString())
+        .paymentKey(null)
+        .idempotencyKey(UUID.randomUUID().toString())
+        .userId(UUID.randomUUID().toString())
+        .paymentStatus(READY)
+        .orderPublicId(orderPublicId)
+        .orderName("피자맛 호빵")
+        .totalAmount(amount)
+        .balanceAmount(amount)
+        .confirmDeadline(LocalDateTime.now().plusDays(5))
+        .cancelDeadLine(LocalDateTime.now().plusDays(5))
+        .build();
   }
 }

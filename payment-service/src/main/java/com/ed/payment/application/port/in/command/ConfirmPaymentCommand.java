@@ -1,4 +1,4 @@
-package com.ed.payment.application.port.in;
+package com.ed.payment.application.port.in.command;
 
 import static lombok.AccessLevel.PRIVATE;
 

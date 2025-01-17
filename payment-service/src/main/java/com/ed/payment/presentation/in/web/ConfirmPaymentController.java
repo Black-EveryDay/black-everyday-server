@@ -2,9 +2,9 @@ package com.ed.payment.presentation.in.web;
 
 import static com.ed.payment.libs.common.response.ApiResponseUtils.ok;
 
-import com.ed.payment.application.port.in.ConfirmPaymentCommand;
+import com.ed.payment.application.port.in.command.ConfirmPaymentCommand;
 import com.ed.payment.application.port.in.ConfirmPaymentUseCase;
-import com.ed.payment.application.port.out.pg.PaymentDone;
+import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class ConfirmPaymentController {
   private final ConfirmPaymentUseCase confirmPaymentUseCase;
 
   @GetMapping("/api/v1/payments/success")
-  public ResponseEntity<PaymentDone> requestPaymentSuccess(
+  public ResponseEntity<PaymentDoneResponse> requestPaymentSuccess(
       @RequestParam String paymentType, @RequestParam String paymentKey,
       @RequestParam String orderId, @RequestParam Long amount) {
     return ok(confirmPaymentUseCase.confirmPayment(

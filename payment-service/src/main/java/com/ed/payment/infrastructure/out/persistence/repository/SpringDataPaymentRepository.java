@@ -11,13 +11,6 @@ import org.springframework.data.jpa.repository.Query;
 interface SpringDataPaymentRepository extends JpaRepository<PaymentJpaEntity, Long> {
   boolean existsByOrderPublicId(String orderPublicId);
   Optional<PaymentJpaEntity> findByOrderPublicId(String orderPublicId);
-
-  @Query("SELECT p FROM PaymentJpaEntity p " +
-      "WHERE p.paymentPublicId = :paymentPublicId " +
-      "AND p.paymentStatus = :paymentStatus " +
-      "AND p.cancelDeadLine > :requestDateTime")
-  Optional<PaymentJpaEntity> findByPaymentPublicId(String paymentPublicId, PaymentStatus paymentStatus, LocalDateTime requestDateTime);
-
   @Query("SELECT p FROM PaymentJpaEntity p " +
       "WHERE p.userPublicId = :userPublicId " +
       "AND p.paymentStatus NOT IN :paymentStatuses " +

@@ -4,8 +4,9 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import com.ed.payment.application.port.out.pg.PaymentDone;
+import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
 import com.ed.payment.domain.Payment;
+import com.ed.payment.infrastructure.out.pg.toss.dtos.TossPaymentDoneResponse;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -32,16 +33,16 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
   private String baseUrl;
 
   @Override
-  public PaymentDone confirmPayment(Payment payment, String paymentKey) {
+  public PaymentDoneResponse confirmPayment(Payment payment, String paymentKey) {
     RestTemplate restTemplate = new RestTemplate();
 
     URI url = URI.create(baseUrl + "/confirm");
     HttpHeaders headers = generateHeaders(payment.getIdempotencyKey());
-    Map<String, Object> body = generateBody(paymentKey, payment.getOrderPublicId(), payment.getAmount());
+    Map<String, Object> body = generateBody(paymentKey, payment.getOrderPublicId(), payment.getTotalAmount());
 
     HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, headers);
-    return paymentPgMapper.mapConfirmResponseToApplication(
-        restTemplate.postForObject(url, httpEntity, TossPaymentDone.class));
+    return paymentPgMapper.confirmResponseToApplication(
+        restTemplate.postForObject(url, httpEntity, TossPaymentDoneResponse.class));
   }
 
   private Map<String, Object> generateBody(

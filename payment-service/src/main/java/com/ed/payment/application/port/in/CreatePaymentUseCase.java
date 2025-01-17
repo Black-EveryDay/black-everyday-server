@@ -1,7 +1,7 @@
 package com.ed.payment.application.port.in;
 
-import com.ed.OrderPaymentCreateRequest;
+import com.ed.OrderPaymentCreateRequestEvent;
 
 public interface CreatePaymentUseCase {
-  void createPayment(OrderPaymentCreateRequest request);
+  void createPayment(OrderPaymentCreateRequestEvent request);
 }
