@@ -1,4 +1,4 @@
-package com.ed.productservice.infrastructure.persistence.repository;
+package com.ed.productservice.infrastructure.persistence.repository.elasticsearch;
 
 import com.ed.productservice.infrastructure.persistence.elasticsearch.SearchProduct;
 import java.util.Optional;
