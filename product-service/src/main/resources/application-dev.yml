@@ -6,6 +6,13 @@ spring:
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
 
+  elasticsearch:
+    host: ${ELASTIC_HOST}
+    username: ${ELASTIC_USERNAME}
+    password: ${ELASTIC_PASSWORD}
+    repositories:
+      enabled: true
+
   jpa:
     hibernate:
       ddl-auto: none
