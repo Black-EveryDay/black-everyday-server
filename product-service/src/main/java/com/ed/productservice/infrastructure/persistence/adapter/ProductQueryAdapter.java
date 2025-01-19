@@ -24,7 +24,7 @@ public class ProductQueryAdapter {
 
   public ProductInfoDto findById(String productPublicId) {
 
-    return productRepository.findByProductInfo(productPublicId)
+    return productRepository.findByProductAndCurrentPrice(productPublicId)
         .orElseThrow(() -> new ProductException(
             ErrorCode.PRODUCT_NOT_FOUND));
   }
@@ -38,5 +38,12 @@ public class ProductQueryAdapter {
         condition.maxPrice(),
         condition.brandName(),
         pageable);
+  }
+
+  public ProductInfoDto getProductByVersion(String productPublicId, int version) {
+
+    return productRepository.findByProductAndPriceVersion(productPublicId, version)
+        .orElseThrow(() -> new ProductException(
+            ErrorCode.PRODUCT_NOT_FOUND));
   }
 }

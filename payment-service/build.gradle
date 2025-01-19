@@ -1,7 +1,18 @@
+import groovy.json.JsonSlurper
+import io.github.cdimascio.dotenv.Dotenv
+import org.apache.http.client.utils.URIBuilder
+
+buildscript {
+    dependencies {
+        classpath "io.github.cdimascio:dotenv-java:${dotenvVersion}"
+        classpath "org.apache.httpcomponents:httpclient:${apacheHttpclientVersion}"
+    }
+}
+
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.1'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${dependencyManagementVersion}"
 }
 
 group = 'com.ed'
@@ -27,35 +38,41 @@ repositories {
     }
 }
 
+tasks.named("compileJava") {
+    dependsOn("generateAvroJava")
+}
+
+tasks.named("build") {
+    dependsOn("generateAvroJava")
+}
+
 dependencies {
     // web
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}"
 
     // db
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'com.mysql:mysql-connector-j'
-
-    // gson
-    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
+    runtimeOnly "com.mysql:mysql-connector-j:${mysqlConnectorVersion}"
 
     // kafka
-    implementation 'org.springframework.kafka:spring-kafka'
-    testImplementation 'org.springframework.kafka:spring-kafka-test'
-    avroTools 'org.apache.avro:avro-tools:1.12.0'
-    implementation 'io.confluent:kafka-avro-serializer:7.8.0'
+    implementation "com.google.code.gson:gson:${gsonVersion}"
+    implementation "org.springframework.kafka:spring-kafka:${springKafkaVersion}"
+    testImplementation "org.springframework.kafka:spring-kafka-test:${springKafkaVersion}"
+    avroTools "org.apache.avro:avro-tools:${avroToolsVersion}"
+    implementation "io.confluent:kafka-avro-serializer:${kafkaAvroSerializerVersion}"
 
     // eureka
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${springCloudVersion}"
 
     // lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     // test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
 }
 
 tasks.named('test') {
@@ -71,20 +88,70 @@ sourceSets {
     }
 }
 
+def loadEnv() {
+    return Dotenv.configure()
+            .directory(project.rootDir.absolutePath)
+            .ignoreIfMissing()
+            .load()
+}
+
+tasks.register("downloadAvroSchema") {
+    group = "build"
+    description = "Downloads AVSC files from Confluent Schema Registry with wildcard filtering"
+
+    def dotenv = loadEnv()
+    def schemaRegistryUrls = [
+            dev  : dotenv.get("DEV_SCHEMA_REGISTRY_URL"),
+            prod : dotenv.get("PROD_SCHEMA_REGISTRY_URL")
+    ]
+    def activeProfile = System.getProperty("spring.profiles.active") ?: "dev"
+
+    def schemaRegistryUrl = schemaRegistryUrls[activeProfile]
+    def subjectPattern = ~/^order_payment_.*-value$/
+    def outputDir = file("src/main/avro")
+
+    inputs.property("schemaRegistryUrl", schemaRegistryUrl)
+    inputs.property("subjectPattern", subjectPattern.toString())
+    outputs.dir(outputDir)
+
+    doLast {
+        outputDir.mkdirs()
+
+        def subjectsUrl = new URIBuilder(schemaRegistryUrl)
+                .setPath("/subjects")
+                .build()
+                .toURL()
+
+        def allSubjects = subjectsUrl.text
+        def subjectList = new JsonSlurper().parseText(allSubjects)
+
+        def matchedSubjects = subjectList.findAll { it ==~ subjectPattern }
+
+        matchedSubjects.each { subject ->
+            def schemaUrl = new URIBuilder(schemaRegistryUrl)
+                    .setPath("/subjects/${subject}/versions/latest")
+                    .build()
+                    .toURL()
+
+            def response = schemaUrl.text
+            def schema = new JsonSlurper().parseText(response).schema
+
+            def fileName = subject.replaceAll('-value$', "") + ".avsc"
+            def avscFile = new File(outputDir, fileName)
+            avscFile.text = schema
+        }
+    }
+}
+
 tasks.register("generateAvroJava", JavaExec) {
     group = "build"
     description = "Compiles Avro schemas into Java classes"
     mainClass.set("org.apache.avro.tool.Main")
     classpath = configurations.avroTools
-    args = [
-            "compile", "-string", "schema",
-            "src/main/avro/**_v1.avsc",
-            "build/generated-src"
-    ]
-}
 
-tasks.named("compileJava") {
-    dependsOn("generateAvroJava")
+    def avroFiles = fileTree("src/main/avro").include("*.avsc")
+    args = ["compile", "-string", "schema"] + avroFiles.collect { it } + ["build/generated-src"]
+    dependsOn("downloadAvroSchema")
 }
 
 ext {

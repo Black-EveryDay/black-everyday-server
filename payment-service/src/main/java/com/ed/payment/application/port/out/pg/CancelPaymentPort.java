@@ -1,5 +1,8 @@
 package com.ed.payment.application.port.out.pg;
 
+import com.ed.payment.application.port.out.pg.dtos.CancelPaymentRequest;
+import com.ed.payment.application.port.out.pg.dtos.PaymentCanceledResponse;
+
 public interface CancelPaymentPort {
-  PaymentCanceled cancelPayment(String paymentKey, String idempotencyKey, String cancelReason);
+  PaymentCanceledResponse cancelPayment(CancelPaymentRequest request);
 }

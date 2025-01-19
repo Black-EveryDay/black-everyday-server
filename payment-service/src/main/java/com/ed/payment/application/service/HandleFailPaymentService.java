@@ -2,15 +2,15 @@ package com.ed.payment.application.service;
 
 import static com.ed.payment.domain.PaymentStatus.ABORTED;
 import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_CONFIRM_RESPONSE;
-import static com.ed.payment.libs.common.exception.ErrorCode.DUPLICATED_ORDER_REQUEST;
+import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_CONFIRM_NOT_ALLOWED;
 
-import com.ed.OrderPaymentConfirmResponse;
-import com.ed.payment.application.port.in.HandleFailPaymentCommand;
+import com.ed.OrderPaymentConfirmResponseEvent;
 import com.ed.payment.application.port.in.HandleFailPaymentUseCase;
+import com.ed.payment.application.port.in.command.PaymentRequestFailCommand;
 import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
-import com.ed.payment.application.port.out.persistence.ReadPaymentPort;
+import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
-import com.ed.payment.application.port.out.pg.PaymentFail;
+import com.ed.payment.application.port.out.pg.dtos.PaymentFailResponse;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import com.ed.payment.libs.common.exception.CustomException;
@@ -27,32 +27,36 @@ public class HandleFailPaymentService implements HandleFailPaymentUseCase {
 
   private static final String DUPLICATED_ORDER_ERROR = "DUPLICATED_ORDER_ID";
 
-  private final ReadPaymentPort readPaymentPort;
+  private final GetPaymentPort getPaymentPort;
   private final UpdatePaymentPort updatePaymentPort;
   private final CreatePaymentHistoryPort createPaymentHistoryPort;
-  private final OrderPaymentResponse<OrderPaymentConfirmResponse> orderPaymentConfirmResponse;
+  private final OrderPaymentResponse<OrderPaymentConfirmResponseEvent> orderPaymentConfirmResponse;
 
   @Transactional
   @Override
-  public PaymentFail handleFailPayment(HandleFailPaymentCommand command) {
+  public PaymentFailResponse handleFailPayment(PaymentRequestFailCommand command) {
     if (DUPLICATED_ORDER_ERROR.equalsIgnoreCase(command.getCode())) {
-      throw new CustomException(DUPLICATED_ORDER_REQUEST);
+      throw new CustomException(PAYMENT_CONFIRM_NOT_ALLOWED);
     }
 
-    Payment payment = readPaymentPort.getPaymentByOrderPublicId(command.getOrderId());
+    Payment payment = getPaymentPort.getPaymentByOrderPublicId(command.getOrderId());
     updatePaymentPort.updatePaymentStatusById(payment.getPaymentId(), ABORTED);
-    createPaymentHistoryPort.createFailPaymentHistory(payment.getPaymentId(), ABORTED);
+    createPaymentHistoryPort.createFailPaymentHistory(payment.getPaymentId());
 
-    sendOrderPaymentConfirmResponse(command.getOrderId());
+    sendOrderPaymentRequestFailResponse(command.getOrderId());
 
-    return PaymentFail.of(command.getCode(), command.getMessage(), command.getOrderId());
+    return PaymentFailResponse.of(command.getCode(), command.getMessage(), command.getOrderId());
   }
 
-  private void sendOrderPaymentConfirmResponse(String orderId) {
-    orderPaymentConfirmResponse.send(ORDER_PAYMENT_CONFIRM_RESPONSE, OrderPaymentConfirmResponse.newBuilder()
+  private void sendOrderPaymentRequestFailResponse(String orderId) {
+    orderPaymentConfirmResponse.send(ORDER_PAYMENT_CONFIRM_RESPONSE, createFailMessage(orderId));
+  }
+
+  private OrderPaymentConfirmResponseEvent createFailMessage(String orderId) {
+    return OrderPaymentConfirmResponseEvent.newBuilder()
         .setIsSuccess(false)
         .setOrderId(orderId)
         .setMessageTimestamp(LocalDateTime.now())
-        .build());
+        .build();
   }
 }

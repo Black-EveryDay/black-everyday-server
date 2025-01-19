@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,9 @@ public class StockRollbackScheduler {
     private final StockDecreaseHistoryRepository stockDecreaseHistoryRepository;
     private final ProductInternalService productInternalService;
     private final SchedulerUtil schedulerUtil;
+    @Value("${server.port}")
+    private int serverPort;
+
 
     @Transactional
     public void rollbackUncommittedStock() {
@@ -32,6 +36,7 @@ public class StockRollbackScheduler {
 
         Set<String> transactionIdSet = schedulerUtil.convertSet(uncommittedStocks);
 
+        log.info("롤백 스케줄러 실행 serverPort = {}", serverPort);
         stockRollback(transactionIdSet);
 
         updateStockHistoryStatus(uncommittedStocks);

@@ -26,11 +26,17 @@ public class ProductQueryController {
     ProductInfoDto dto = productQueryAdapter.findById(productPublicId);
 
     return ProductDetailResponse.from(dto);
+  }
 
+  @GetMapping("/{productPublicId}/{version}")
+  public ProductDetailResponse findOneByVersion(@PathVariable("productPublicId") String productPublicId, @PathVariable ("version") int version) {
+    ProductInfoDto dto = productQueryAdapter.getProductByVersion(productPublicId, version);
+
+    return ProductDetailResponse.from(dto);
   }
 
   @GetMapping()
-  public Page<ProductDetailResponse> getShopList(ProductSearchCondition condition,
+  public Page<ProductDetailResponse> getProductList(ProductSearchCondition condition,
       Pageable pageable) {
 
     return productQueryAdapter.search(condition, pageable)

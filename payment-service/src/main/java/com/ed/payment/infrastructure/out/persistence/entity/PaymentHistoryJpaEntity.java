@@ -1,5 +1,6 @@
 package com.ed.payment.infrastructure.out.persistence.entity;
 
+import static com.ed.payment.domain.PaymentStatus.ABORTED;
 import static com.ed.payment.domain.PaymentStatus.READY;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
@@ -23,7 +24,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "ED_PAYMENT_HISTORY")
-@Builder(access = PRIVATE)
 @AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor(access = PROTECTED)
 public class PaymentHistoryJpaEntity extends BaseTimeJpaEntity {
@@ -58,51 +58,46 @@ public class PaymentHistoryJpaEntity extends BaseTimeJpaEntity {
   @Column(name = "CANCEL_REASON")
   private String cancelReason;
 
-  public static PaymentHistoryJpaEntity createPaymentHistory(Long paymentId, Long amount) {
-    return PaymentHistoryJpaEntity.builder()
-        .paymentHistoryPublicId(generatePublicId())
-        .paymentId(paymentId)
-        .paymentStatus(READY)
-        .totalAmount(amount)
-        .balanceAmount(amount)
-        .build();
+  @Builder(builderMethodName = "createPaymentHistory", builderClassName = "CreatePaymentHistory")
+  private PaymentHistoryJpaEntity(Long paymentId, Long amount) {
+    this.paymentHistoryPublicId = generatePublicId();
+    this.paymentId = paymentId;
+    this.paymentStatus = READY;
+    this.totalAmount = amount;
+    this.balanceAmount = amount;
   }
 
-  public static PaymentHistoryJpaEntity createConfirmSuccessPaymentHistory(
+  @Builder(builderMethodName = "createFailPaymentHistory", builderClassName = "CreateFailPaymentHistory")
+  private PaymentHistoryJpaEntity(Long paymentId) {
+    this.paymentHistoryPublicId = generatePublicId();
+    this.paymentId = paymentId;
+    this.paymentStatus = ABORTED;
+  }
+
+  @Builder(builderMethodName = "createConfirmPaymentHistory", builderClassName = "CreateConfirmPaymentHistory")
+  private PaymentHistoryJpaEntity(
       Long paymentId, String lastTransactionKey, PaymentStatus paymentStatus,
       Long totalAmount, Long balanceAmount) {
-    return PaymentHistoryJpaEntity.builder()
-        .paymentHistoryPublicId(generatePublicId())
-        .paymentId(paymentId)
-        .lastTransactionKey(lastTransactionKey)
-        .paymentStatus(paymentStatus)
-        .totalAmount(totalAmount)
-        .balanceAmount(balanceAmount)
-        .build();
+    this.paymentHistoryPublicId = generatePublicId();
+    this.paymentId = paymentId;
+    this.lastTransactionKey = lastTransactionKey;
+    this.paymentStatus = paymentStatus;
+    this.totalAmount = totalAmount;
+    this.balanceAmount = balanceAmount;
   }
 
-  public static PaymentHistoryJpaEntity createFailPaymentHistory(
-      Long paymentId, PaymentStatus paymentStatus) {
-    return PaymentHistoryJpaEntity.builder()
-        .paymentHistoryPublicId(generatePublicId())
-        .paymentId(paymentId)
-        .paymentStatus(paymentStatus)
-        .build();
-  }
-
-  public static PaymentHistoryJpaEntity createCancelSuccessPaymentHistory(
+  @Builder(builderMethodName = "createCancelPaymentHistory", builderClassName = "CreateCancelPaymentHistory")
+  private PaymentHistoryJpaEntity(
       Long paymentId, String lastTransactionKey, PaymentStatus paymentStatus,
       Long totalAmount, Long balanceAmount, Long cancelAmount, String cancelReason) {
-    return PaymentHistoryJpaEntity.builder()
-        .paymentHistoryPublicId(generatePublicId())
-        .paymentId(paymentId)
-        .lastTransactionKey(lastTransactionKey)
-        .paymentStatus(paymentStatus)
-        .totalAmount(totalAmount)
-        .balanceAmount(balanceAmount)
-        .cancelAmount(cancelAmount)
-        .cancelReason(cancelReason)
-        .build();
+    this.paymentHistoryPublicId = generatePublicId();
+    this.paymentId = paymentId;
+    this.lastTransactionKey = lastTransactionKey;
+    this.paymentStatus = paymentStatus;
+    this.totalAmount = totalAmount;
+    this.balanceAmount = balanceAmount;
+    this.cancelAmount = cancelAmount;
+    this.cancelReason = cancelReason;
   }
 
   private static String generatePublicId() {

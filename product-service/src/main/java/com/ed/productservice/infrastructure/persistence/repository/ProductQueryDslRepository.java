@@ -2,9 +2,11 @@ package com.ed.productservice.infrastructure.persistence.repository;
 
 import static com.ed.productservice.infrastructure.persistence.entity.QBrandEntity.brandEntity;
 import static com.ed.productservice.infrastructure.persistence.entity.QProductEntity.productEntity;
+import static com.ed.productservice.infrastructure.persistence.entity.QProductPriceVersionEntity.productPriceVersionEntity;
 
 import com.ed.productservice.domain.vo.ProductCategory;
 import com.ed.productservice.domain.vo.ProductInfoDto;
+import com.ed.productservice.infrastructure.persistence.entity.QProductPriceVersionEntity;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -44,17 +46,19 @@ public class ProductQueryDslRepository {
             productEntity.category,
             productEntity.description,
             productEntity.name,
-            productEntity.price,
+            productPriceVersionEntity.price,
             brandEntity.brandName))
         .from(productEntity)
         .join(brandEntity).on(productEntity.brandId.eq(brandEntity.brandId))
+        .join(productPriceVersionEntity)
+        .on(productEntity.productId.eq(productPriceVersionEntity.productId))
         .where(
             nameContains(productName),
             colorEquals(color),
             categoryEquals(category),
-            priceGoe(minPrice),
-            priceLoe(maxPrice),
-            brandNameEquals(brandName)
+            brandNameEquals(brandName),
+            isCurrentVersion(),
+            priceBetween(minPrice, maxPrice)
         );
 
     List<ProductInfoDto> results = query
@@ -67,17 +71,39 @@ public class ProductQueryDslRepository {
         .select(productEntity.count())
         .from(productEntity)
         .join(brandEntity).on(productEntity.brandId.eq(brandEntity.brandId))
+        .join(productPriceVersionEntity)
+        .on(productEntity.productId.eq(productPriceVersionEntity.productId))
         .where(
             nameContains(productName),
             colorEquals(color),
             categoryEquals(category),
-            priceGoe(minPrice),
-            priceLoe(maxPrice),
-            brandNameEquals(brandName)
+            brandNameEquals(brandName),
+            isCurrentVersion(),
+            priceBetween(minPrice, maxPrice)
         )
         .fetchOne()).orElse(0L);
 
     return new PageImpl<>(results, pageable, total);
+  }
+
+  private BooleanExpression isCurrentVersion() {
+    return QProductPriceVersionEntity.productPriceVersionEntity.isCurrentVersion.isTrue();
+  }
+
+  private BooleanExpression priceBetween(Integer minPrice, Integer maxPrice) {
+    if (minPrice == null && maxPrice == null) {
+      return null;
+    }
+
+    QProductPriceVersionEntity price = QProductPriceVersionEntity.productPriceVersionEntity;
+
+    if (minPrice == null) {
+      return price.price.loe(maxPrice);
+    }
+    if (maxPrice == null) {
+      return price.price.goe(minPrice);
+    }
+    return price.price.between(minPrice, maxPrice);
   }
 
 
@@ -93,13 +119,6 @@ public class ProductQueryDslRepository {
     return category != null ? productEntity.category.eq(category) : null;
   }
 
-  private BooleanExpression priceGoe(Integer minPrice) {
-    return minPrice != null ? productEntity.price.goe(minPrice) : null;
-  }
-
-  private BooleanExpression priceLoe(Integer maxPrice) {
-    return maxPrice != null ? productEntity.price.loe(maxPrice) : null;
-  }
 
   private BooleanExpression brandNameEquals(String brandName) {
     return StringUtils.hasText(brandName) ? brandEntity.brandName.eq(brandName) : null;
@@ -115,8 +134,8 @@ public class ProductQueryDslRepository {
                 productEntity.createdAt.desc();
           case "price":
             return order.isAscending() ?
-                productEntity.price.asc() :
-                productEntity.price.desc();
+                productPriceVersionEntity.price.asc() :
+                productPriceVersionEntity.price.desc();
         }
       }
     }

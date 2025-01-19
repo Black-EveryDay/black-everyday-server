@@ -7,9 +7,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.ed.payment.application.port.in.ConfirmPaymentCommand;
 import com.ed.payment.application.port.in.ConfirmPaymentUseCase;
-import com.ed.payment.application.port.out.pg.PaymentDone;
+import com.ed.payment.application.port.in.command.ConfirmPaymentCommand;
+import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,14 @@ class ConfirmPaymentControllerTest {
     queryParams.add("orderId", orderId);
     queryParams.add("amount", String.valueOf(amount));
 
-    PaymentDone response = PaymentDone.of(paymentKey, orderId, amount, amount, DONE, lastTransactionKey);
+    PaymentDoneResponse response = PaymentDoneResponse.builder()
+        .paymentKey(paymentKey)
+        .orderId(orderId)
+        .totalAmount(amount)
+        .balanceAmount(amount)
+        .paymentStatus(DONE)
+        .lastTransactionKey(lastTransactionKey)
+        .build();
 
     // stubbing
     when(confirmPaymentUseCase.confirmPayment(any(ConfirmPaymentCommand.class)))

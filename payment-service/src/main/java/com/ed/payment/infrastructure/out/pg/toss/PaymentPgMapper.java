@@ -1,35 +1,40 @@
 package com.ed.payment.infrastructure.out.pg.toss;
 
-import static com.ed.payment.domain.PaymentStatus.ABORTED;
-import static com.ed.payment.domain.PaymentStatus.CANCELED;
-import static com.ed.payment.domain.PaymentStatus.DONE;
+import static com.ed.payment.domain.PaymentStatus.getCancelStatus;
+import static com.ed.payment.domain.PaymentStatus.getConfirmStatus;
 
-import com.ed.payment.application.port.out.pg.PaymentCanceled;
-import com.ed.payment.application.port.out.pg.PaymentDone;
+import com.ed.payment.application.port.out.pg.dtos.PaymentCanceledResponse;
+import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
+import com.ed.payment.infrastructure.out.pg.toss.dtos.TossPaymentCanceledResponse;
+import com.ed.payment.infrastructure.out.pg.toss.dtos.TossPaymentDoneResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 class PaymentPgMapper {
 
-  PaymentDone mapConfirmResponseToApplication(TossPaymentDone tossPaymentDone) {
-    return PaymentDone.of(
-        tossPaymentDone.getPaymentKey(),
-        tossPaymentDone.getOrderId(),
-        tossPaymentDone.getTotalAmount(),
-        tossPaymentDone.getBalanceAmount(),
-        DONE.name().equalsIgnoreCase(tossPaymentDone.getStatus()) ? DONE : ABORTED,
-        tossPaymentDone.getLastTransactionKey());
+  PaymentDoneResponse confirmResponseToApplication(
+      TossPaymentDoneResponse response) {
+    return PaymentDoneResponse.builder()
+        .paymentKey(response.getPaymentKey())
+        .orderId(response.getOrderId())
+        .totalAmount(response.getTotalAmount())
+        .balanceAmount(response.getBalanceAmount())
+        .paymentStatus(getConfirmStatus(response.getStatus()))
+        .lastTransactionKey(response.getLastTransactionKey())
+        .build();
   }
 
-  PaymentCanceled mapCancelResponseToApplication(TossPaymentCanceled tossPaymentCanceled) {
-    return PaymentCanceled.of(
-        tossPaymentCanceled.getPaymentKey(),
-        tossPaymentCanceled.getOrderId(),
-        tossPaymentCanceled.getTotalAmount(),
-        tossPaymentCanceled.getBalanceAmount(),
-        tossPaymentCanceled.getCancels().getFirst().getCancelAmount(),
-        tossPaymentCanceled.getCancels().getFirst().getCancelReason(),
-        CANCELED.name().equalsIgnoreCase(tossPaymentCanceled.getStatus()) ? CANCELED : ABORTED,
-        tossPaymentCanceled.getLastTransactionKey());
+  PaymentCanceledResponse cancelResponseToApplication(
+      TossPaymentCanceledResponse response) {
+    return PaymentCanceledResponse.builder()
+        .paymentKey(response.getPaymentKey())
+        .orderId(response.getOrderId())
+        .totalAmount(response.getTotalAmount())
+        .balanceAmount(response.getBalanceAmount())
+        .cancelAmount(response.getCancels().getLast().getCancelAmount())
+        .cancelReason(response.getCancels().getLast().getCancelReason())
+        .paymentStatus(getCancelStatus(response.getStatus()))
+        .lastTransactionKey(response.getLastTransactionKey())
+        .build();
   }
 }

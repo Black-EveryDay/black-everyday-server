@@ -38,9 +38,6 @@ public class ProductEntity extends BaseEntity {
   @Column(name = "NAME", nullable = false)
   private String name;
 
-  @Column(name = "PRICE", nullable = false)
-  private int price;
-
   @Column(name = "DESCRIPTION", nullable = false)
   private String description;
 
@@ -58,13 +55,12 @@ public class ProductEntity extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private ProductCategory category;
 
-  public ProductEntity(String productPublicId, Long brandId, String name, int price,
+  public ProductEntity(String productPublicId, Long brandId, String name,
       String description, String color, String image, ProductStatus status,
       ProductCategory category) {
     this.productPublicId = productPublicId;
     this.brandId = brandId;
     this.name = name;
-    this.price = price;
     this.description = description;
     this.color = color;
     this.image = image;
@@ -73,9 +69,8 @@ public class ProductEntity extends BaseEntity {
   }
 
   public void update(Product product) {
-    this.brandId = product.getProductId();
+    this.brandId = product.getBrandId();
     this.name = product.getName();
-    this.price = product.getPrice();
     this.description = product.getDescription();
     this.color = product.getColor();
     this.image = product.getImage();

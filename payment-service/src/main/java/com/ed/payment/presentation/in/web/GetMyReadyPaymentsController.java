@@ -4,7 +4,7 @@ import static com.ed.payment.libs.common.constant.CustomHttpHeaders.HEADER_USER_
 import static com.ed.payment.libs.common.response.ApiResponseUtils.ok;
 
 import com.ed.payment.application.port.in.GetMyReadyPaymentsUseCase;
-import com.ed.payment.application.port.out.persistence.PaymentResponse;
+import com.ed.payment.application.port.out.persistence.dtos.PaymentResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

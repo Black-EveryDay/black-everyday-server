@@ -1,7 +1,7 @@
 package com.ed.payment.application.port.in;
 
-import com.ed.OrderPaymentCancelRequest;
+import com.ed.OrderPaymentCancelRequestEvent;
 
 public interface CancelPaymentUseCase {
-  void cancelPayment(OrderPaymentCancelRequest request);
+  void cancelPayment(OrderPaymentCancelRequestEvent request);
 }

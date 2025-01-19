@@ -3,9 +3,8 @@ package com.ed.productservice.infrastructure.persistence.adapter.mapper;
 import com.ed.productservice.domain.ProductForCreate;
 import com.ed.productservice.domain.vo.Product;
 import com.ed.productservice.infrastructure.persistence.entity.ProductEntity;
-import org.springframework.stereotype.Component;
-
 import java.util.UUID;
+import org.springframework.stereotype.Component;
 
 @Component
 public class ProductMapper {
@@ -15,7 +14,6 @@ public class ProductMapper {
         productPublicId(createPublicId())
         .brandId(brandId)
         .name(productForCreate.getName())
-        .price(productForCreate.getPrice())
         .description(productForCreate.getDescription())
         .color(productForCreate.getColor())
         .image(productForCreate.getImage())
@@ -28,19 +26,18 @@ public class ProductMapper {
     return UUID.randomUUID().toString();
   }
 
-  public Product toDomain(ProductEntity entity) {
-    return new Product(
-        entity.getProductId(),
-        entity.getProductPublicId(),
-        entity.getBrandId(),
-        entity.getName(),
-        entity.getPrice(),
-        entity.getDescription(),
-        entity.getColor(),
-        entity.getImage(),
-        entity.getStatus(),
-        entity.getCategory(),
-        entity.getCreatedAt()
-    );
+  public Product toDomain(ProductEntity entity, int price) {
+    return Product.builder()
+        .productId(entity.getProductId())
+        .productPublicId(entity.getProductPublicId())
+        .brandId(entity.getBrandId())
+        .name(entity.getName())
+        .price(price)
+        .description(entity.getDescription())
+        .color(entity.getColor())
+        .image(entity.getImage())
+        .status(entity.getStatus())
+        .category(entity.getCategory())
+        .createdAt(entity.getCreatedAt()).build();
   }
 }
