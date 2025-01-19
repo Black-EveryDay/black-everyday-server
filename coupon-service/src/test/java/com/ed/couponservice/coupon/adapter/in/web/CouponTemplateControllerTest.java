@@ -4,14 +4,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.ed.couponservice.coupon.adapter.in.web.dto.CreateCouponRequest;
 import com.ed.couponservice.coupon.adapter.in.web.dto.CreateCouponTemplateRequest;
+import com.ed.couponservice.coupon.adapter.in.web.dto.SearchCouponTemplatesCondition;
 import com.ed.couponservice.coupon.application.port.in.CouponTemplateUseCase;
 import com.ed.couponservice.coupon.application.port.in.command.CreateCouponTemplateCommand;
+import com.ed.couponservice.coupon.application.port.in.command.SearchCouponTemplatesCommand;
+import com.ed.couponservice.coupon.application.port.in.command.mapper.CommandMapper;
 import com.ed.couponservice.coupon.application.port.out.dto.CouponTemplateDetailResponse;
 import com.ed.couponservice.coupon.domain.enums.CouponIssuanceType;
 import com.ed.couponservice.coupon.domain.enums.CouponIssuerType;
@@ -19,6 +23,8 @@ import com.ed.couponservice.coupon.domain.enums.CouponUsageTargetType;
 import com.ed.couponservice.coupon.domain.enums.DiscountType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,11 +33,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.MultiValueMap;
 
 @WebMvcTest(CouponTemplateController.class)
 class CouponTemplateControllerTest {
@@ -44,6 +55,9 @@ class CouponTemplateControllerTest {
 
   @MockitoBean
   private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
+  @MockitoBean
+  private CommandMapper commandMapper;
 
   @MockitoBean
   private CouponTemplateUseCase couponTemplateUseCase;
@@ -183,6 +197,74 @@ class CouponTemplateControllerTest {
           .andExpect(jsonPath("$.success").value(true));
     }
 
+  }
+
+  @Nested
+  @DisplayName("SearchCouponTemplatesTest")
+  class SearchCouponTemplatesTest {
+
+    private final UUID couponTemplateId = UUID.randomUUID();
+    private final String uri = "/api/v1/coupon-templates?";
+
+    @Test
+    @DisplayName("Should search coupon templates success")
+    void shouldSearchCouponTemplatesSuccess() throws Exception {
+
+      // given
+      Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+
+      MultiValueMap<String, String> params = MultiValueMap.fromSingleValue(Map.of(
+          "publicId", couponTemplateId.toString(),
+          "couponName", "couponName",
+          "couponIssuanceType", CouponIssuanceType.AUTOMATIC.toString(),
+          "couponIssuerType", CouponIssuerType.SERVICE.toString(),
+          "isIssuable", "true",
+          "couponUsageTargetType", CouponUsageTargetType.ALL.toString()
+      ));
+
+      SearchCouponTemplatesCommand searchCouponTemplatesCommand = SearchCouponTemplatesCommand.builder()
+          .publicId(couponTemplateId)
+          .couponName("couponName")
+          .couponIssuanceType(CouponIssuanceType.AUTOMATIC)
+          .couponIssuerType(CouponIssuerType.SERVICE)
+          .couponIssuerId(UUID.randomUUID())
+          .isIssuable(true)
+          .couponUsageTargetType(CouponUsageTargetType.ALL)
+          .couponUsageTargetId(UUID.randomUUID())
+          .pageable(pageable)
+          .build();
+
+      given(commandMapper.searchCouponTemplateRequestToSearchCouponTemplateCommand(
+          any(SearchCouponTemplatesCondition.class), any(Pageable.class)))
+          .willReturn(searchCouponTemplatesCommand);
+
+      CouponTemplateDetailResponse couponTemplateDetailResponse = CouponTemplateDetailResponse.builder()
+          .id(1L)
+          .publicId(couponTemplateId)
+          .couponName("couponName")
+          .couponIssuanceType(CouponIssuanceType.AUTOMATIC)
+          .couponIssuerType(CouponIssuerType.SERVICE)
+          .couponIssuerId(null)
+          .maxIssuance(null)
+          .isIssuable(false)
+          .couponUsageTargetType(CouponUsageTargetType.ALL)
+          .couponUsageTargetId(null)
+          .discountType(DiscountType.PERCENTAGE)
+          .discountValue(BigDecimal.valueOf(10.5))
+          .expirationDays(null)
+          .expirationDate(null)
+          .build();
+
+      given(couponTemplateUseCase.searchCouponTemplates(any(SearchCouponTemplatesCommand.class)))
+          .willReturn(new PageImpl<>(List.of(couponTemplateDetailResponse)));
+
+      // when
+      ResultActions resultActions = mockMvc.perform(get(uri)
+          .params(params));
+
+      // then
+      resultActions.andExpect(status().isOk());
+    }
   }
 
 }
