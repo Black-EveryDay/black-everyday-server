@@ -55,6 +55,9 @@ dependencies {
 
     // Feign
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // HATEOAS
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 }
 
 dependencyManagement {

@@ -54,6 +54,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
 
+    // Feign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     // QueryDsl
     implementation "com.querydsl:querydsl-jpa:${querydslVersion}:jakarta"

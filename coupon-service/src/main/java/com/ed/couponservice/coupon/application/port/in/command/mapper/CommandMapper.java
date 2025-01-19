@@ -1,6 +1,6 @@
 package com.ed.couponservice.coupon.application.port.in.command.mapper;
 
-import com.ed.couponservice.coupon.adapter.in.web.dto.CouponSearchCondition;
+import com.ed.couponservice.coupon.adapter.in.web.dto.SearchCouponTemplatesCondition;
 import com.ed.couponservice.coupon.application.port.in.command.SearchCouponTemplatesCommand;
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +10,7 @@ public interface CommandMapper {
 
 
   SearchCouponTemplatesCommand searchCouponTemplateRequestToSearchCouponTemplateCommand(
-      CouponSearchCondition couponSearchCondition,
+      SearchCouponTemplatesCondition searchCouponTemplatesCondition,
       Pageable pageable
   );
 }

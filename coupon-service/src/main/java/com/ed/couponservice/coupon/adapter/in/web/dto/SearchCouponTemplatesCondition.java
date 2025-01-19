@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class CouponSearchCondition {
+public class SearchCouponTemplatesCondition {
 
   private UUID publicId;
   private String couponName;

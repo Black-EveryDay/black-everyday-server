@@ -2,9 +2,9 @@ package com.ed.couponservice.coupon.adapter.in.web;
 
 import static com.ed.couponservice.libs.common.ApiResponseUtils.created;
 
-import com.ed.couponservice.coupon.adapter.in.web.dto.CouponSearchCondition;
 import com.ed.couponservice.coupon.adapter.in.web.dto.CreateCouponRequest;
 import com.ed.couponservice.coupon.adapter.in.web.dto.CreateCouponTemplateRequest;
+import com.ed.couponservice.coupon.adapter.in.web.dto.SearchCouponTemplatesCondition;
 import com.ed.couponservice.coupon.application.port.in.CouponTemplateUseCase;
 import com.ed.couponservice.coupon.application.port.in.command.CreateCouponCommand;
 import com.ed.couponservice.coupon.application.port.in.command.SearchCouponTemplatesCommand;
@@ -55,13 +55,13 @@ public class CouponTemplateController {
 
   @GetMapping
   public PagedModel<CouponTemplateDetailResponse> searchCouponTemplates(
-      CouponSearchCondition couponSearchCondition,
+      SearchCouponTemplatesCondition searchCouponTemplatesCondition,
       @PageableDefault Pageable pageable
   ) {
 
     SearchCouponTemplatesCommand searchCouponTemplateCommand =
         commandMapper.searchCouponTemplateRequestToSearchCouponTemplateCommand(
-            couponSearchCondition,
+            searchCouponTemplatesCondition,
             pageable
         );
 

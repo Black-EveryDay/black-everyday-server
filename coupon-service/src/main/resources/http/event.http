@@ -6,7 +6,7 @@ Authorization: "Bearer {{jwttoken}}"
 
 {
   "couponName": "string",
-  "couponIssuanceType": "MANUAL",
+  "couponIssuanceType": "AUTOMATIC",
   "couponIssuerType": "SERVICE",
   "couponUsageTargetType": "ALL",
   "discountType": "FIXED",
