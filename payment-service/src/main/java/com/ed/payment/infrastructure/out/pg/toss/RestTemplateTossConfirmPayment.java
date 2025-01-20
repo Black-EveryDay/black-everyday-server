@@ -1,5 +1,6 @@
 package com.ed.payment.infrastructure.out.pg.toss;
 
+import static com.ed.payment.libs.common.constant.HttpHeaders.IDEMPOTENCY_KEY;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -63,7 +64,7 @@ public class RestTemplateTossConfirmPayment implements TossConfirmPayment {
 
     headers.add(AUTHORIZATION, authorizations);
     headers.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
-    headers.add("Idempotency-Key", idempotencyKey);
+    headers.add(IDEMPOTENCY_KEY, idempotencyKey);
     return headers;
   }
 }

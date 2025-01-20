@@ -4,7 +4,7 @@ import com.ed.payment.application.port.out.persistence.dtos.UpdateCancelPaymentR
 import com.ed.payment.domain.PaymentStatus;
 
 public interface UpdatePaymentPort {
-  void updatePaymentStatusById(Long paymentId, PaymentStatus paymentStatus);
+  void updatePaymentStatusAbortedById(Long paymentId);
   void updatePaymentStatusAndPaymentKeyById(Long paymentId, PaymentStatus paymentStatus, String paymentKey);
   void updatePaymentStatusAndIdempotencyKeyById(UpdateCancelPaymentRequest request);
 }

@@ -6,7 +6,6 @@ import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_CONF
 import com.ed.OrderPaymentConfirmResponseEvent;
 import com.ed.payment.application.port.in.ConfirmPaymentUseCase;
 import com.ed.payment.application.port.in.command.ConfirmPaymentCommand;
-import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.application.port.out.pg.ConfirmPaymentPort;
@@ -26,12 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ConfirmPaymentService implements ConfirmPaymentUseCase {
 
-  private final OutPortPersistenceMapper outPortPersistenceMapper;
   private final GetPaymentPort getPaymentPort;
   private final PaymentConfirmValidator confirmValidator;
   private final ConfirmPaymentPort confirmPaymentPort;
   private final UpdatePaymentPort updatePaymentPort;
-  private final CreatePaymentHistoryPort createPaymentHistoryPort;
   private final OrderPaymentResponse<OrderPaymentConfirmResponseEvent> orderPaymentConfirmProducer;
 
   @Transactional
@@ -45,9 +42,6 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
 
     updatePaymentPort.updatePaymentStatusAndPaymentKeyById(
         payment.getPaymentId(), paymentDoneResponse.getPaymentStatus(), command.getPaymentKey());
-
-    createPaymentHistoryPort.createConfirmPaymentHistory(
-        outPortPersistenceMapper.confirmHistoryToPersistence(payment.getPaymentId(), paymentDoneResponse));
 
     sendOrderPaymentConfirmResponse(paymentDoneResponse, payment.getPaymentPublicId());
 

@@ -1,7 +1,5 @@
 package com.ed.payment.infrastructure.out.persistence.entity;
 
-import static com.ed.payment.domain.PaymentStatus.ABORTED;
-import static com.ed.payment.domain.PaymentStatus.READY;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -11,9 +9,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "ED_PAYMENT_HISTORY")
+@Builder(access = PRIVATE)
 @AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor(access = PROTECTED)
 public class PaymentHistoryJpaEntity extends BaseTimeJpaEntity {
@@ -36,21 +38,13 @@ public class PaymentHistoryJpaEntity extends BaseTimeJpaEntity {
   @Column(name = "PAYMENT_HISTORY_PUBLIC_ID", nullable = false, unique = true)
   private String paymentHistoryPublicId;
 
-  @Column(name = "PAYMENT_ID", nullable = false)
-  private Long paymentId;
-
-  @Column(name = "LAST_TRANSACTION_KEY")
-  private String lastTransactionKey;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "PAYMENT_ID", nullable = false)
+  private PaymentJpaEntity paymentJpaEntity;
 
   @Column(name = "PAYMENT_STATUS", nullable = false)
   @Enumerated(EnumType.STRING)
   private PaymentStatus paymentStatus;
-
-  @Column(name = "TOTAL_AMOUNT")
-  private Long totalAmount;
-
-  @Column(name = "BALANCE_AMOUNT")
-  private Long balanceAmount;
 
   @Column(name = "CANCEL_AMOUNT")
   private Long cancelAmount;
@@ -58,46 +52,23 @@ public class PaymentHistoryJpaEntity extends BaseTimeJpaEntity {
   @Column(name = "CANCEL_REASON")
   private String cancelReason;
 
-  @Builder(builderMethodName = "createPaymentHistory", builderClassName = "CreatePaymentHistory")
-  private PaymentHistoryJpaEntity(Long paymentId, Long amount) {
-    this.paymentHistoryPublicId = generatePublicId();
-    this.paymentId = paymentId;
-    this.paymentStatus = READY;
-    this.totalAmount = amount;
-    this.balanceAmount = amount;
+  public static PaymentHistoryJpaEntity createPaymentHistory(PaymentJpaEntity paymentJpaEntity) {
+    return PaymentHistoryJpaEntity.builder()
+        .paymentHistoryPublicId(generatePublicId())
+        .paymentJpaEntity(paymentJpaEntity)
+        .paymentStatus(paymentJpaEntity.getPaymentStatus())
+        .build();
   }
 
-  @Builder(builderMethodName = "createFailPaymentHistory", builderClassName = "CreateFailPaymentHistory")
-  private PaymentHistoryJpaEntity(Long paymentId) {
-    this.paymentHistoryPublicId = generatePublicId();
-    this.paymentId = paymentId;
-    this.paymentStatus = ABORTED;
-  }
-
-  @Builder(builderMethodName = "createConfirmPaymentHistory", builderClassName = "CreateConfirmPaymentHistory")
-  private PaymentHistoryJpaEntity(
-      Long paymentId, String lastTransactionKey, PaymentStatus paymentStatus,
-      Long totalAmount, Long balanceAmount) {
-    this.paymentHistoryPublicId = generatePublicId();
-    this.paymentId = paymentId;
-    this.lastTransactionKey = lastTransactionKey;
-    this.paymentStatus = paymentStatus;
-    this.totalAmount = totalAmount;
-    this.balanceAmount = balanceAmount;
-  }
-
-  @Builder(builderMethodName = "createCancelPaymentHistory", builderClassName = "CreateCancelPaymentHistory")
-  private PaymentHistoryJpaEntity(
-      Long paymentId, String lastTransactionKey, PaymentStatus paymentStatus,
-      Long totalAmount, Long balanceAmount, Long cancelAmount, String cancelReason) {
-    this.paymentHistoryPublicId = generatePublicId();
-    this.paymentId = paymentId;
-    this.lastTransactionKey = lastTransactionKey;
-    this.paymentStatus = paymentStatus;
-    this.totalAmount = totalAmount;
-    this.balanceAmount = balanceAmount;
-    this.cancelAmount = cancelAmount;
-    this.cancelReason = cancelReason;
+  public static PaymentHistoryJpaEntity createCancelPaymentHistory(
+      PaymentJpaEntity paymentJpaEntity, Long cancelAmount, String cancelReason) {
+    return PaymentHistoryJpaEntity.builder()
+        .paymentHistoryPublicId(generatePublicId())
+        .paymentJpaEntity(paymentJpaEntity)
+        .paymentStatus(paymentJpaEntity.getPaymentStatus())
+        .cancelAmount(cancelAmount)
+        .cancelReason(cancelReason)
+        .build();
   }
 
   private static String generatePublicId() {

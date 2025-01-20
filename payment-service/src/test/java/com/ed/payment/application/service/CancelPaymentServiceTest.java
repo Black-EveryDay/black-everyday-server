@@ -10,10 +10,8 @@ import static org.mockito.Mockito.when;
 
 import com.ed.OrderPaymentCancelRequestEvent;
 import com.ed.OrderPaymentCancelResponseEvent;
-import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
-import com.ed.payment.application.port.out.persistence.dtos.CreateCancelPaymentHistoryRequest;
 import com.ed.payment.application.port.out.persistence.dtos.UpdateCancelPaymentRequest;
 import com.ed.payment.application.port.out.pg.CancelPaymentPort;
 import com.ed.payment.application.port.out.pg.dtos.CancelPaymentRequest;
@@ -55,9 +53,6 @@ class CancelPaymentServiceTest {
   private UpdatePaymentPort updatePaymentPort;
 
   @Mock
-  private CreatePaymentHistoryPort createPaymentHistoryPort;
-
-  @Mock
   private OrderPaymentResponse<OrderPaymentCancelResponseEvent> producer;
 
   @Test
@@ -88,9 +83,6 @@ class CancelPaymentServiceTest {
     UpdateCancelPaymentRequest updateCancelPaymentRequest = outPortPersistenceMapper.updateCancelPaymentToPersistence(
         paymentId, cancelResponse);
 
-    CreateCancelPaymentHistoryRequest cancelPaymentHistoryRequest = outPortPersistenceMapper.cancelHistoryToPersistence(
-        paymentId, cancelResponse);
-
     // stubbing
     when(getPaymentPort.getPaymentByOrderPublicId(orderPublicId))
         .thenReturn(payment);
@@ -101,9 +93,6 @@ class CancelPaymentServiceTest {
     doNothing().when(updatePaymentPort)
         .updatePaymentStatusAndIdempotencyKeyById(updateCancelPaymentRequest);
 
-    doNothing().when(createPaymentHistoryPort)
-        .createCancelPaymentHistory(cancelPaymentHistoryRequest);
-
     when(producer.send(anyString(), any()))
         .thenReturn(true);
 
@@ -113,7 +102,6 @@ class CancelPaymentServiceTest {
     // then
     verify(getPaymentPort).getPaymentByOrderPublicId(anyString());
     verify(updatePaymentPort).updatePaymentStatusAndIdempotencyKeyById(updateCancelPaymentRequest);
-    verify(createPaymentHistoryPort).createCancelPaymentHistory(cancelPaymentHistoryRequest);
     verify(producer).send(anyString(), any());
   }
 
@@ -159,7 +147,6 @@ class CancelPaymentServiceTest {
         .balanceAmount(balanceAmount)
         .cancelAmount(cancelAmount)
         .paymentStatus(CANCELED)
-        .lastTransactionKey("9C62B18EEF0DE3EB7F4422EB6D14BC6E")
         .build();
   }
 }

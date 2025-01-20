@@ -14,5 +14,4 @@ public class TossPaymentDoneResponse {
   private Long balanceAmount;
   @JsonDeserialize(using = PaymentStatusDeserializer.class)
   private PaymentStatus status;
-  private String lastTransactionKey;
 }
