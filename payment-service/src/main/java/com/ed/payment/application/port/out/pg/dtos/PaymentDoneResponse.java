@@ -17,5 +17,4 @@ public class PaymentDoneResponse {
   private Long totalAmount;
   private Long balanceAmount;
   private PaymentStatus paymentStatus;
-  private String lastTransactionKey;
 }

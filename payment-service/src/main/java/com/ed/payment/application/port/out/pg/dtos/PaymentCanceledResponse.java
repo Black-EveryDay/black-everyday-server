@@ -19,5 +19,4 @@ public class PaymentCanceledResponse {
   private Long cancelAmount;
   private String cancelReason;
   private PaymentStatus paymentStatus;
-  private String lastTransactionKey;
 }

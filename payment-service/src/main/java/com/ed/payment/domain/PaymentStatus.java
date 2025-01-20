@@ -12,16 +12,19 @@ public enum PaymentStatus {
     return paymentStatus == DONE;
   }
 
-  public static boolean isCanceled(PaymentStatus paymentStatus) {
-    return paymentStatus == CANCELED || paymentStatus == PARTIAL_CANCELED;
-  }
-
   public static PaymentStatus getConfirmStatus(PaymentStatus paymentStatus) {
     return DONE == paymentStatus ? DONE : ABORTED;
   }
 
-  public static PaymentStatus getCancelStatus(PaymentStatus paymentStatus) {
-    if (isCanceled(paymentStatus)) return paymentStatus;
-    return ABORTED;
+  public static boolean isCanceled(PaymentStatus paymentStatus) {
+    return paymentStatus == CANCELED || paymentStatus == PARTIAL_CANCELED;
+  }
+
+  public static PaymentStatus getCancelPaymentStatus(PaymentStatus paymentStatus, Long totalAmount) {
+    return isZeroTotalAmount(paymentStatus, totalAmount) ? CANCELED : paymentStatus;
+  }
+
+  private static boolean isZeroTotalAmount(PaymentStatus paymentStatus, Long totalAmount) {
+    return paymentStatus == PARTIAL_CANCELED && totalAmount == 0L;
   }
 }

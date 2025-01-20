@@ -10,10 +10,8 @@ import static org.mockito.Mockito.when;
 
 import com.ed.OrderPaymentConfirmResponseEvent;
 import com.ed.payment.application.port.in.command.ConfirmPaymentCommand;
-import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
-import com.ed.payment.application.port.out.persistence.dtos.CreateConfirmPaymentHistoryRequest;
 import com.ed.payment.application.port.out.pg.ConfirmPaymentPort;
 import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
 import com.ed.payment.domain.Payment;
@@ -35,9 +33,6 @@ class ConfirmPaymentServiceTest {
   private ConfirmPaymentService confirmPaymentService;
 
   @Mock
-  private OutPortPersistenceMapper outPortPersistenceMapper;
-
-  @Mock
   private GetPaymentPort getPaymentPort;
 
   @Mock
@@ -48,9 +43,6 @@ class ConfirmPaymentServiceTest {
 
   @Mock
   private UpdatePaymentPort updatePaymentPort;
-
-  @Mock
-  private CreatePaymentHistoryPort createPaymentHistoryPort;
 
   @Mock
   private OrderPaymentResponse<OrderPaymentConfirmResponseEvent> producer;
@@ -67,9 +59,6 @@ class ConfirmPaymentServiceTest {
     Payment payment = createPayment(paymentKey, orderPublicId, amount);
     PaymentDoneResponse confirmResponse = createConfirmResponse(paymentKey, orderPublicId, amount);
 
-    CreateConfirmPaymentHistoryRequest confirmPaymentHistoryRequest = outPortPersistenceMapper
-        .confirmHistoryToPersistence(payment.getPaymentId(), confirmResponse);
-
     // stubbing
     when(getPaymentPort.getPaymentByOrderPublicId(orderPublicId))
         .thenReturn(payment);
@@ -79,9 +68,6 @@ class ConfirmPaymentServiceTest {
 
     doNothing().when(updatePaymentPort)
         .updatePaymentStatusAndPaymentKeyById(payment.getPaymentId(), confirmResponse.getPaymentStatus(), paymentKey);
-
-    doNothing().when(createPaymentHistoryPort)
-        .createConfirmPaymentHistory(confirmPaymentHistoryRequest);
 
     when(producer.send(anyString(), any(OrderPaymentConfirmResponseEvent.class)))
         .thenReturn(true);
@@ -93,7 +79,6 @@ class ConfirmPaymentServiceTest {
     verify(getPaymentPort).getPaymentByOrderPublicId(orderPublicId);
     verify(confirmPaymentPort).confirmPayment(payment, paymentKey);
     verify(updatePaymentPort).updatePaymentStatusAndPaymentKeyById(payment.getPaymentId(), confirmResponse.getPaymentStatus(), paymentKey);
-    verify(createPaymentHistoryPort).createConfirmPaymentHistory(confirmPaymentHistoryRequest);
     verify(producer).send(anyString(), any(OrderPaymentConfirmResponseEvent.class));
   }
 
@@ -125,7 +110,6 @@ class ConfirmPaymentServiceTest {
         .totalAmount(amount)
         .balanceAmount(amount)
         .paymentStatus(DONE)
-        .lastTransactionKey("9C62B18EEF0DE3EB7F4422EB6D14BC6E")
         .build();
   }
 }

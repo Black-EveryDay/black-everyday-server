@@ -7,7 +7,6 @@ import com.ed.OrderPaymentCancelRequestEvent;
 import com.ed.OrderPaymentCancelResponseEvent;
 import com.ed.payment.application.port.in.CancelPaymentUseCase;
 import com.ed.payment.application.port.out.mq.Producer;
-import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.application.port.out.pg.CancelPaymentPort;
@@ -32,7 +31,6 @@ public class CancelPaymentService implements CancelPaymentUseCase {
   private final PaymentCancelValidator cancelValidator;
   private final CancelPaymentPort cancelPaymentPort;
   private final UpdatePaymentPort updatePaymentPort;
-  private final CreatePaymentHistoryPort createPaymentHistoryPort;
   private final Producer<OrderPaymentCancelResponseEvent> orderPaymentCancelProducer;
 
   @Transactional
@@ -46,9 +44,6 @@ public class CancelPaymentService implements CancelPaymentUseCase {
 
     updatePaymentPort.updatePaymentStatusAndIdempotencyKeyById(
         outPortPersistenceMapper.updateCancelPaymentToPersistence(payment.getPaymentId(), paymentCanceledResponse));
-
-    createPaymentHistoryPort.createCancelPaymentHistory(
-        outPortPersistenceMapper.cancelHistoryToPersistence(payment.getPaymentId(), paymentCanceledResponse));
 
     sendOrderPaymentCancelResponse(paymentCanceledResponse, payment.getPaymentPublicId());
   }

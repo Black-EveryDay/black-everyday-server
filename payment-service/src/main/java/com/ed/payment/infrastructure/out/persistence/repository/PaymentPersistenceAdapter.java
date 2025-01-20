@@ -53,20 +53,19 @@ class PaymentPersistenceAdapter implements CreatePaymentPort, GetPaymentPort, Up
   }
 
   @Override
-  public void updatePaymentStatusById(Long paymentId, PaymentStatus paymentStatus) {
-    getPaymentJpaEntity(paymentId).updatePaymentStatus(paymentStatus);
+  public void updatePaymentStatusAbortedById(Long paymentId) {
+    getPaymentJpaEntity(paymentId).fail();
   }
 
   @Override
   public void updatePaymentStatusAndPaymentKeyById(Long paymentId, PaymentStatus paymentStatus, String paymentKey) {
-    getPaymentJpaEntity(paymentId).updatePaymentStatusAndPaymentKey(paymentStatus, paymentKey);
+    getPaymentJpaEntity(paymentId).confirm(paymentStatus, paymentKey);
   }
 
   @Override
   public void updatePaymentStatusAndIdempotencyKeyById(UpdateCancelPaymentRequest request) {
     getPaymentJpaEntity(request.getPaymentId())
-        .updatePaymentStatusAndAmountAndIdempotencyKey(
-            request.getPaymentStatus(), request.getBalanceAmount());
+        .cancel(request.getPaymentStatus(), request.getBalanceAmount(), request.getCancelAmount(), request.getCancelReason());
   }
 
   private PaymentJpaEntity getPaymentJpaEntity(Long paymentId) {

@@ -66,7 +66,6 @@ class RestTemplateTossCancelPaymentTest {
         .cancelAmount(cancelAmount)
         .cancelReason(cancelReason)
         .paymentStatus(CANCELED)
-        .lastTransactionKey("9C62B18EEF0DE3EB7F4422EB6D14BC6E")
         .build();
   }
 }
