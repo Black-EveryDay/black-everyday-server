@@ -27,7 +27,7 @@ spring:
           uri: lb://payment-service
           predicates:
             - Path=/api/{version}/payments/**
-        # event-service
+        # coupon-service
         - id: event-service
           uri: lb://event-service
           predicates:

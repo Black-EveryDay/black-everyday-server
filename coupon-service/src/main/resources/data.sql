@@ -1,0 +1,23 @@
+-- 첫 번째 레코드
+INSERT INTO ED_COUPON_TEMPLATE (DISCOUNT_VALUE, EXPIRATION_DAYS, COUPON_NAME, IS_ISSUABLE,
+                                COUPON_ISSUER_ID,
+                                COUPON_USAGE_TARGET_TYPE, COUPON_USAGE_TARGET_ID, MAX_ISSUANCE,
+                                CREATED_AT, UPDATED_AT, DELETED_AT, DELETED_BY,
+                                COUPON_TEMPLATE_PUBLIC_ID, COUPON_ISSUANCE_TYPE, COUPON_ISSUER_TYPE,
+                                DISCOUNT_TYPE)
+VALUES (10.50, NULL, "coupon name 2", TRUE, NULL,
+        'ALL', NULL, 100,
+        '2025-01-12 22:53:42', NULL, NULL, NULL,
+        '6a423727-b52a-40e9-8c20-377e3d94e5ad', 'MANUAL', 'SERVICE', 'PERCENTAGE');
+
+-- 두 번째 레코드
+INSERT INTO ED_COUPON_TEMPLATE (DISCOUNT_VALUE, EXPIRATION_DAYS, COUPON_NAME, IS_ISSUABLE,
+                                COUPON_ISSUER_ID,
+                                COUPON_USAGE_TARGET_TYPE, COUPON_USAGE_TARGET_ID, MAX_ISSUANCE,
+                                CREATED_AT, UPDATED_AT, DELETED_AT, DELETED_BY,
+                                COUPON_TEMPLATE_PUBLIC_ID, COUPON_ISSUANCE_TYPE, COUPON_ISSUER_TYPE,
+                                DISCOUNT_TYPE)
+VALUES (10000.00, NULL, "coupon name 2", TRUE, NULL,
+        'ALL', NULL, 100,
+        '2025-01-12 22:54:02', NULL, NULL, NULL,
+        'f0d3a337-2808-4adf-acfc-9064270603cb', 'MANUAL', 'SERVICE', 'FIXED');
