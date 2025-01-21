@@ -1,0 +1,108 @@
+### 상품생성
+POST http://localhost:19093/api/v1/products/top
+Content-Type: application/json
+
+{
+  "productInfo": {
+    "brandId": 1,
+    "name": "베이직 긴팔 티셔츠",
+    "price": 40000,
+    "description": "편안한 착용감의 데일리 티셔츠",
+    "status": "ACTIVE",
+    "category": "TOP",
+    "color": "BLACK",
+    "image": "top_image_url.jpg",
+    "quantity": 100
+  },
+  "topSizeRequestList": [
+    {
+      "topSize": "S",
+      "totalLength": 65.0,
+      "shoulderWidth": 42.0,
+      "chestWidth": 48.0,
+      "sleeveLength": 61.0,
+      "quantity": 10
+    },
+    {
+      "topSize": "M",
+      "totalLength": 67.0,
+      "shoulderWidth": 44.0,
+      "chestWidth": 50.0,
+      "sleeveLength": 62.0,
+      "quantity": 10
+    },
+    {
+      "topSize": "L",
+      "totalLength": 69.0,
+      "shoulderWidth": 46.0,
+      "chestWidth": 52.0,
+      "sleeveLength": 63.0,
+      "quantity": 10
+    }
+  ]
+}
+
+### Create Bottom Product
+POST http://localhost:19093/api/v1/products/bottom
+Content-Type: application/json
+
+{
+  "productInfo": {
+    "brandId": 1,
+    "name": "스웻 팬츠",
+    "price": 50000,
+    "description": "편안한 착용감의 데일리 팬츠",
+    "status": "ACTIVE",
+    "category": "BOTTOM",
+    "color": "BLACK",
+    "image": "bottom_image_url.jpg",
+    "quantity": 100
+  },
+  "bottomSizeRequestList": [
+    {
+      "bottomSize": "S",
+      "waistWidth": 32.0,
+      "hipWidth": 44.0,
+      "thighWidth": 28.0,
+      "bottomTotalLength": 98.0,
+      "quantity": 100
+    },
+    {
+      "bottomSize": "M",
+      "waistWidth": 34.0,
+      "hipWidth": 46.0,
+      "thighWidth": 30.0,
+      "bottomTotalLength": 99.0,
+      "quantity": 100
+    },
+    {
+      "bottomSize": "L",
+      "waistWidth": 36.0,
+      "hipWidth": 48.0,
+      "thighWidth": 32.0,
+      "bottomTotalLength": 100.0,
+      "quantity": 100
+    }
+  ]
+}
+
+###
+POST http://localhost:19093/api/v1/products/internal/prepare
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "productPublicId": "e4030362-0251-441a-b752-63feea51337c",
+      "quantity": 2,
+      "size": "M",
+      "productCategory": "TOP"
+    },
+    {
+      "productPublicId": "37eede74-184e-404e-a4f6-b1c063d91795",
+      "quantity": 1,
+      "size": "L",
+      "productCategory": "BOTTOM"
+    }
+  ]
+}
