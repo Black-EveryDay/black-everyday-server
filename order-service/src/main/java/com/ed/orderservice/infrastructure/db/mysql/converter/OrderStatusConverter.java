@@ -3,6 +3,7 @@ package com.ed.orderservice.infrastructure.db.mysql.converter;
 import com.ed.orderservice.domain.enums.OrderStatus;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 
 @Converter(autoApply = true)
@@ -12,12 +13,14 @@ public class OrderStatusConverter implements AttributeConverter<OrderStatus, Str
   @Override
   public String convertToDatabaseColumn(OrderStatus orderStatus) {
 
-    return orderStatus.name();
+    return orderStatus.getCode();
   }
 
   @Override
   public OrderStatus convertToEntityAttribute(String dbData) {
-
-    return OrderStatus.valueOf(dbData);
+    return Arrays.stream(OrderStatus.values())
+        .filter(status -> status.getCode().equals(dbData))
+        .findFirst()
+        .orElse(null);
   }
 }
