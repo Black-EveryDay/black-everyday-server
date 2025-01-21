@@ -1,8 +1,5 @@
 package com.ed.orderservice.domain.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum OrderStatus {
   ORDER_CREATED("01", "주문 생성"),
   PAYMENT_REQUEST("02", "결제 요청"),
@@ -25,5 +22,9 @@ public enum OrderStatus {
 
   public String getDescription() {
     return description;
+  }
+
+  public int getOrderValue() {
+    return Integer.parseInt(code);
   }
 }
