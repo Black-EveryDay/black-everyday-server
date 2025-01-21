@@ -2,6 +2,7 @@ package com.ed.orderservice.infrastructure.entity;
 
 import com.ed.orderservice.domain.vo.order.item.OrderItemCoupon;
 import com.ed.orderservice.domain.vo.order.item.OrderItemCouponTemplate;
+import com.ed.orderservice.infrastructure.entity.common.BaseTimeByJpaEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "ED_ORDER_COUPON")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderItemCouponEntity {
+public class OrderItemCouponEntity extends BaseTimeByJpaEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
