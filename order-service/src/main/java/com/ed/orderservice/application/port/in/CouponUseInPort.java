@@ -9,6 +9,6 @@ public interface CouponUseInPort {
 
   ApiResponse<UseCouponResponse> useCoupon(UUID couponPublicId, UseCouponRequest useCouponRequest);
 
-  UseCouponResponse cancelUseCoupon(UUID couponPublicId);
+  ApiResponse<UseCouponResponse> cancelUseCoupon(UUID couponPublicId);
   
 }

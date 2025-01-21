@@ -8,6 +8,11 @@ plugins {
 group = 'com.ed'
 version = '0.0.1-SNAPSHOT'
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 repositories {
     mavenCentral()
 }
@@ -30,34 +35,36 @@ dependencies {
     // Spring Boot Starters
     implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
     implementation "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
 
     // Spring Cloud
     implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${springCloudVersion}"
-    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${springCloudVersion}"
-    
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${springCloudVersion}")
+
     // Database
-    implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
     runtimeOnly "com.mysql:mysql-connector-j:${mysqlConnectorVersion}"
 
-    // Testing
-    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
+    // Kafka
+    implementation "org.springframework.kafka:spring-kafka:${springKafkaVersion}"
+    implementation "io.confluent:kafka-avro-serializer:${kafkaAvroSerializerVersion}"
+    avroTools "org.apache.avro:avro-tools:${avroToolsVersion}"
+
+    // API Documentation
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocOpenapiVersion}"
+
+    // Utilities
+    implementation "com.google.code.gson:gson:${gsonVersion}"
 
     // Lombok
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-    // API Documentation
-    testImplementation "org.springframework.restdocs:spring-restdocs-mockmvc:${springRestdocsVersion}"
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocOpenapiVersion}"
-    testImplementation "com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}"
-
-    // Kafka
-    implementation "org.springframework.kafka:spring-kafka:${springKafkaVersion}"
+    // Testing
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
     testImplementation "org.springframework.kafka:spring-kafka-test:${springKafkaVersion}"
-    avroTools "org.apache.avro:avro-tools:${avroToolsVersion}"
-    implementation "io.confluent:kafka-avro-serializer:${kafkaAvroSerializerVersion}"
-    implementation "com.google.code.gson:gson:${gsonVersion}"
+    testImplementation "org.springframework.restdocs:spring-restdocs-mockmvc:${springRestdocsVersion}"
+    testImplementation "com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
 }
 
 
@@ -86,7 +93,7 @@ tasks.register("generateAvroJava", JavaExec) {
     classpath = configurations.avroTools
     args = [
             "compile", "-string", "schema",
-            "src/main/avro/order_payment_create_request_v1.avsc",
+            "src/main/avro/order_payment_create_request.avsc",
             "build/generated-src"
     ]
 }

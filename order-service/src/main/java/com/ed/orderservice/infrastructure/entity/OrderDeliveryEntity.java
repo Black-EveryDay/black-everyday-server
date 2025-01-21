@@ -3,6 +3,7 @@ package com.ed.orderservice.infrastructure.entity;
 import com.ed.orderservice.domain.enums.DeliveryCompanyCode;
 import com.ed.orderservice.domain.enums.OrderDeliveryStatus;
 import com.ed.orderservice.infrastructure.db.mysql.converter.OrderDeliveryConverter;
+import com.ed.orderservice.infrastructure.entity.common.BaseTimeByJpaEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "ED_ORDER_DELIVERY")
 @Getter
 @NoArgsConstructor
-public class OrderDeliveryEntity {
+public class OrderDeliveryEntity extends BaseTimeByJpaEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

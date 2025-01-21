@@ -1,19 +1,19 @@
 ### Create a new order
-POST http://localhost:19095/api/v1/orders
+POST http://localhost:19091/api/v1/orders
 Content-Type: application/json
 X-User-Id: 550e8400-e29b-41d4-a716-446655440006
 
 {
   "orderer": {
-    "name": "베이직 긴팔 티셔츠 외 ~",
+    "name": "홍길동",
     "phoneNumber": "010-1234-5678"
   },
   "orderItemDtos": [
     {
       "brandId": "33732dd3-3901-4429-ba58-676c6965923",
-      "productId": "3a725377-affd-4533-82b5-285a735a78fc",
+      "productId": "e4030362-0251-441a-b752-63feea51337c",
       "productName": "베이직 긴팔 티셔츠",
-      "quantity": 2,
+      "quantity": 1,
       "unitPrice": 40000,
       "size": "L",
       "productCategory": "TOP",
@@ -21,9 +21,9 @@ X-User-Id: 550e8400-e29b-41d4-a716-446655440006
     },
     {
       "brandId": "55732dd3-3901-4429-ba58-676c6965923",
-      "productId": "1b554921-eb04-4633-915b-4f864c486bd4",
+      "productId": "37eede74-184e-404e-a4f6-b1c063d91795",
       "productName": "스웻 팬츠",
-      "quantity": 2,
+      "quantity": 1,
       "unitPrice": 50000,
       "size": "L",
       "productCategory": "BOTTOM",

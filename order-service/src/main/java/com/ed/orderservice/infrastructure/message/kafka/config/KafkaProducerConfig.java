@@ -5,7 +5,7 @@ import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 
-import com.ed.OrderPaymentCreateRequest;
+import com.ed.OrderPaymentCreateRequestEvent;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class KafkaProducerConfig {
   private String schemaRegistryUrl;
 
   @Bean
-  public ProducerFactory<String, OrderPaymentCreateRequest> producerFactory() {
+  public ProducerFactory<String, OrderPaymentCreateRequestEvent> producerFactory() {
     Map<String, Object> configProps = new HashMap<>();
     configProps.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     configProps.put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -37,7 +37,7 @@ public class KafkaProducerConfig {
   }
 
   @Bean
-  public KafkaTemplate<String, OrderPaymentCreateRequest> kafkaTemplate() {
+  public KafkaTemplate<String, OrderPaymentCreateRequestEvent> kafkaTemplate() {
     return new KafkaTemplate<>(producerFactory());
   }
 

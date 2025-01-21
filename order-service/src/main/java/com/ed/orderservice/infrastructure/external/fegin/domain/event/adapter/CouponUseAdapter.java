@@ -23,7 +23,7 @@ public class CouponUseAdapter implements CouponUseInPort {
   }
 
   @Override
-  public UseCouponResponse cancelUseCoupon(UUID couponPublicId) {
+  public ApiResponse<UseCouponResponse> cancelUseCoupon(UUID couponPublicId) {
     
     return couponClient.cancelUseCoupon(couponPublicId);
   }

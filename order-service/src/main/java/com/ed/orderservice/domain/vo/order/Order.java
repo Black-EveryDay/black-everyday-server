@@ -18,8 +18,10 @@ public class Order {
   private final OrderAmountCalculator amountCalculator = new OrderAmountCalculator();
   private final OrderTimeLine orderTimeLine = new OrderTimeLine();
 
-  private Long orderId = null;
+  private Long orderId;
   private String orderPublicId;
+  private String orderPublicName;
+
   private String orderName;
   private String phoneNumber;
 
@@ -41,9 +43,8 @@ public class Order {
   @Builder
   private Order(Long orderId, Orderer orderer,
       List<OrderItem> orderItems, OrderDelivery orderDelivery,
-      String userId, String productTransactionId) {
+      String userId, String productTransactionId, OrderBase orderBase) {
     this.orderId = orderId;
-    this.orderPublicId = generateOrderNumber();
     this.orderName = orderer.getName();
     this.phoneNumber = orderer.getPhoneNumber();
     this.orderItems = orderItems;
@@ -52,6 +53,8 @@ public class Order {
     this.productTransactionId = productTransactionId;
     this.paymentId = null;
     this.paidAt = null;
+    this.orderPublicId = orderBase.getOrderPublicId();
+    this.orderPublicName = orderBase.getOrderPublicName();
   }
 
   public void updateOrderTimelines() {
@@ -63,13 +66,7 @@ public class Order {
     this.paidAt = paidAt;
   }
 
-  private String generateOrderNumber() {
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-    String datePart = dateFormat.format(new Date());
-    int randomNumber = CommonUtils.getRandom().nextInt(1000000000);
-    String randomPart = String.format("%010d", randomNumber);
-    return datePart + randomPart;
-  }
+
 
   public void recalculateTotals() {
     this.totalQuantity = amountCalculator.calculateTotalQuantity(orderItems);

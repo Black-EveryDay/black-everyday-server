@@ -5,6 +5,7 @@ import com.ed.orderservice.application.port.in.command.CreateOrderCommand;
 import com.ed.orderservice.domain.mapper.OrderItemMapper;
 import com.ed.orderservice.infrastructure.external.fegin.domain.product.dto.StockDecreaseResponse;
 import com.ed.orderservice.infrastructure.external.fegin.domain.product.dto.StockPrepareRequest;
+import com.ed.orderservice.libs.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,8 @@ public class ProductStockService {
 
   public String reserveProductStock(CreateOrderCommand command) {
     StockPrepareRequest request = orderItemMapper.toStockPrepareRequest(command.getOrderItemDtos());
-    StockDecreaseResponse response = productStockInPort.prepareStock(request);
+    ApiResponse<StockDecreaseResponse> response = productStockInPort.prepareStock(request);
 
-    return response.toString();
+    return response.getBody().transactionId();
   }
 }

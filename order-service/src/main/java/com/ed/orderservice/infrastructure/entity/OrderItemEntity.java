@@ -1,6 +1,7 @@
 package com.ed.orderservice.infrastructure.entity;
 
 import com.ed.orderservice.domain.vo.order.item.OrderItemCoupon;
+import com.ed.orderservice.infrastructure.entity.common.BaseTimeByJpaEntity;
 import com.ed.orderservice.infrastructure.external.fegin.domain.product.dto.ProductCategory;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "ED_ORDER_ITEM")
 @Getter
 @NoArgsConstructor
-public class OrderItemEntity {
+public class OrderItemEntity extends BaseTimeByJpaEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,0 +1,2 @@
+### 쿠폰 사용
+POST http://localhost:19096/api/v1/internal/coupons/{{couponPublicId}}/orderInfo
