@@ -5,6 +5,11 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ExceptionStatus {
+  // Event
+  EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "e001", "Event not found"),
+  EVENT_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "e002", "Event not available"),
+  EVENT_FULL(HttpStatus.BAD_REQUEST, "e003", "Event is full"),
+
   // CouponTemplate
   COUPON_TEMPLATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "t001", "Coupon template not found"),
   COUPON_TEMPLATE_ISSUANCE_TYPE_NOT_AUTOMATIC(HttpStatus.BAD_REQUEST, "t002",

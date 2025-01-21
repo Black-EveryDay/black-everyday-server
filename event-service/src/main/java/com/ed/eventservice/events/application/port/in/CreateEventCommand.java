@@ -15,4 +15,5 @@ public class CreateEventCommand {
   private LocalDateTime startAt;
   private LocalDateTime endAt;
   private UUID couponTemplateId;
+  private Long maxParticipants;
 }

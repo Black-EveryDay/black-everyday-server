@@ -22,4 +22,6 @@ public class CreateEventRequest {
   private LocalDateTime endAt;
   @NotNull
   private UUID couponTemplateId;
+  @NotNull
+  private Long maxParticipants;
 }

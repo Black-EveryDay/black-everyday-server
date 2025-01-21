@@ -4,11 +4,15 @@ import com.ed.eventservice.events.adapter.out.feign.domain.coupon.dto.CouponTemp
 import com.ed.eventservice.events.adapter.out.feign.domain.coupon.dto.enums.CouponIssuanceType;
 import com.ed.eventservice.events.application.port.in.CreateEventCommand;
 import com.ed.eventservice.events.application.port.in.EventUseCase;
+import com.ed.eventservice.events.application.port.in.JoinEventCommand;
 import com.ed.eventservice.events.application.port.out.CouponOutPort;
 import com.ed.eventservice.events.application.port.out.EventPersistencePort;
 import com.ed.eventservice.events.application.port.out.dto.CreateEventResponse;
+import com.ed.eventservice.events.application.port.out.dto.JoinEventResponse;
 import com.ed.eventservice.events.domain.Event;
+import com.ed.eventservice.events.domain.EventUser;
 import com.ed.eventservice.events.domain.mapper.EventMapper;
+import com.ed.eventservice.events.domain.mapper.EventUserMapper;
 import com.ed.eventservice.libs.exception.ExceptionStatus;
 import com.ed.eventservice.libs.exception.ServiceException;
 import java.util.List;
@@ -23,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class EventService implements EventUseCase {
 
   private final EventMapper eventMapper;
+  private final EventUserMapper eventUserMapper;
   private final EventPersistencePort eventPersistencePort;
   private final CouponOutPort couponOutPort;
 
@@ -55,5 +60,16 @@ public class EventService implements EventUseCase {
 
       throw new ServiceException(ExceptionStatus.COUPON_TEMPLATE_ISSUANCE_TYPE_NOT_AUTOMATIC);
     }
+  }
+
+  @Override
+  @Transactional
+  public JoinEventResponse joinEvent(JoinEventCommand joinEventCommand) {
+    Event event = eventPersistencePort.findEventById(joinEventCommand.getEventId());
+
+    EventUser newEventUser = event.join(joinEventCommand.getUserId());
+    EventUser savedEventUser = eventPersistencePort.createEventUser(newEventUser);
+
+    return eventUserMapper.domainToJoinEventResponse(savedEventUser);
   }
 }
