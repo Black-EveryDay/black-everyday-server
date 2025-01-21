@@ -1,6 +1,6 @@
 package com.ed.orderservice.infrastructure.external.fegin.domain.event;
 
-import com.ed.orderservice.infrastructure.external.fegin.config.FeignClientConfig;
+import com.ed.orderservice.infrastructure.external.fegin.domain.event.config.EventFeignErrorDecoder;
 import com.ed.orderservice.infrastructure.external.fegin.domain.event.dto.UseCouponRequest;
 import com.ed.orderservice.infrastructure.external.fegin.domain.event.dto.UseCouponResponse;
 import com.ed.orderservice.libs.response.ApiResponse;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "event-service", configuration = FeignClientConfig.class)
+@FeignClient(name = "event-service", configuration = EventFeignErrorDecoder.class)
 public interface CouponClient {
 
   @PostMapping("/api/v1/internal/coupons/{couponPublicId}/orderInfo")
@@ -20,7 +20,7 @@ public interface CouponClient {
   );
 
   @PostMapping("/api/v1/internal/coupons/{couponPublicId}/orderInfo/cancel")
-  UseCouponResponse cancelUseCoupon(
+  ApiResponse<UseCouponResponse> cancelUseCoupon(
       @PathVariable UUID couponPublicId
   );
 }

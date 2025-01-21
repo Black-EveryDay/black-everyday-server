@@ -1,4 +1,4 @@
-package com.ed.orderservice.infrastructure.external.fegin.config;
+package com.ed.orderservice.infrastructure.external.fegin.domain.event.config;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 
-public class FeignErrorDecoder implements ErrorDecoder {
+public class EventFeignErrorDecoder implements ErrorDecoder {
 
   private final ErrorDecoder defaultErrorDecoder = new Default();
 
