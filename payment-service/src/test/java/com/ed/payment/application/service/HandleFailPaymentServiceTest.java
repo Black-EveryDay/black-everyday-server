@@ -13,11 +13,9 @@ import static org.mockito.Mockito.when;
 
 import com.ed.OrderPaymentConfirmResponseEvent;
 import com.ed.payment.application.port.in.command.PaymentRequestFailCommand;
-import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.domain.Payment;
-import com.ed.payment.domain.PaymentStatus;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import com.ed.payment.libs.common.exception.CustomException;
 import java.util.UUID;
@@ -41,9 +39,6 @@ class HandleFailPaymentServiceTest {
   private UpdatePaymentPort updatePaymentPort;
 
   @Mock
-  private CreatePaymentHistoryPort createPaymentHistoryPort;
-
-  @Mock
   private OrderPaymentResponse<OrderPaymentConfirmResponseEvent> producer;
 
   @Test
@@ -59,11 +54,7 @@ class HandleFailPaymentServiceTest {
 
     doNothing()
         .when(updatePaymentPort)
-        .updatePaymentStatusById(anyLong(), any(PaymentStatus.class));
-
-    doNothing()
-        .when(createPaymentHistoryPort)
-        .createFailPaymentHistory(anyLong());
+        .updatePaymentStatusAbortedById(anyLong());
 
     when(producer.send(anyString(), any(OrderPaymentConfirmResponseEvent.class)))
         .thenReturn(true);
@@ -73,8 +64,7 @@ class HandleFailPaymentServiceTest {
 
     // then
     verify(getPaymentPort).getPaymentByOrderPublicId(anyString());
-    verify(updatePaymentPort).updatePaymentStatusById(anyLong(), any(PaymentStatus.class));
-    verify(createPaymentHistoryPort).createFailPaymentHistory(anyLong());
+    verify(updatePaymentPort).updatePaymentStatusAbortedById(anyLong());
     verify(producer).send(anyString(), any(OrderPaymentConfirmResponseEvent.class));
   }
 
@@ -92,8 +82,7 @@ class HandleFailPaymentServiceTest {
         .hasMessage(PAYMENT_CONFIRM_NOT_ALLOWED.getMessage());
 
     verify(getPaymentPort, never()).getPaymentByOrderPublicId(anyString());
-    verify(updatePaymentPort, never()).updatePaymentStatusById(anyLong(), any(PaymentStatus.class));
-    verify(createPaymentHistoryPort, never()).createFailPaymentHistory(anyLong());
+    verify(updatePaymentPort, never()).updatePaymentStatusAbortedById(anyLong());
   }
 
   private PaymentRequestFailCommand createFailPaymentCommand(String code) {

@@ -1,6 +1,5 @@
 package com.ed.payment.infrastructure.out.pg.toss;
 
-import static com.ed.payment.domain.PaymentStatus.getCancelStatus;
 import static com.ed.payment.domain.PaymentStatus.getConfirmStatus;
 
 import com.ed.payment.application.port.out.pg.dtos.PaymentCanceledResponse;
@@ -20,7 +19,6 @@ class PaymentPgMapper {
         .totalAmount(response.getTotalAmount())
         .balanceAmount(response.getBalanceAmount())
         .paymentStatus(getConfirmStatus(response.getStatus()))
-        .lastTransactionKey(response.getLastTransactionKey())
         .build();
   }
 
@@ -33,8 +31,7 @@ class PaymentPgMapper {
         .balanceAmount(response.getBalanceAmount())
         .cancelAmount(response.getCancels().getLast().getCancelAmount())
         .cancelReason(response.getCancels().getLast().getCancelReason())
-        .paymentStatus(getCancelStatus(response.getStatus()))
-        .lastTransactionKey(response.getLastTransactionKey())
+        .paymentStatus(response.getStatus())
         .build();
   }
 }
