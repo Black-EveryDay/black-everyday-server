@@ -1,13 +1,11 @@
 package com.ed.payment.application.service;
 
-import static com.ed.payment.domain.PaymentStatus.ABORTED;
 import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_CONFIRM_RESPONSE;
 import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_CONFIRM_NOT_ALLOWED;
 
 import com.ed.OrderPaymentConfirmResponseEvent;
 import com.ed.payment.application.port.in.HandleFailPaymentUseCase;
 import com.ed.payment.application.port.in.command.PaymentRequestFailCommand;
-import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.application.port.out.pg.dtos.PaymentFailResponse;
@@ -29,7 +27,6 @@ public class HandleFailPaymentService implements HandleFailPaymentUseCase {
 
   private final GetPaymentPort getPaymentPort;
   private final UpdatePaymentPort updatePaymentPort;
-  private final CreatePaymentHistoryPort createPaymentHistoryPort;
   private final OrderPaymentResponse<OrderPaymentConfirmResponseEvent> orderPaymentConfirmResponse;
 
   @Transactional
@@ -40,8 +37,7 @@ public class HandleFailPaymentService implements HandleFailPaymentUseCase {
     }
 
     Payment payment = getPaymentPort.getPaymentByOrderPublicId(command.getOrderId());
-    updatePaymentPort.updatePaymentStatusById(payment.getPaymentId(), ABORTED);
-    createPaymentHistoryPort.createFailPaymentHistory(payment.getPaymentId());
+    updatePaymentPort.updatePaymentStatusAbortedById(payment.getPaymentId());
 
     sendOrderPaymentRequestFailResponse(command.getOrderId());
 

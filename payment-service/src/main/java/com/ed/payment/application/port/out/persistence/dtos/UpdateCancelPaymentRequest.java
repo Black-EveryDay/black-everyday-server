@@ -15,4 +15,6 @@ public class UpdateCancelPaymentRequest {
   private Long paymentId;
   private PaymentStatus paymentStatus;
   private Long balanceAmount;
+  private Long cancelAmount;
+  private String cancelReason;
 }

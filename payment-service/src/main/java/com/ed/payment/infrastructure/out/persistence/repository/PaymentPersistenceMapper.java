@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 class PaymentPersistenceMapper {
 
   PaymentJpaEntity createRequestToJpaEntity(CreatePaymentRequest request) {
-    return PaymentJpaEntity.createPayment()
+    PaymentJpaEntity paymentJpaEntity = PaymentJpaEntity.createPayment()
         .userPublicId(request.getUserPublicId())
         .orderPublicId(request.getOrderPublicId())
         .orderName(request.getOrderName())
@@ -18,6 +18,10 @@ class PaymentPersistenceMapper {
         .confirmDeadline(request.getConfirmDeadline())
         .cancelDeadLine(request.getCancelDeadLine())
         .build();
+
+    paymentJpaEntity.addPaymentHistoryJpaEntity();
+
+    return paymentJpaEntity;
   }
 
   PaymentResponse mapToApplication(PaymentJpaEntity entity) {

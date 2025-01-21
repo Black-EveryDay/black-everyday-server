@@ -1,14 +1,11 @@
 package com.ed.payment.application.service;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ed.OrderPaymentCreateRequestEvent;
-import com.ed.payment.application.port.out.persistence.CreatePaymentHistoryPort;
 import com.ed.payment.application.port.out.persistence.CreatePaymentPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.dtos.CreatePaymentRequest;
@@ -36,9 +33,6 @@ class CreatePaymentServiceTest {
   @Mock
   private CreatePaymentPort createPaymentPort;
 
-  @Mock
-  private CreatePaymentHistoryPort createPaymentHistoryPort;
-
   @Test
   @DisplayName("createPayment: 주문 생성 시 발행한 주문 메시지를 기반으로 결제 데이터를 생성한다.")
   void createPayment_success() {
@@ -55,16 +49,12 @@ class CreatePaymentServiceTest {
     when(createPaymentPort.createPayment(createPaymentRequest))
         .thenReturn(mock());
 
-    doNothing().when(createPaymentHistoryPort)
-        .createPaymentHistory(anyLong(), anyLong());
-
     // when
     createPaymentService.createPayment(createOrderPaymentRequest);
 
   	// then
     verify(getPaymentPort).existsByOrderPublicId(orderId);
     verify(createPaymentPort).createPayment(createPaymentRequest);
-    verify(createPaymentHistoryPort).createPaymentHistory(anyLong(), anyLong());
   }
 
   @Test
@@ -86,7 +76,6 @@ class CreatePaymentServiceTest {
     // then
     verify(getPaymentPort).existsByOrderPublicId(orderId);
     verify(createPaymentPort, never()).createPayment(createPaymentRequest);
-    verify(createPaymentHistoryPort, never()).createPaymentHistory(anyLong(), anyLong());
   }
 
   private OrderPaymentCreateRequestEvent createCreateOrderPaymentRequest(String orderId) {

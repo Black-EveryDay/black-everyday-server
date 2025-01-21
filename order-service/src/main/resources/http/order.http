@@ -1,5 +1,5 @@
 ### Create a new order
-POST http://localhost:19095/api/v1/orders
+POST http://localhost:19091/api/v1/orders
 Content-Type: application/json
 X-User-Id: 550e8400-e29b-41d4-a716-446655440006
 
@@ -13,7 +13,7 @@ X-User-Id: 550e8400-e29b-41d4-a716-446655440006
       "brandId": "33732dd3-3901-4429-ba58-676c6965923",
       "productId": "e4030362-0251-441a-b752-63feea51337c",
       "productName": "베이직 긴팔 티셔츠",
-      "quantity": 2,
+      "quantity": 1,
       "unitPrice": 40000,
       "size": "S",
       "productCategory": "TOP",

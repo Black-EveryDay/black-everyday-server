@@ -39,7 +39,6 @@ class ConfirmPaymentControllerTest {
     final String paymentKey = "tgen_20250107154634hYNt7";
     final String orderId = UUID.randomUUID().toString();
     final Long amount = 10000L;
-    final String lastTransactionKey = "9C62B18EEF0DE3EB7F4422EB6D14BC6E";
 
     MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
     queryParams.add("paymentType", paymentType);
@@ -53,7 +52,6 @@ class ConfirmPaymentControllerTest {
         .totalAmount(amount)
         .balanceAmount(amount)
         .paymentStatus(DONE)
-        .lastTransactionKey(lastTransactionKey)
         .build();
 
     // stubbing
@@ -69,7 +67,6 @@ class ConfirmPaymentControllerTest {
         .andExpect(jsonPath("$.body.totalAmount").value(response.getTotalAmount()))
         .andExpect(jsonPath("$.body.balanceAmount").value(response.getBalanceAmount()))
         .andExpect(jsonPath("$.body.paymentStatus").value(response.getPaymentStatus().toString()))
-        .andExpect(jsonPath("$.body.lastTransactionKey").value(response.getLastTransactionKey()))
         .andExpect(jsonPath("$.timestamp").exists());
   }
 }

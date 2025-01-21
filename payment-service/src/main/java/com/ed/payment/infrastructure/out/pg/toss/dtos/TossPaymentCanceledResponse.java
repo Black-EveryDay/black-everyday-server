@@ -15,7 +15,6 @@ public class TossPaymentCanceledResponse {
   private Long balanceAmount;
   @JsonDeserialize(using = PaymentStatusDeserializer.class)
   private PaymentStatus status;
-  private String lastTransactionKey;
   private List<Cancels> cancels;
 
   @Getter

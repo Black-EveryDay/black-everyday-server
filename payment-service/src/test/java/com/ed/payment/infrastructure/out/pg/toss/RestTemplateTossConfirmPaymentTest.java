@@ -30,14 +30,12 @@ class RestTemplateTossConfirmPaymentTest {
     Payment payment = createPayment(orderPublicId, amount);
 
     final String paymentKey = "tgen_20250107154634hYNt7";
-    final String lastTransactionKey = "9C62B18EEF0DE3EB7F4422EB6D14BC6E";
     PaymentDoneResponse response = PaymentDoneResponse.builder()
         .paymentKey(paymentKey)
         .orderId(orderPublicId)
         .totalAmount(amount)
         .balanceAmount(amount)
         .paymentStatus(DONE)
-        .lastTransactionKey(lastTransactionKey)
         .build();
 
     // stubbing
