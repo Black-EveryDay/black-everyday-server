@@ -15,19 +15,19 @@ X-User-Id: 550e8400-e29b-41d4-a716-446655440006
       "productName": "베이직 긴팔 티셔츠",
       "quantity": 1,
       "unitPrice": 40000,
-      "size": "L",
+      "size": "S",
       "productCategory": "TOP",
-      "orderItemCouponId": null
+      "orderItemCouponId": "3a9f045f-d58c-4359-ba3e-8f52e2a2ea56"
     },
     {
       "brandId": "55732dd3-3901-4429-ba58-676c6965923",
       "productId": "37eede74-184e-404e-a4f6-b1c063d91795",
       "productName": "스웻 팬츠",
-      "quantity": 1,
+      "quantity": 3,
       "unitPrice": 50000,
-      "size": "L",
+      "size": "S",
       "productCategory": "BOTTOM",
-      "orderItemCouponId": null
+      "orderItemCouponId": "78964230-8be4-4211-9ada-234660f33ceb"
     }
   ],
   "orderDeliveryRequest": {
@@ -40,3 +40,8 @@ X-User-Id: 550e8400-e29b-41d4-a716-446655440006
     "requirement": "부재시 경비실에 맡겨주세요"
   }
 }
+
+
+###
+@orderId = 202501210172253716
+GET http://localhost:19095/api/v1/internal/orders/{{orderId}}

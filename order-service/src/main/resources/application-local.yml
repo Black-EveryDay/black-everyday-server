@@ -16,6 +16,7 @@ spring:
     init:
       mode: always
       schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/init.sql
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${SPRING_DATASOURCE_URL}

@@ -4,7 +4,7 @@ import static com.ed.orderservice.libs.common.HttpHeaderConstants.HEADER_USER_ID
 
 import com.ed.orderservice.presentaion.port.in.CreateOrderUseCase;
 import com.ed.orderservice.presentaion.web.request.NewOrderRequest;
-import com.ed.orderservice.presentaion.web.response.NewPurchaseOrderMessageResponse;
+import com.ed.orderservice.presentaion.web.response.domain.orderCreate.NewPurchaseOrderMessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
