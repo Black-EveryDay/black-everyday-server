@@ -7,7 +7,7 @@ import com.ed.orderservice.domain.vo.order.OrderDelivery;
 import com.ed.orderservice.domain.vo.order.Orderer;
 import com.ed.orderservice.domain.vo.order.item.OrderItem;
 import com.ed.orderservice.infrastructure.entity.OrderEntity;
-import com.ed.orderservice.infrastructure.external.fegin.domain.event.dto.UseCouponDto;
+import com.ed.orderservice.infrastructure.external.fegin.domain.coupon.dto.UseCouponDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;

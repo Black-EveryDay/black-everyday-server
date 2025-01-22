@@ -3,7 +3,7 @@ package com.ed.orderservice.domain.vo.order;
 import com.ed.orderservice.domain.vo.order.item.OrderItem;
 import com.ed.orderservice.domain.vo.order.item.OrderItemCoupon;
 import com.ed.orderservice.domain.vo.order.item.OrderItemCouponTemplate;
-import com.ed.orderservice.infrastructure.external.fegin.domain.event.enums.DiscountType;
+import com.ed.orderservice.infrastructure.external.fegin.domain.coupon.enums.DiscountType;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;

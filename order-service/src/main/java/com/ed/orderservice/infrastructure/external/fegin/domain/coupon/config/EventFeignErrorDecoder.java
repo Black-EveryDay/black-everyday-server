@@ -1,4 +1,4 @@
-package com.ed.orderservice.infrastructure.external.fegin.domain.event.config;
+package com.ed.orderservice.infrastructure.external.fegin.domain.coupon.config;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;

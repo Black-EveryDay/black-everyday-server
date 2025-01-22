@@ -1,6 +1,6 @@
-package com.ed.orderservice.infrastructure.external.fegin.domain.event.dto;
+package com.ed.orderservice.infrastructure.external.fegin.domain.coupon.dto;
 
-import com.ed.orderservice.infrastructure.external.fegin.domain.event.enums.DiscountType;
+import com.ed.orderservice.infrastructure.external.fegin.domain.coupon.enums.DiscountType;
 import java.math.BigDecimal;
 import java.util.UUID;
 
