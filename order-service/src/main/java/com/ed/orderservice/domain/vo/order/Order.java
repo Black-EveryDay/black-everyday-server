@@ -3,11 +3,8 @@ package com.ed.orderservice.domain.vo.order;
 import com.ed.orderservice.domain.enums.OrderStatus;
 import com.ed.orderservice.domain.vo.order.item.OrderItem;
 import com.ed.orderservice.infrastructure.entity.OrderStatusHistoryEntity;
-import com.ed.orderservice.libs.common.CommonUtils;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -65,8 +62,6 @@ public class Order {
     this.paymentId = paymentId;
     this.paidAt = paidAt;
   }
-
-
 
   public void recalculateTotals() {
     this.totalQuantity = amountCalculator.calculateTotalQuantity(orderItems);

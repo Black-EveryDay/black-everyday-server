@@ -1,9 +1,9 @@
-package com.ed.orderservice.infrastructure.external.fegin.domain.event.adapter;
+package com.ed.orderservice.infrastructure.external.fegin.domain.coupon.adapter;
 
 import com.ed.orderservice.application.port.in.CouponUseInPort;
-import com.ed.orderservice.infrastructure.external.fegin.domain.event.CouponClient;
-import com.ed.orderservice.infrastructure.external.fegin.domain.event.dto.UseCouponRequest;
-import com.ed.orderservice.infrastructure.external.fegin.domain.event.dto.UseCouponResponse;
+import com.ed.orderservice.infrastructure.external.fegin.domain.coupon.CouponClient;
+import com.ed.orderservice.infrastructure.external.fegin.domain.coupon.dto.UseCouponRequest;
+import com.ed.orderservice.infrastructure.external.fegin.domain.coupon.dto.UseCouponResponse;
 import com.ed.orderservice.libs.response.ApiResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.ed.orderservice.infrastructure.external.fegin.domain.event.dto;
+package com.ed.orderservice.infrastructure.external.fegin.domain.coupon.dto;
 
 import java.util.UUID;
 import lombok.Builder;

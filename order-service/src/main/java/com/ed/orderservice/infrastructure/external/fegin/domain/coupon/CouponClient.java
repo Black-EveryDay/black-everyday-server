@@ -1,8 +1,8 @@
-package com.ed.orderservice.infrastructure.external.fegin.domain.event;
+package com.ed.orderservice.infrastructure.external.fegin.domain.coupon;
 
-import com.ed.orderservice.infrastructure.external.fegin.domain.event.config.EventFeignErrorDecoder;
-import com.ed.orderservice.infrastructure.external.fegin.domain.event.dto.UseCouponRequest;
-import com.ed.orderservice.infrastructure.external.fegin.domain.event.dto.UseCouponResponse;
+import com.ed.orderservice.infrastructure.external.fegin.domain.coupon.config.EventFeignErrorDecoder;
+import com.ed.orderservice.infrastructure.external.fegin.domain.coupon.dto.UseCouponRequest;
+import com.ed.orderservice.infrastructure.external.fegin.domain.coupon.dto.UseCouponResponse;
 import com.ed.orderservice.libs.response.ApiResponse;
 import java.util.UUID;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
-@FeignClient(name = "event-service", configuration = EventFeignErrorDecoder.class)
+@FeignClient(name = "coupon-service", configuration = EventFeignErrorDecoder.class)
 public interface CouponClient {
 
   @PostMapping("/api/v1/internal/coupons/{couponPublicId}/orderInfo")

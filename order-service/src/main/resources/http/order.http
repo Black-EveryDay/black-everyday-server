@@ -1,5 +1,5 @@
 ### Create a new order
-POST http://localhost:19091/api/v1/orders
+POST http://localhost:19095/api/v1/orders
 Content-Type: application/json
 X-User-Id: 550e8400-e29b-41d4-a716-446655440006
 
@@ -17,7 +17,7 @@ X-User-Id: 550e8400-e29b-41d4-a716-446655440006
       "unitPrice": 40000,
       "size": "S",
       "productCategory": "TOP",
-      "orderItemCouponId": "3a9f045f-d58c-4359-ba3e-8f52e2a2ea56"
+      "orderItemCouponId": "45718643-58c1-45da-bcfc-d39a6b084fca"
     },
     {
       "brandId": "55732dd3-3901-4429-ba58-676c6965923",
@@ -27,7 +27,7 @@ X-User-Id: 550e8400-e29b-41d4-a716-446655440006
       "unitPrice": 50000,
       "size": "S",
       "productCategory": "BOTTOM",
-      "orderItemCouponId": "78964230-8be4-4211-9ada-234660f33ceb"
+      "orderItemCouponId": "fd6d8e7f-9642-4db9-a1bf-fe7e3ee4c958"
     }
   ],
   "orderDeliveryRequest": {
@@ -43,5 +43,10 @@ X-User-Id: 550e8400-e29b-41d4-a716-446655440006
 
 
 ###
-@orderId = 202501210172253716
-GET http://localhost:19095/api/v1/internal/orders/{{orderId}}
+POST http://localhost:19095/api/v1/internal/orders/settlements
+Content-Type: application/json
+
+[
+  "202501220897635214",
+  "202501220055539487"
+]

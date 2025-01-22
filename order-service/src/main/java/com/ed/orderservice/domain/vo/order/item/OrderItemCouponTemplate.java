@@ -1,6 +1,7 @@
 package com.ed.orderservice.domain.vo.order.item;
 
-import com.ed.orderservice.infrastructure.external.fegin.domain.event.enums.DiscountType;
+import com.ed.orderservice.infrastructure.entity.OrderItemCouponTemplateEntity;
+import com.ed.orderservice.infrastructure.external.fegin.domain.coupon.enums.DiscountType;
 import java.math.BigDecimal;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,15 @@ public class OrderItemCouponTemplate {
     this.couponName = couponName;
     this.discountType = discountType;
     this.discountAmount = discountAmount;
+  }
+
+  public static OrderItemCouponTemplate fromEntity(OrderItemCouponTemplateEntity entity) {
+    return OrderItemCouponTemplate.builder()
+        .couponTemplateId(entity.getTemplateId())
+        .couponName(entity.getCouponName())
+        .discountType(entity.getDiscountType())
+        .discountAmount(entity.getDiscountValue())
+        .build();
   }
 
 }

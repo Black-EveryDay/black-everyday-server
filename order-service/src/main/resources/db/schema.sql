@@ -38,7 +38,8 @@ CREATE TABLE ED_ORDER_COUPON (
     COUPON_NAME            VARCHAR(255)   NULL                    COMMENT '쿠폰 이름',
     COUPON_TEMPLATE_ID     VARCHAR(255)   NULL                    COMMENT '쿠폰 템플릿 식별자',
     DISCOUNT_AMOUNT        DECIMAL(38, 2) NULL                    COMMENT '할인 금액',
-    DISCOUNT_TYPE          TINYINT        NULL                    COMMENT '할인 유형',
+    DISCOUNT_TYPE          VARCHAR(255)   NULL                    COMMENT '할인 유형',
+    DISCOUNT_VALUE         DECIMAL(38, 2) NULL                    COMMENT '할인 값',
     ORDER_ITEM_ID          BIGINT         NOT NULL                COMMENT '주문 항목 식별자',
     IS_DELETED             BOOL           NOT NULL  DEFAULT FALSE COMMENT '삭제 여부',
     CREATED_BY             CHAR(36)                               COMMENT '생성자',
@@ -47,8 +48,7 @@ CREATE TABLE ED_ORDER_COUPON (
     UPDATED_AT             TIMESTAMP      NOT NULL                COMMENT '수정 일시',
     DELETED_BY             CHAR(36)                               COMMENT '삭제자',
     DELETED_AT             TIMESTAMP                              COMMENT '삭제 일시',
-    PRIMARY KEY (ORDER_COUPON_ID),
-    CHECK (`DISCOUNT_TYPE` BETWEEN 0 AND 1)
+    PRIMARY KEY (ORDER_COUPON_ID)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT '주문 쿠폰 정보';
 
 CREATE TABLE ED_ORDER_DELIVERY (
