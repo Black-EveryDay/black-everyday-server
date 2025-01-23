@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EventUserJpaRepository extends JpaRepository<EventUserEntity, Long> {
 
+  boolean existsByEventIdAndUserId(String eventId, String userId);
 }

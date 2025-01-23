@@ -8,11 +8,11 @@ Content-Type: application/json
   "startAt": "2021-08-01T00:00:00",
   "endAt": "2025-08-31T23:59:59",
   "couponTemplateId": "16908823-9ec2-4b6c-8a0d-485ab7bad8bc",
-  "maxParticipants": 5000
+  "maxParticipants": 10000000
 }
 
 ### 이벤트 참여 API
-@eventPublicId=04409856-fd2e-430a-99ba-96d79e7eab11
+@eventPublicId=fe6c12a4-6831-4452-88ba-cab73fb9aa46
 POST localhost:19097/api/v1/events/{{eventPublicId}}/join
 Content-Type: application/json
 

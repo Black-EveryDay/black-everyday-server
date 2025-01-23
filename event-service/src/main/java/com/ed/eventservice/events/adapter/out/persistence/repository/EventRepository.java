@@ -43,11 +43,16 @@ public class EventRepository implements EventPersistencePort {
   @Override
   public EventUser createEventUser(EventUser newEventUser) {
 
-    Event savedEvent = saveEvent(newEventUser.getEvent());
+//    Event savedEvent = saveEvent(newEventUser.getEvent());
 
     EventUserEntity savedEventUser = eventUserJpaRepository.save(
         eventUserMapper.domainToJpaEntity(newEventUser));
 
-    return eventUserMapper.jpaEntityToDomain(savedEventUser, savedEvent);
+    return eventUserMapper.jpaEntityToDomain(savedEventUser, newEventUser.getEvent());
+  }
+
+  @Override
+  public boolean checkUserAlreadyJoinedEvent(UUID eventId, UUID userId) {
+    return eventUserJpaRepository.existsByEventIdAndUserId(eventId.toString(), userId.toString());
   }
 }

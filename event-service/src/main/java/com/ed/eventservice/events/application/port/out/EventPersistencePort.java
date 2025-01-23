@@ -9,6 +9,8 @@ public interface EventPersistencePort {
   Event saveEvent(Event event);
 
   Event findEventById(UUID eventId);
-  
+
   EventUser createEventUser(EventUser newEventUser);
+
+  boolean checkUserAlreadyJoinedEvent(UUID eventId, UUID userId);
 }

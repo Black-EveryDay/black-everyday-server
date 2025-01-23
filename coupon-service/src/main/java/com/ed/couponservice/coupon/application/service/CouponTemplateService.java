@@ -63,11 +63,8 @@ public class CouponTemplateService implements CouponTemplateUseCase {
   public Page<CouponTemplateDetailResponse> searchCouponTemplates(
       SearchCouponTemplatesCommand command) {
 
-    Page<CouponTemplateDetailResponse> searchCouponTemplateResponsePage =
-        couponTemplatePersistencePort.searchCouponTemplates(command)
-            .map(couponTemplateMapper::domainToCouponTemplateDetailResponse);
-
-    return searchCouponTemplateResponsePage;
+    return couponTemplatePersistencePort.searchCouponTemplates(command)
+        .map(couponTemplateMapper::domainToCouponTemplateDetailResponse);
   }
 
 }

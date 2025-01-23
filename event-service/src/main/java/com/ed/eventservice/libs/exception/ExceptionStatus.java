@@ -9,6 +9,7 @@ public enum ExceptionStatus {
   EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "e001", "Event not found"),
   EVENT_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "e002", "Event not available"),
   EVENT_FULL(HttpStatus.BAD_REQUEST, "e003", "Event is full"),
+  USER_ALREADY_JOINED_EVENT(HttpStatus.BAD_REQUEST, "e004", "User already joined event"),
 
   // CouponTemplate
   COUPON_TEMPLATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "t001", "Coupon template not found"),

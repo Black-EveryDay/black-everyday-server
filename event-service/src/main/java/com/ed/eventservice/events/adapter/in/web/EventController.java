@@ -9,9 +9,11 @@ import com.ed.eventservice.events.application.port.in.mapper.CreateEventCommandM
 import com.ed.eventservice.events.application.port.in.mapper.JoinEventCommandMapper;
 import com.ed.eventservice.events.application.port.out.dto.CreateEventResponse;
 import com.ed.eventservice.events.application.port.out.dto.JoinEventResponse;
+import com.ed.eventservice.libs.common.TimeChecker;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/events")
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class EventController {
   private final EventUseCase eventUseCase;
   private final CreateEventCommandMapper createEventCommandMapper;
   private final JoinEventCommandMapper joinEventCommandMapper;
+  private final TimeChecker timeChecker;
 
   @PostMapping
   public ResponseEntity<CreateEventResponse> createEvent(
@@ -45,8 +49,14 @@ public class EventController {
       @RequestBody JoinEventRequest request
   ) {
 
-    return eventUseCase.joinEvent(
+    timeChecker.start();
+
+    JoinEventResponse response = eventUseCase.joinEvent(
         joinEventCommandMapper.eventIdAndRequestToCommand(eventId, request));
+
+    timeChecker.end();
+
+    return response;
   }
 
 }

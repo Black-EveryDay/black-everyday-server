@@ -3,6 +3,7 @@ package com.ed.eventservice.events.domain;
 import com.ed.eventservice.events.domain.enums.EventType;
 import com.ed.eventservice.libs.exception.DomainException;
 import com.ed.eventservice.libs.exception.ExceptionStatus;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Builder;
@@ -10,7 +11,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class Event {
+public class Event implements Serializable {
 
   private Long id;
   private UUID publicId;
@@ -25,7 +26,7 @@ public class Event {
   public EventUser join(UUID userId) {
 
     validateEventAvailableAtCurrent();
-    validateEventFull();
+//    validateEventFull();
 
     currentParticipants += 1;
 

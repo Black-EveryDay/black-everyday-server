@@ -1,5 +1,10 @@
 server:
   port: 19097
+  tomcat:
+    accept-count: 100
+    max-connections: 8192
+    threads:
+      max: 500
 
 spring:
   sql:
@@ -7,6 +12,7 @@ spring:
       mode: never
       schema-locations: classpath:schema.sql
       data-locations: classpath:data.sql
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -20,11 +26,25 @@ spring:
         default_schema: public
         default_batch_fetch_size: 500
     open-in-view: false
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${SPRING_DATASOURCE_URL}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
+    hikari:
+      maximum-pool-size: 100
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
+
+  devtools:
+    restart:
+      enabled: false
 
 eureka:
   client:
