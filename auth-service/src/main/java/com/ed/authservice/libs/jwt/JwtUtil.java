@@ -2,6 +2,7 @@ package com.ed.authservice.libs.jwt;
 
 import com.ed.authservice.auth.domain.User;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
@@ -33,6 +34,7 @@ public class JwtUtil {
   }
 
   public Key getSigningKey() {
-    return Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes());
+    
+    return Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(jwtProperties.getSecretKey()));
   }
 }
