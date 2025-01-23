@@ -28,10 +28,15 @@ spring:
           predicates:
             - Path=/api/{version}/payments/**
         # coupon-service
+        - id: coupon-service
+          uri: lb://coupon-service
+          predicates:
+            - Path=/api/{version}/coupons/**, /api/{version}/coupon-templates/**
+        # event-service
         - id: event-service
           uri: lb://event-service
           predicates:
-            - Path=/api/{version}/events/**, /api/{version}/coupons/**
+            - Path=/api/{version}/events/**
       discovery:
         locator:
           enabled: true  # 서비스 디스커버리를 통해 동적으로 라우트를 생성하도록 설정
