@@ -4,9 +4,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+@Component
 public class AuditorAwareImpl implements AuditorAware<String> {
 
   @Override
