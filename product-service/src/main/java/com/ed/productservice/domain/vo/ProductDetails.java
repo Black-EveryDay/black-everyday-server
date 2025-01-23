@@ -1,6 +1,6 @@
 package com.ed.productservice.domain.vo;
 
-public record ProductInfoDto(
+public record ProductDetails(
     String productPublicId,
     String color,
     String image,

@@ -1,6 +1,6 @@
 package com.ed.productservice.presentation.web.response;
 
-import com.ed.productservice.domain.vo.ProductInfoDto;
+import com.ed.productservice.domain.vo.ProductDetails;
 import com.ed.productservice.infrastructure.persistence.elasticsearch.SearchProduct;
 
 
@@ -15,7 +15,7 @@ public record ProductDetailResponse(
     String brandName
 ) {
 
-  public static ProductDetailResponse from(ProductInfoDto dto) {
+  public static ProductDetailResponse from(ProductDetails dto) {
     return new ProductDetailResponse(
         dto.productPublicId(),
         dto.color(),
