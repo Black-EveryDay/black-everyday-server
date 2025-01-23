@@ -1,6 +1,7 @@
 package com.ed.productservice.infrastructure.persistence.scheduler;
 
 import java.util.concurrent.TimeUnit;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -9,16 +10,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class DistributedStockRollback {
+@RequiredArgsConstructor
+public class DistributedLockScheduler {
 
   private final RedissonClient redissonClient;
   private final StockRollbackScheduler stockRollbackScheduler;
-
-  public DistributedStockRollback(RedissonClient redissonClient,
-      StockRollbackScheduler stockRollbackScheduler) {
-    this.redissonClient = redissonClient;
-    this.stockRollbackScheduler = stockRollbackScheduler;
-  }
+  private final PopularProductCacheAdapter popularProductCacheAdapter;
 
   @Scheduled(cron = "30 * * * * *")
   public void scheduleDistributedStockRollback() {
@@ -35,6 +32,24 @@ public class DistributedStockRollback {
       }
     } catch (InterruptedException e) {
       log.error("Interrupted while acquiring lock for stock rollback.", e);
+    }
+  }
+
+  @Scheduled(cron = "0 0 */1 * * *")
+  public void schedulerProductCache() {
+    RLock lock = redissonClient.getLock("popular-products-cache-lock");
+    try {
+      boolean isLocked = lock.tryLock(1, 5, TimeUnit.SECONDS);
+
+      if (isLocked) {
+        try {
+          popularProductCacheAdapter.refreshPopularProductsCache();
+        } finally {
+          lock.unlock();
+        }
+      }
+    } catch (InterruptedException e) {
+      log.error("Failed to acquire lock for popular products caching", e);
     }
   }
 }
