@@ -1,6 +1,6 @@
 package com.ed.productservice.infrastructure.persistence.adapter;
 
-import com.ed.productservice.domain.vo.ProductInfoDto;
+import com.ed.productservice.domain.vo.ProductDetails;
 import com.ed.productservice.infrastructure.persistence.repository.ProductQueryDslRepository;
 import com.ed.productservice.infrastructure.persistence.repository.ProductRepository;
 import com.ed.productservice.infrastructure.persistence.search.ProductSearchCondition;
@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,15 +22,22 @@ public class ProductQueryAdapter {
 
   private final ProductRepository productRepository;
   private final ProductQueryDslRepository productQueryDslRepository;
+  private final ValueOperations<String, ProductDetails> productOperations;
 
-  public ProductInfoDto findById(String productPublicId) {
+  public ProductDetails findById(String productPublicId) {
+    log.info("publicId = {}", productPublicId);
+
+    ProductDetails cachedProduct = productOperations.get("getProduct:" + productPublicId);
+    if (cachedProduct != null) {
+      return cachedProduct;
+    }
 
     return productRepository.findByProductAndCurrentPrice(productPublicId)
         .orElseThrow(() -> new ProductException(
             ErrorCode.PRODUCT_NOT_FOUND));
   }
 
-  public Page<ProductInfoDto> search(ProductSearchCondition condition, Pageable pageable) {
+  public Page<ProductDetails> search(ProductSearchCondition condition, Pageable pageable) {
 
     return productQueryDslRepository.search(condition.productName(),
         condition.color(),
@@ -40,7 +48,7 @@ public class ProductQueryAdapter {
         pageable);
   }
 
-  public ProductInfoDto getProductByVersion(String productPublicId, int version) {
+  public ProductDetails getProductByVersion(String productPublicId, int version) {
 
     return productRepository.findByProductAndPriceVersion(productPublicId, version)
         .orElseThrow(() -> new ProductException(
