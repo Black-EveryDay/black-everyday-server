@@ -49,14 +49,8 @@ public class EventController {
       @RequestBody JoinEventRequest request
   ) {
 
-    timeChecker.start();
-
-    JoinEventResponse response = eventUseCase.joinEvent(
+    return eventUseCase.joinEvent(
         joinEventCommandMapper.eventIdAndRequestToCommand(eventId, request));
-
-    timeChecker.end();
-
-    return response;
   }
 
 }

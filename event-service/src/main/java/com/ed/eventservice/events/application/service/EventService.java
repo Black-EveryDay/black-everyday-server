@@ -72,27 +72,14 @@ public class EventService implements EventUseCase {
   @Transactional
   public JoinEventResponse joinEvent(JoinEventCommand joinEventCommand) {
 
-    timeChecker.check("joinEvent");
-
     validateUserNotJoinedEvent(joinEventCommand.getEventId(), joinEventCommand.getUserId());
-
-    timeChecker.check("validateUserNotJoinedEvent");
 
     Event event = eventPersistencePort.findEventById(joinEventCommand.getEventId());
 
-    timeChecker.check("eventPersistencePort.findEventById");
-
     validateParticipationPossible(event);
 
-    timeChecker.check("validateParticipationPossible");
-
     EventUser newEventUser = event.join(joinEventCommand.getUserId());
-
-    timeChecker.check("event.join");
-
     EventUser savedEventUser = eventPersistencePort.createEventUser(newEventUser);
-
-    timeChecker.check("eventPersistencePort.createEventUser");
 
     return eventUserMapper.domainToJoinEventResponse(savedEventUser);
   }
@@ -101,7 +88,7 @@ public class EventService implements EventUseCase {
 
     if (!eventPersistencePort.checkUserAlreadyJoinedEvent(eventId, userId)) {
 
-//      throw new ServiceException(ExceptionStatus.USER_ALREADY_JOINED_EVENT);
+      throw new ServiceException(ExceptionStatus.USER_ALREADY_JOINED_EVENT);
     }
   }
 

@@ -1,4 +1,4 @@
-package com.ed.eventservice.events.adapter.out.persistence.repository;
+package com.ed.eventservice.events.adapter.out.redis;
 
 import com.ed.eventservice.events.application.port.out.EventOutPort;
 import com.ed.eventservice.events.domain.Event;
