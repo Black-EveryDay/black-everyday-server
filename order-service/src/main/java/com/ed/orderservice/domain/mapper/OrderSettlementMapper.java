@@ -17,7 +17,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderSettlementMapper {
 
-  public OrderSettlement toOrderSettlement(Order order) {
+  public List<OrderSettlement> toOrderSettlements(List<Order> orders) {
+    return orders.stream()
+        .map(this::buildOrderSettlement)
+        .toList();
+  }
+
+  private OrderSettlement buildOrderSettlement(Order order) {
     return OrderSettlement.builder()
         .orderPublicId(order.getOrderPublicId())
         .orderItems(toOrderItemSettlements(order))

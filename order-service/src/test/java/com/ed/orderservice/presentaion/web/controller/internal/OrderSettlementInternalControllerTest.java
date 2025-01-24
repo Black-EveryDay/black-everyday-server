@@ -63,9 +63,8 @@ class OrderSettlementInternalControllerTest {
 
       List<OrderSettlement> orderSettlements = createMockOrderSettlements();
 
-      when(orderSettlementUseCase.getOrderSettlement(any(OrderSettlementCommand.class)))
-          .thenReturn(orderSettlements.get(0))
-          .thenReturn(orderSettlements.get(1));
+      when(orderSettlementUseCase.getOrderSettlements(any(OrderSettlementCommand.class)))
+          .thenReturn(orderSettlements);
 
       // When & Then
       mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL)

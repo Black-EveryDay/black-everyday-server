@@ -1,19 +1,20 @@
 package com.ed.orderservice.application.port.in.command;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class OrderSettlementCommand {
 
-  private String orderId;
+  private List<String> orderIds;
 
   @Builder
-  private OrderSettlementCommand(String orderId) {
-    this.orderId = orderId;
+  private OrderSettlementCommand(List<String> orderIds) {
+    this.orderIds = orderIds;
   }
 
-  public static OrderSettlementCommand of(String orderId) {
-    return OrderSettlementCommand.builder().orderId(orderId).build();
+  public static OrderSettlementCommand of(List<String> orderIds) {
+    return OrderSettlementCommand.builder().orderIds(orderIds).build();
   }
 }

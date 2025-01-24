@@ -7,6 +7,7 @@ import com.ed.orderservice.domain.vo.order.settlement.OrderSettlement;
 import com.ed.orderservice.domain.vo.order.Order;
 import com.ed.orderservice.presentaion.port.in.OrderSettlementUseCase;
 
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,8 @@ public class OrderSettlementService implements OrderSettlementUseCase {
   private final OrderSettlementMapper orderSettlementMapper;
 
   @Override
-  public OrderSettlement getOrderSettlement(OrderSettlementCommand command) {
-    Order order = orderGetOutPort.getOrder(command.getOrderId());
-    return orderSettlementMapper.toOrderSettlement(order);
+  public List<OrderSettlement> getOrderSettlements(OrderSettlementCommand command) {
+    List<Order> orders = orderGetOutPort.getOrders(command.getOrderIds());
+    return orderSettlementMapper.toOrderSettlements(orders);
   }
 }
