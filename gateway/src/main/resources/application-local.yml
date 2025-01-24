@@ -21,7 +21,7 @@ spring:
         - id: order-service
           uri: lb://order-service
           predicates:
-            - Path=/api/{version}/orders/**
+            - Path=/api/{version}/orders/**, /api/{version}/internal/**
         # payment-service
         - id: payment-service
           uri: lb://payment-service
@@ -31,7 +31,7 @@ spring:
         - id: event-service
           uri: lb://event-service
           predicates:
-            - Path=/api/{version}/events/**, /api/{version}/coupons/**
+            - Path=/api/{version}/events/**, /api/{version}/coupons/**, /api/{version}/coupon-templates
       discovery:
         locator:
           enabled: true  # 서비스 디스커버리를 통해 동적으로 라우트를 생성하도록 설정
