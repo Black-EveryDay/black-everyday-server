@@ -1,7 +1,32 @@
-### Create a new order
-POST http://localhost:19095/api/v1/orders
+### 회원가입 API
+POST http://localhost:19091/api/v1/auth/sign-up
 Content-Type: application/json
-X-User-Id: 550e8400-e29b-41d4-a716-446655440006
+
+{
+  "username": "saaddsddee",
+  "password": "Paaasdasdad!!@1"
+}
+
+### 로그인 API
+POST http://localhost:19091/api/v1/auth/sign-in
+Content-Type: application/json
+
+{
+  "username": "saaddsddee",
+  "password": "Paaasdasdad!!@1"
+}
+
+### 주문 취소
+@orderId = 202501220897635214
+PUT http://localhost:19091/api/v1/orders/{{orderId}}/cancel
+Content-Type: application/json
+
+
+### Create a new order
+@jwttoken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhdXRoLXNlcnZpY2UiLCJpYXQiOjE3Mzc2NTI1NjgsImV4cCI6MTgyNDA1MjU2OCwidXNlcklkIjoiYjZhODUzMjktNThmZC00ZmIxLTk1NzgtNGFlYjMxN2Q1ZTU0IiwidXNlclJvbGUiOiJERUZBVUxUX0NVU1RPTUVSIn0.lRy2Tk8yQwM06vMZ1uzGn5d_tI5IdKkueXm9WxBraaIvneUBWuOauGlsfTbPEWQ_pm7CdMnSBiaAoDjptBmtTQ
+POST http://localhost:19091/api/v1/orders
+Content-Type: application/json
+Authorization: Bearer {{jwttoken}}
 
 {
   "orderer": {
@@ -45,6 +70,7 @@ X-User-Id: 550e8400-e29b-41d4-a716-446655440006
 ###
 POST http://localhost:19095/api/v1/internal/orders/settlements
 Content-Type: application/json
+#Authorization: Bearer {{jwttoken}}
 
 [
   "202501220897635214",
