@@ -1,5 +1,6 @@
 package com.ed.orderservice.presentaion.web.controller;
 
+import static com.ed.orderservice.libs.common.HttpHeaderConstants.HEADER_USER_ID;
 import static com.ed.orderservice.domain.vo.order.OrderBase.generateOrderPublicId;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -42,10 +43,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(OrderController.class)
+@WebMvcTest(OrderCreateController.class)
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-class OrderControllerTest {
+class OrderCreateControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -74,7 +75,7 @@ class OrderControllerTest {
 
       mockMvc.perform(post(uri)
               .contentType(MediaType.APPLICATION_JSON)
-              .header("X-User-Id", userId)
+              .header(HEADER_USER_ID, userId)
               .content(objectMapper.writeValueAsString(request)))
           .andExpect(status().isOk())
           .andDo(MockMvcRestDocumentationWrapper.document("create-order",
