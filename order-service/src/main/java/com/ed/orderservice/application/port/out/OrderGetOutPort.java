@@ -1,9 +1,9 @@
 package com.ed.orderservice.application.port.out;
 
 import com.ed.orderservice.domain.vo.order.Order;
+import java.util.List;
 
 public interface OrderGetOutPort {
 
-  Order getOrder(String orderId);
-
+  List<Order> getOrders(List<String> orderIds);
 }

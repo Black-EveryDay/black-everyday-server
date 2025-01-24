@@ -19,11 +19,9 @@ public class OrderSettlementInternalController {
 
   @PostMapping("/settlements")
   public List<OrderSettlementResponse> getOrderSettlements(@RequestBody List<String> orderIds) {
-    return orderIds.stream()
-        .map(OrderSettlementCommand::of)
-        .map(orderSettlementUseCase::getOrderSettlement)
+    return orderSettlementUseCase.getOrderSettlements(OrderSettlementCommand.of(orderIds))
+        .stream()
         .map(OrderSettlementResponse::from)
         .toList();
   }
-
 }
