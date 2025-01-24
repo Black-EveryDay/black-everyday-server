@@ -7,6 +7,7 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import java.math.BigDecimal;
+import java.util.Optional;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,12 +40,14 @@ public class OrderItemCouponTemplateEntity {
   }
 
   public static OrderItemCouponTemplateEntity fromDomain(OrderItemCouponTemplate domain) {
-    return OrderItemCouponTemplateEntity.builder()
-        .templateId(domain.getCouponTemplateId())
-        .couponName(domain.getCouponName())
-        .discountType(domain.getDiscountType())
-        .discountValue(domain.getDiscountAmount())
-        .build();
+    return Optional.ofNullable(domain)
+        .map(d -> OrderItemCouponTemplateEntity.builder()
+            .templateId(d.getCouponTemplateId())
+            .couponName(d.getCouponName())
+            .discountType(d.getDiscountType())
+            .discountValue(d.getDiscountAmount())
+            .build())
+        .orElse(null);
   }
 
 }

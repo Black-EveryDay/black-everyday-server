@@ -1,4 +1,4 @@
-package com.ed.orderservice.presentaion.web.response.domain.orderSettlement;
+package com.ed.orderservice.presentaion.web.response.domain.settlement;
 
 import static lombok.AccessLevel.PRIVATE;
 import com.ed.orderservice.domain.vo.order.settlement.OrderItemSettlement;

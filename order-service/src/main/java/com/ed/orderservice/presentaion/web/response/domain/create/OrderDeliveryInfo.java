@@ -1,4 +1,4 @@
-package com.ed.orderservice.presentaion.web.response.domain.orderCreate;
+package com.ed.orderservice.presentaion.web.response.domain.create;
 
 import com.ed.orderservice.domain.vo.order.OrderDelivery;
 import lombok.Builder;

@@ -5,6 +5,7 @@ import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 
+import com.ed.OrderPaymentCancelRequestEvent;
 import com.ed.OrderPaymentCreateRequestEvent;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import java.util.HashMap;
@@ -37,8 +38,21 @@ public class KafkaProducerConfig {
   }
 
   @Bean
+  public ProducerFactory<String, OrderPaymentCancelRequestEvent> orderPaymentCancelProducerFactory() {
+    Map<String, Object> configProps = new HashMap<>();
+    configProps.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    configProps.put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    configProps.put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+    configProps.put(SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl);
+    return new DefaultKafkaProducerFactory<>(configProps);
+  }
+
+  @Bean
   public KafkaTemplate<String, OrderPaymentCreateRequestEvent> kafkaTemplate() {
     return new KafkaTemplate<>(producerFactory());
   }
-
+  @Bean
+  public KafkaTemplate<String, OrderPaymentCancelRequestEvent> orderPaymentCancelKafkaTemplate() {
+    return new KafkaTemplate<>(orderPaymentCancelProducerFactory());
+  }
 }

@@ -1,4 +1,4 @@
-package com.ed.orderservice.application.service;
+package com.ed.orderservice.application.service.domain.order.create;
 
 import com.ed.orderservice.application.port.in.CouponUseInPort;
 import com.ed.orderservice.domain.mapper.OrderMapper;

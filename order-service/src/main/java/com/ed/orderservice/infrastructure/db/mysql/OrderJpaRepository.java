@@ -11,4 +11,6 @@ public interface OrderJpaRepository
 
 	OrderEntity findByOrderPublicId(String orderPublicId);
 	List<OrderEntity> findByOrderPublicIdIn(List<String> orderPublicIds);
+
+	OrderEntity findByOrderPublicIdAndUserId(String orderId, String userId);
 }
