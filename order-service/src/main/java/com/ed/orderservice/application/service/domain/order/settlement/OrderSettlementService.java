@@ -1,4 +1,4 @@
-package com.ed.orderservice.application.service;
+package com.ed.orderservice.application.service.domain.order.settlement;
 
 import com.ed.orderservice.application.port.in.command.OrderSettlementCommand;
 import com.ed.orderservice.application.port.out.OrderGetOutPort;

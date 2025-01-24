@@ -1,4 +1,4 @@
-package com.ed.orderservice.application.service;
+package com.ed.orderservice.application.service.domain.order.create;
 
 import com.ed.orderservice.application.port.in.ProductStockInPort;
 import com.ed.orderservice.application.port.in.command.CreateOrderCommand;
@@ -21,5 +21,9 @@ public class ProductStockService {
     ApiResponse<StockDecreaseResponse> response = productStockInPort.prepareStock(request);
 
     return response.getBody().transactionId();
+  }
+
+  public void cancelProductStock(String requestId) {
+    productStockInPort.rollbackStock(requestId);
   }
 }
