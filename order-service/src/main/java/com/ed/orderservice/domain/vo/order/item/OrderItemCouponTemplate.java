@@ -3,6 +3,7 @@ package com.ed.orderservice.domain.vo.order.item;
 import com.ed.orderservice.infrastructure.entity.OrderItemCouponTemplateEntity;
 import com.ed.orderservice.infrastructure.external.fegin.domain.coupon.enums.DiscountType;
 import java.math.BigDecimal;
+import java.util.Optional;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,12 +28,14 @@ public class OrderItemCouponTemplate {
   }
 
   public static OrderItemCouponTemplate fromEntity(OrderItemCouponTemplateEntity entity) {
-    return OrderItemCouponTemplate.builder()
-        .couponTemplateId(entity.getTemplateId())
-        .couponName(entity.getCouponName())
-        .discountType(entity.getDiscountType())
-        .discountAmount(entity.getDiscountValue())
-        .build();
+    return Optional.ofNullable(entity)
+        .map(e -> OrderItemCouponTemplate.builder()
+            .couponTemplateId(e.getTemplateId())
+            .couponName(e.getCouponName())
+            .discountType(e.getDiscountType())
+            .discountAmount(e.getDiscountValue())
+            .build())
+        .orElse(null);
   }
 
 }

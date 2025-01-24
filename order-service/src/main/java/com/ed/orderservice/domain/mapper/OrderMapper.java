@@ -67,7 +67,7 @@ public class OrderMapper {
         .build();
 
     Order newOrder = Order.builder()
-        .userId(orderEntity.getUserid())
+        .userId(orderEntity.getUserId())
         .orderId(orderEntity.getOrderId())
         .orderer(orderer)
         .orderItems(orderItems)
@@ -92,7 +92,7 @@ public class OrderMapper {
         .orderDate(LocalDateTime.now())
         .totalAmount(newOrder.getTotalAmount())
         .totalQuantity(newOrder.getTotalQuantity())
-        .userid(newOrder.getUserId())
+        .userId(newOrder.getUserId())
         .paymentId(newOrder.getPaymentId())
         .paidAt(newOrder.getPaidAt())
         .productTransactionId(newOrder.getProductTransactionId())
@@ -122,4 +122,30 @@ public class OrderMapper {
         .toList();
   }
 
+
+//  public OrderEntity cancelUpdateToEntity(Order newOrder) {
+//    OrderEntity orderEntity = OrderEntity.builder()
+//        .orderPublicId(newOrder.getOrderPublicId())
+//        .orderPublicName(newOrder.getOrderPublicName())
+//        .orderName(newOrder.getOrderName())
+//        .phoneNumber(newOrder.getPhoneNumber())
+//        .orderStatus(newOrder.getOrderStatus())
+//        .orderDate(LocalDateTime.now())
+//        .totalAmount(newOrder.getTotalAmount())
+//        .totalQuantity(newOrder.getTotalQuantity())
+//        .userId(newOrder.getUserId())
+//        .paymentId(newOrder.getPaymentId())
+//        .paidAt(newOrder.getPaidAt())
+//        .productTransactionId(newOrder.getProductTransactionId())
+//        .build();
+//
+//    orderEntity.addOrderItems(newOrder.getOrderItems());
+//    orderEntity.addOrderStatusHistory(newOrder.getOrderStatus());
+//    orderEntity.addOrderTimeline(newOrder.getOrderTimeLine().getOrderDate(),
+//        newOrder.getOrderTimeLine().getPaymentDeadline(),
+//        newOrder.getOrderTimeLine().getPaymentDeadline());
+//    orderEntity.updateCancel(newOrder.getOrderId(), OrderStatus.PAYMENT_CANCELED_WAITING);
+//
+//    return orderEntity;
+//  }
 }

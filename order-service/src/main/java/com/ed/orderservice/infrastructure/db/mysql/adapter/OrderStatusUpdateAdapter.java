@@ -28,6 +28,21 @@ public class OrderStatusUpdateAdapter implements OrderStatusUpdateOutPort {
     updateOrderStatus(orderId, OrderStatus.PAYMENT_FAILED);
   }
 
+  @Override
+  public void updateToPaymentCanceledRequest(String orderId) {
+    updateOrderStatus(orderId, OrderStatus.PAYMENT_CANCELED_WAITING);
+  }
+
+  @Override
+  public void updateToPaymentCanceled(String orderId) {
+    updateOrderStatus(orderId, OrderStatus.PAYMENT_CANCELED);
+  }
+
+  @Override
+  public void updateToPaymentCancelFailed(String orderId) {
+    updateOrderStatus(orderId, OrderStatus.PAYMENT_CANCELED_FAILED);
+  }
+
   private void updateOrderStatus(String orderId, OrderStatus status) {
     OrderEntity orderEntity = orderJpaRepository.findByOrderPublicId(orderId);
     orderEntity.updateOrderStatus(status);

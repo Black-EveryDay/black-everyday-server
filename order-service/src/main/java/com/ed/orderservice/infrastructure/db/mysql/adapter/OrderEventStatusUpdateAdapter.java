@@ -27,9 +27,22 @@ public class OrderEventStatusUpdateAdapter implements OrderEventStatusUpdateOutP
     orderStatusUpdateOutPort.updateToPaymentFailed(orderId);
   }
 
+  @Override
+  public void updateToPaymentCanceled(String orderId) {
+    updateOrderEventStatus(orderId, OrderEventStatus.ORDER_PAYMENT_CANCEL_SUCCESS);
+    orderStatusUpdateOutPort.updateToPaymentCanceled(orderId);
+  }
+
+  @Override
+  public void updateToPaymentCancelFailed(String orderId){
+    updateOrderEventStatus(orderId, OrderEventStatus.ORDER_PAYMENT_CANCEL_FAILURE);
+    orderStatusUpdateOutPort.updateToPaymentCancelFailed(orderId);
+  }
+
+
+
   private void updateOrderEventStatus(String orderId, OrderEventStatus newStatus) {
 
-    //TODO error 및 로그
     OrderEventEntity orderEventEntity = orderEventJpaRepository.findByOrderEntity_OrderPublicId(
         orderId).orElseThrow();
     orderEventEntity.updateOrderEventStatus(newStatus);

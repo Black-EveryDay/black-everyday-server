@@ -2,7 +2,7 @@ package com.ed.orderservice.presentaion.web.controller.internal;
 
 import com.ed.orderservice.application.port.in.command.OrderSettlementCommand;
 import com.ed.orderservice.presentaion.port.in.OrderSettlementUseCase;
-import com.ed.orderservice.presentaion.web.response.domain.orderSettlement.OrderSettlementResponse;
+import com.ed.orderservice.presentaion.web.response.domain.settlement.OrderSettlementResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

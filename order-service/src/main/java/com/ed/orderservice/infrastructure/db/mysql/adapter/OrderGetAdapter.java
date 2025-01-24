@@ -23,4 +23,10 @@ public class OrderGetAdapter implements OrderGetOutPort {
         .map(orderMapper::toDomain)
         .toList();
   }
+
+  @Override
+  public Order getOrder(String orderId, String userId) {
+    OrderEntity orderEntity = orderJpaRepository.findByOrderPublicIdAndUserId(orderId, userId);
+    return orderMapper.toDomain(orderEntity);
+  }
 }

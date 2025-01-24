@@ -6,4 +6,5 @@ import java.util.List;
 public interface OrderGetOutPort {
 
   List<Order> getOrders(List<String> orderIds);
+  Order getOrder(String orderId, String userId);
 }

@@ -5,7 +5,6 @@ import com.ed.orderservice.domain.vo.order.OrderDelivery;
 import com.ed.orderservice.domain.vo.order.item.OrderItem;
 import com.ed.orderservice.infrastructure.db.mysql.converter.OrderStatusConverter;
 import com.ed.orderservice.infrastructure.entity.common.BaseTimeByJpaEntity;
-import jakarta.persistence.Transient;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -82,7 +81,7 @@ public class OrderEntity extends BaseTimeByJpaEntity {
   private Long totalQuantity;
 
   @Column(name = "USER_ID", nullable = false)
-  private String userid;
+  private String userId;
 
   @Column(name = "PAYMENT_ID", nullable = true)
   private String paymentId = null;
@@ -92,7 +91,7 @@ public class OrderEntity extends BaseTimeByJpaEntity {
   @Builder
   public OrderEntity(String orderPublicId, String orderName, String phoneNumber,
       OrderStatus orderStatus, LocalDateTime orderDate, String productTransactionId,
-      Long totalAmount, Long totalQuantity, String userid, String paymentId, LocalDateTime paidAt, String orderPublicName) {
+      Long totalAmount, Long totalQuantity, String userId, String paymentId, LocalDateTime paidAt, String orderPublicName) {
     this.orderPublicId = orderPublicId;
     this.orderName = orderName;
     this.orderPublicName = orderPublicName;
@@ -101,7 +100,7 @@ public class OrderEntity extends BaseTimeByJpaEntity {
     this.orderDate = orderDate;
     this.totalAmount = totalAmount;
     this.totalQuantity = totalQuantity;
-    this.userid = userid;
+    this.userId = userId;
     this.productTransactionId = productTransactionId;
     this.paymentId = paymentId;
     this.paidAt = paidAt;
