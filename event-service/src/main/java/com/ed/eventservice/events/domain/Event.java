@@ -26,7 +26,6 @@ public class Event implements Serializable {
   public EventUser join(UUID userId) {
 
     validateEventAvailableAtCurrent();
-//    validateEventFull();
 
     currentParticipants += 1;
 
@@ -41,14 +40,6 @@ public class Event implements Serializable {
     if (startAt.isAfter(LocalDateTime.now()) || endAt.isBefore(LocalDateTime.now())) {
 
       throw new DomainException(ExceptionStatus.EVENT_NOT_AVAILABLE);
-    }
-  }
-
-  private void validateEventFull() {
-
-    if (currentParticipants >= maxParticipants) {
-
-      throw new DomainException(ExceptionStatus.EVENT_FULL);
     }
   }
 }

@@ -32,8 +32,6 @@ spring:
     url: ${SPRING_DATASOURCE_URL}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
-    hikari:
-      maximum-pool-size: 100
 
   data:
     redis:
@@ -41,6 +39,10 @@ spring:
       port: 6379
       username: ${REDIS_USERNAME}
       password: ${REDIS_PASSWORD}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS}
+    schema-registry-url: ${SCHEMA_REGISTRY_URL}
 
   devtools:
     restart:

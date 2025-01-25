@@ -9,7 +9,6 @@ import com.ed.eventservice.events.application.port.in.mapper.CreateEventCommandM
 import com.ed.eventservice.events.application.port.in.mapper.JoinEventCommandMapper;
 import com.ed.eventservice.events.application.port.out.dto.CreateEventResponse;
 import com.ed.eventservice.events.application.port.out.dto.JoinEventResponse;
-import com.ed.eventservice.libs.common.TimeChecker;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,6 @@ public class EventController {
   private final EventUseCase eventUseCase;
   private final CreateEventCommandMapper createEventCommandMapper;
   private final JoinEventCommandMapper joinEventCommandMapper;
-  private final TimeChecker timeChecker;
 
   @PostMapping
   public ResponseEntity<CreateEventResponse> createEvent(

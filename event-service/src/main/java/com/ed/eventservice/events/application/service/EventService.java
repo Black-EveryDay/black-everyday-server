@@ -14,7 +14,6 @@ import com.ed.eventservice.events.domain.Event;
 import com.ed.eventservice.events.domain.EventUser;
 import com.ed.eventservice.events.domain.mapper.EventMapper;
 import com.ed.eventservice.events.domain.mapper.EventUserMapper;
-import com.ed.eventservice.libs.common.TimeChecker;
 import com.ed.eventservice.libs.exception.ExceptionStatus;
 import com.ed.eventservice.libs.exception.ServiceException;
 import java.util.List;
@@ -22,6 +21,7 @@ import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +35,7 @@ public class EventService implements EventUseCase {
   private final EventPersistencePort eventPersistencePort;
   private final CouponOutPort couponOutPort;
   private final EventOutPort eventOutPort;
-  private final TimeChecker timeChecker;
+  private final ApplicationEventPublisher applicationEventPublisher;
 
   @Override
   @Transactional
@@ -81,12 +81,15 @@ public class EventService implements EventUseCase {
     EventUser newEventUser = event.join(joinEventCommand.getUserId());
     EventUser savedEventUser = eventPersistencePort.createEventUser(newEventUser);
 
+    applicationEventPublisher.publishEvent(
+        eventUserMapper.domainToCreateCouponEvent(savedEventUser));
+
     return eventUserMapper.domainToJoinEventResponse(savedEventUser);
   }
 
   private void validateUserNotJoinedEvent(UUID eventId, UUID userId) {
 
-    if (!eventPersistencePort.checkUserAlreadyJoinedEvent(eventId, userId)) {
+    if (eventPersistencePort.checkUserAlreadyJoinedEvent(eventId, userId)) {
 
       throw new ServiceException(ExceptionStatus.USER_ALREADY_JOINED_EVENT);
     }
@@ -95,6 +98,7 @@ public class EventService implements EventUseCase {
   private void validateParticipationPossible(Event event) {
 
     if (!eventOutPort.checkParticipationPossible(event)) {
+
       throw new ServiceException(ExceptionStatus.EVENT_FULL);
     }
   }

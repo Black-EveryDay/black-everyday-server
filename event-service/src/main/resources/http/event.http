@@ -12,10 +12,10 @@ Content-Type: application/json
 }
 
 ### 이벤트 참여 API
-@eventPublicId=fe6c12a4-6831-4452-88ba-cab73fb9aa46
+@eventPublicId=67d2e97d-282b-4898-be60-a3357ad6ab66
 POST localhost:19097/api/v1/events/{{eventPublicId}}/join
 Content-Type: application/json
 
 {
-  "userId": "aff9c535-cd4c-4252-989b-7bb10d9aec3b"
+  "userId": "aff9c535-cd4c-4252-989b-7bb10d9aec3d"
 }

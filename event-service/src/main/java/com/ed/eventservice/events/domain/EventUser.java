@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 public class EventUser {
 
+  private Long id;
   private Event event;
   private UUID userId;
 }

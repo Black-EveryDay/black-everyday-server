@@ -17,46 +17,52 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    avroTools
 }
 
 repositories {
     mavenCentral()
-}
-
-ext {
-    set('springCloudVersion', "2024.0.0")
+    maven {
+        url = uri("https://packages.confluent.io/maven")
+    }
 }
 
 dependencies {
+    // Spring Boot Starters
+    implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}"
 
     // Eureka
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${springCloudVersion}"
 
     // DevTools
-    compileOnly 'org.projectlombok:lombok:1.18.36'
-    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     // Database
-    runtimeOnly 'com.mysql:mysql-connector-j:9.1.0'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.4.1'
-
-    // Validation
-    implementation 'org.springframework.boot:spring-boot-starter-validation:3.4.1'
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
+    runtimeOnly "com.mysql:mysql-connector-j:${mysqlConnectorVersion}"
 
     // Mapper
-    implementation 'org.mapstruct:mapstruct:1.6.3'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 
     // Test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.1'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
 
     // Feign
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${springCloudVersion}"
 
     // Redis
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+    implementation "org.springframework.boot:spring-boot-starter-data-redis-reactive:${springRedisVersion}"
+
+    //Kafka
+    implementation "org.springframework.kafka:spring-kafka:${springKafkaVersion}"
+    testImplementation "org.springframework.kafka:spring-kafka-test:${springKafkaVersion}"
+    avroTools "org.apache.avro:avro-tools:${avroToolsVersion}"
+    implementation "io.confluent:kafka-avro-serializer:${kafkaAvroSerializerVersion}"
+    implementation "com.google.code.gson:gson:${gsonVersion}"
 }
 
 dependencyManagement {
@@ -67,4 +73,33 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs.add('-parameters')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'build/generated-src'
+        }
+    }
+}
+
+
+tasks.register("generateAvroJava", JavaExec) {
+    group = "build"
+    description = "Compiles Avro schemas into Java classes"
+    mainClass.set("org.apache.avro.tool.Main")
+    classpath = configurations.avroTools
+    args = [
+            "compile", "-string", "schema",
+            "src/main/avro/event_coupon_create_request_v1.avsc",
+            "build/generated-src"
+    ]
+}
+
+tasks.named("compileJava") {
+    dependsOn("generateAvroJava")
 }
