@@ -4,12 +4,13 @@ server:
 spring:
   sql:
     init:
-      mode: always
+      mode: never
       schema-locations: classpath:schema.sql
       data-locations: classpath:data.sql
+
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
@@ -20,6 +21,14 @@ spring:
         default_schema: public
         default_batch_fetch_size: 500
     open-in-view: false
+
+
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS}
+    schema-registry-url: ${DEV_SCHEMA_REGISTRY_URL}
+    consumer:
+      group-id: ${CONSUMER_GROUP_ID}
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${SPRING_DATASOURCE_URL}

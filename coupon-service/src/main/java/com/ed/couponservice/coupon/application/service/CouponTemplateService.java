@@ -3,6 +3,7 @@ package com.ed.couponservice.coupon.application.service;
 import com.ed.couponservice.coupon.application.port.in.CouponTemplateUseCase;
 import com.ed.couponservice.coupon.application.port.in.command.CreateCouponCommand;
 import com.ed.couponservice.coupon.application.port.in.command.CreateCouponTemplateCommand;
+import com.ed.couponservice.coupon.application.port.in.command.CreateEventCouponCommand;
 import com.ed.couponservice.coupon.application.port.in.command.SearchCouponTemplatesCommand;
 import com.ed.couponservice.coupon.application.port.out.CouponPersistencePort;
 import com.ed.couponservice.coupon.application.port.out.CouponTemplatePersistencePort;
@@ -53,9 +54,20 @@ public class CouponTemplateService implements CouponTemplateUseCase {
     CouponTemplate couponTemplate =
         couponTemplatePersistencePort.getCouponTemplateByPublicId(command.getCouponTemplateId());
 
-    List<Coupon> newCoupons = couponTemplate.createCoupon(command.getQuantity());
+    List<Coupon> newCoupons = couponTemplate.createCoupons(command.getQuantity());
 
     couponPersistencePort.saveNewCoupons(newCoupons);
+  }
+
+  @Override
+  public void createEventCoupon(CreateEventCouponCommand command) {
+    CouponTemplate couponTemplate =
+        couponTemplatePersistencePort.getCouponTemplateByPublicId(command.getCouponTemplateId());
+
+    Coupon coupon = couponTemplate.createCoupon();
+    coupon.issueCoupon(command.getUserId());
+
+    couponPersistencePort.saveNewCoupons(List.of(coupon));
   }
 
   @Override

@@ -79,21 +79,29 @@ public class CouponTemplate {
   }
 
 
-  public List<Coupon> createCoupon(Integer quantity) {
+  public List<Coupon> createCoupons(Integer quantity) {
 
     checkQuantityGreaterThanZero(quantity);
     checkMaxIssuanceLimit(quantity);
 
+    return IntStream.range(0, quantity)
+        .mapToObj(i -> createCoupon())
+        .toList();
+  }
+
+  public Coupon createCoupon() {
+
+    checkMaxIssuanceLimit(1);
+
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime expirationDate = computeCouponExpiryDate(now);
 
-    return IntStream.range(0, quantity).mapToObj(
-        i -> Coupon.builder()
-            .publicId(UUID.randomUUID())
-            .couponTemplate(this)
-            .issuedAt(now)
-            .expirationDate(expirationDate)
-            .build()).toList();
+    return Coupon.builder()
+        .publicId(UUID.randomUUID())
+        .couponTemplate(this)
+        .issuedAt(now)
+        .expirationDate(expirationDate)
+        .build();
   }
 
   private void checkQuantityGreaterThanZero(Integer quantity) {
@@ -135,5 +143,16 @@ public class CouponTemplate {
     return this.couponExpirationInfo.getFixedExpirationDate().isBefore(localDateTime)
         ? this.couponExpirationInfo.getFixedExpirationDate()
         : localDateTime.plusDays(this.couponExpirationInfo.getExpirationDays().toDays());
+  }
+
+  public Coupon createEventCoupon(UUID userId) {
+
+    return Coupon.builder()
+        .publicId(UUID.randomUUID())
+        .couponTemplate(this)
+        .issuedAt(LocalDateTime.now())
+        .expirationDate(computeCouponExpiryDate(LocalDateTime.now()))
+        .userId(userId)
+        .build();
   }
 }

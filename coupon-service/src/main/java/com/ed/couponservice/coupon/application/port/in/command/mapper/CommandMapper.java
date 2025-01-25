@@ -7,8 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 @Mapper(componentModel = "spring")
 public interface CommandMapper {
-
-
+  
   SearchCouponTemplatesCommand searchCouponTemplateRequestToSearchCouponTemplateCommand(
       SearchCouponTemplatesCondition searchCouponTemplatesCondition,
       Pageable pageable
