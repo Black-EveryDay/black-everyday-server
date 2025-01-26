@@ -1,0 +1,70 @@
+server:
+  port: ${SPRING_PORT}
+  tomcat:
+    accept-count: 100
+    max-connections: 8192
+    threads:
+      max: 500
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        default_schema: public
+        default_batch_fetch_size: 500
+    open-in-view: false
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS}
+    schema-registry-url: ${SCHEMA_REGISTRY_URL}
+
+  devtools:
+    restart:
+      enabled: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_DEFAULT_ZONE}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+      base-path: ${ACTUATOR_BASE_PATH}
+    jmx:
+      exposure:
+        exclude: "*"
+    access:
+      default: none
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  endpoint:
+    prometheus:
+      access: unrestricted
+  server:
+    address: ${MANAGEMENT_SERVER_ADDRESS}
+    port: ${MANAGEMENT_SERVER_PORT}
