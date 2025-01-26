@@ -12,6 +12,7 @@ import org.mapstruct.Mapping;
 public interface EventMapper {
 
   @Mapping(target = "publicId", source = "publicId")
+  @Mapping(target = "currentParticipants", ignore = true)
   Event createEventCommandToDomain(CreateEventCommand createEventCommand, UUID publicId);
 
   EventJpaEntity domainToJpaEntity(Event event);

@@ -12,7 +12,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,7 +46,13 @@ public class EventJpaEntity extends BaseJpaEntity {
   private LocalDateTime endAt;
 
   @Column(name = "COUPON_TEMPLATE_ID", nullable = false, length = 36)
-  private UUID couponTemplateId;
+  private String couponTemplateId;
+
+  @Column(name = "MAX_PARTICIPANTS", nullable = false)
+  private Long maxParticipants;
+
+  @Column(name = "CURRENT_PARTICIPANTS", nullable = false)
+  private Long currentParticipants;
 
   @Builder
   private EventJpaEntity(
@@ -57,7 +62,9 @@ public class EventJpaEntity extends BaseJpaEntity {
       EventType type,
       LocalDateTime startAt,
       LocalDateTime endAt,
-      UUID couponTemplateId
+      String couponTemplateId,
+      Long maxParticipants,
+      Long currentParticipants
   ) {
 
     this.id = id;
@@ -67,5 +74,7 @@ public class EventJpaEntity extends BaseJpaEntity {
     this.startAt = startAt;
     this.endAt = endAt;
     this.couponTemplateId = couponTemplateId;
+    this.maxParticipants = maxParticipants;
+    this.currentParticipants = currentParticipants;
   }
 }

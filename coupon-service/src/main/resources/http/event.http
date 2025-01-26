@@ -24,7 +24,6 @@ Content-Type: application/json
   "quantity": 10
 }
 
-
 ### 쿠폰 발급 API
 @couponPublicId=6e66c6f1-72a7-462c-a97f-89d057efac98
 POST http://localhost:19096/api/v1/coupons/{{couponPublicId}}/user

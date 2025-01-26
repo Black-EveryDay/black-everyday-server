@@ -1,18 +1,19 @@
 server:
   port: 19097
+  tomcat:
+    accept-count: 100
+    max-connections: 8192
+    threads:
+      max: 500
 
 spring:
-  sql:
-    init:
-      mode: never
-      schema-locations: classpath:schema.sql
-      data-locations: classpath:data.sql
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
@@ -20,11 +21,27 @@ spring:
         default_schema: public
         default_batch_fetch_size: 500
     open-in-view: false
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${SPRING_DATASOURCE_URL}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS}
+    schema-registry-url: ${SCHEMA_REGISTRY_URL}
+
+  devtools:
+    restart:
+      enabled: false
 
 eureka:
   client:

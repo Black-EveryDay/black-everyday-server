@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "EventCouponCreateRequest",
+  "namespace": "com.ed",
+  "fields": [
+    {
+      "name": "userId",
+      "type": "string"
+    },
+    {
+      "name": "eventId",
+      "type": "string"
+    },
+    {
+      "name": "couponTemplateId",
+      "type": "string"
+    },
+    {
+      "name": "requestDateTime",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
+    }
+  ]
+}
