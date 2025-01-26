@@ -42,10 +42,10 @@ public class CreateOrderService implements CreateOrderUseCase {
   }
 
   private Order reserveStockApplyCouponsAndSaveOrder(CreateOrderCommand orderCommand) {
-//    String reserveProductStockId = productStockService.reserveProductStock(orderCommand);
-    Order orderWithReservedInventory = orderMapper.toDomain(orderCommand, "sd");
-//    Order orderWithAppliedCoupons = orderItemCouponService.applyCoupons(orderWithReservedInventory);
-    return orderCreatedOutPort.save(orderWithReservedInventory);
+    String reserveProductStockId = productStockService.reserveProductStock(orderCommand);
+    Order orderWithReservedInventory = orderMapper.toDomain(orderCommand, reserveProductStockId);
+    Order orderWithAppliedCoupons = orderItemCouponService.applyCoupons(orderWithReservedInventory);
+    return orderCreatedOutPort.save(orderWithAppliedCoupons);
   }
 
   private OrderEvent createAndSaveOrderPaymentEvent(Order savedOrder) {
