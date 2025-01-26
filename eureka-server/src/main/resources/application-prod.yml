@@ -1,0 +1,33 @@
+server:
+  port: ${SPRING-PORT}
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: ${EUREKA_DEFAULT_ZONE}
+  instance:
+    hostname: localhost
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+      base-path: ${ACTUATOR_BASE_PATH}
+    jmx:
+      exposure:
+        exclude: "*"
+    access:
+      default: none
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  endpoint:
+    prometheus:
+      access: unrestricted
+  server:
+    address: ${MANAGEMENT_SERVER_ADDRESS}
+    port: ${MANAGEMENT_SERVER_PORT}

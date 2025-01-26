@@ -1,38 +1,28 @@
+server:
+  port: ${SPRING_PORT}
+
 spring:
-  application:
-    name: product-service
-  datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
-
-  elasticsearch:
-    host: ${ELASTIC_HOST}
-    username: ${ELASTIC_USERNAME}
-    password: ${ELASTIC_PASSWORD}
-    repositories:
-      enabled: true
-
   jpa:
     hibernate:
       ddl-auto: update
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-    show-sql: true
+        format_sql: true
+        default_schema: public
+        default_batch_fetch_size: 500
     open-in-view: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
 
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
-      username: ${REDIS_USERNAME}
-      password: ${REDIS_PASSWORD}
-
-server:
-  port: ${SPRING_PORT}
+jwt:
+  issuer: auth-service
+  secretKey: ${JWT_SECRET_KEY}
+  duration: ${JWT_DURATION}
 
 eureka:
   client:

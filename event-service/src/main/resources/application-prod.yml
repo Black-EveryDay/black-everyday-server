@@ -1,28 +1,31 @@
+server:
+  port: ${SPRING_PORT}
+  tomcat:
+    accept-count: 100
+    max-connections: 8192
+    threads:
+      max: 500
+
 spring:
-  application:
-    name: product-service
-  datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
-
-  elasticsearch:
-    host: ${ELASTIC_HOST}
-    username: ${ELASTIC_USERNAME}
-    password: ${ELASTIC_PASSWORD}
-    repositories:
-      enabled: true
-
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-    show-sql: true
+        format_sql: true
+        default_schema: public
+        default_batch_fetch_size: 500
     open-in-view: false
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
 
   data:
     redis:
@@ -31,8 +34,13 @@ spring:
       username: ${REDIS_USERNAME}
       password: ${REDIS_PASSWORD}
 
-server:
-  port: ${SPRING_PORT}
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS}
+    schema-registry-url: ${SCHEMA_REGISTRY_URL}
+
+  devtools:
+    restart:
+      enabled: false
 
 eureka:
   client:

@@ -1,38 +1,38 @@
-spring:
-  application:
-    name: product-service
-  datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+server:
+  port: ${SPRING_PORT}
 
-  elasticsearch:
-    host: ${ELASTIC_HOST}
-    username: ${ELASTIC_USERNAME}
-    password: ${ELASTIC_PASSWORD}
-    repositories:
-      enabled: true
+spring:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-    show-sql: true
+        format_sql: true
+        default_schema: public
+        default_batch_fetch_size: 500
     open-in-view: false
 
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
-      username: ${REDIS_USERNAME}
-      password: ${REDIS_PASSWORD}
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS}
+    schema-registry-url: ${PROD_SCHEMA_REGISTRY_URL}
+    consumer:
+      group-id: ${CONSUMER_GROUP_ID}
 
-server:
-  port: ${SPRING_PORT}
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
 
 eureka:
   client:
