@@ -1,6 +1,11 @@
 package com.ed.orderservice.infrastructure.external.fegin.domain.product.dto;
 
-public record StockDecreaseResponse() {
+import java.util.List;
 
-  private static String transactionId;
-}
+public record StockDecreaseResponse(
+    String transactionId,
+    List<ProductBrandInfo> productBrandInfoList
+) {}
+
+
+

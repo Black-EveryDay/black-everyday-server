@@ -24,7 +24,7 @@ class PaymentPersistenceMapper {
     return paymentJpaEntity;
   }
 
-  PaymentResponse mapToApplication(PaymentJpaEntity entity) {
+  PaymentResponse mapToPaymentResponse(PaymentJpaEntity entity) {
     return PaymentResponse.builder()
         .paymentPublicId(entity.getUserPublicId())
         .idempotencyKey(entity.getIdempotencyKey())

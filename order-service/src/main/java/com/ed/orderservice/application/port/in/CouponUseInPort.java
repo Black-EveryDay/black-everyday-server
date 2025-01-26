@@ -1,7 +1,7 @@
 package com.ed.orderservice.application.port.in;
 
-import com.ed.orderservice.infrastructure.external.fegin.domain.event.dto.UseCouponRequest;
-import com.ed.orderservice.infrastructure.external.fegin.domain.event.dto.UseCouponResponse;
+import com.ed.orderservice.infrastructure.external.fegin.domain.coupon.dto.UseCouponRequest;
+import com.ed.orderservice.infrastructure.external.fegin.domain.coupon.dto.UseCouponResponse;
 import com.ed.orderservice.libs.response.ApiResponse;
 import java.util.UUID;
 
@@ -9,6 +9,6 @@ public interface CouponUseInPort {
 
   ApiResponse<UseCouponResponse> useCoupon(UUID couponPublicId, UseCouponRequest useCouponRequest);
 
-  UseCouponResponse cancelUseCoupon(UUID couponPublicId);
+  ApiResponse<UseCouponResponse> cancelUseCoupon(UUID couponPublicId);
   
 }

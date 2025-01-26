@@ -3,11 +3,8 @@ package com.ed.orderservice.domain.vo.order;
 import com.ed.orderservice.domain.enums.OrderStatus;
 import com.ed.orderservice.domain.vo.order.item.OrderItem;
 import com.ed.orderservice.infrastructure.entity.OrderStatusHistoryEntity;
-import com.ed.orderservice.libs.common.CommonUtils;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,8 +15,10 @@ public class Order {
   private final OrderAmountCalculator amountCalculator = new OrderAmountCalculator();
   private final OrderTimeLine orderTimeLine = new OrderTimeLine();
 
-  private Long orderId = null;
+  private Long orderId;
   private String orderPublicId;
+  private String orderPublicName;
+
   private String orderName;
   private String phoneNumber;
 
@@ -41,9 +40,8 @@ public class Order {
   @Builder
   private Order(Long orderId, Orderer orderer,
       List<OrderItem> orderItems, OrderDelivery orderDelivery,
-      String userId, String productTransactionId) {
+      String userId, String productTransactionId, OrderBase orderBase) {
     this.orderId = orderId;
-    this.orderPublicId = generateOrderNumber();
     this.orderName = orderer.getName();
     this.phoneNumber = orderer.getPhoneNumber();
     this.orderItems = orderItems;
@@ -52,6 +50,8 @@ public class Order {
     this.productTransactionId = productTransactionId;
     this.paymentId = null;
     this.paidAt = null;
+    this.orderPublicId = orderBase.getOrderPublicId();
+    this.orderPublicName = orderBase.getOrderPublicName();
   }
 
   public void updateOrderTimelines() {
@@ -61,14 +61,6 @@ public class Order {
   public void updatePaymentInfo(String paymentId, LocalDateTime paidAt) {
     this.paymentId = paymentId;
     this.paidAt = paidAt;
-  }
-
-  private String generateOrderNumber() {
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-    String datePart = dateFormat.format(new Date());
-    int randomNumber = CommonUtils.getRandom().nextInt(1000000000);
-    String randomPart = String.format("%010d", randomNumber);
-    return datePart + randomPart;
   }
 
   public void recalculateTotals() {

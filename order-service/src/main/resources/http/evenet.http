@@ -1,0 +1,52 @@
+### 쿠폰 템플릿 생성 API
+@jwttoken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhdXRoLXNlcnZpY2UiLCJpYXQiOjE3Mzc2OTExMDMsImV4cCI6MTgyNDA5MTEwMywidXNlcklkIjoiYWZmOWM1MzUtY2Q0Yy00MjUyLTk4OWItN2JiMTBkOWFlYzNiIiwidXNlclJvbGUiOiJERUZBVUxUX0NVU1RPTUVSIn0.B466UpK8O3nNXDu2tSfwGkX-V7K0jYG0shVdsiE3TfRb3jEH42wgk8tGdaha8RufaquKp6RwDZN91HmjLqs7ww
+POST http://localhost:19096/api/v1/coupon-templates
+Content-Type: application/json
+Authorization: Bearer {{jwttoken}}
+
+{
+  "couponName": "string",
+  "couponIssuanceType": "AUTOMATIC",
+  "couponIssuerType": "SERVICE",
+  "couponUsageTargetType": "ALL",
+  "discountType": "FIXED",
+  "discountValue": 10000,
+  "expirationDays": 1,
+  "expirationDate": "2025-08-31T14:00:00.000Z"
+}
+
+### 쿠폰 생성 API
+@couponTemplatePublicId =47bd7962-7737-4239-a849-747acace3f97
+POST http://localhost:19096/api/v1/coupon-templates/{{couponTemplatePublicId}}/coupons
+Content-Type: application/json
+
+{
+  "quantity": 10
+}
+
+
+### 쿠폰 발급 API
+@couponPublicId=07d24d56-ac2e-4f78-a431-41c5549f7a39
+POST http://localhost:19096/api/v1/coupons/{{couponPublicId}}/user
+Content-Type: application/json
+
+{
+  "userId": "aff9c535-cd4c-4252-989b-7bb10d9aec3b"
+}
+
+
+### 쿠폰 사용 API
+POST http://localhost:19096/api/v1/internal/coupons/{{couponPublicId}}/orderInfo
+Content-Type: application/json
+Authorization: Bearer {{jwttoken}}
+
+{
+  "userId": "aff9c535-cd4c-4252-989b-7bb10d9aec3b",
+  "productId": "66656873-96ca-4a29-9a8f-311de8211bcb",
+  "brandId": "66656873-96ca-4a29-9a8f-311de8211bcb",
+  "orderId": "qwertasdfgzxcv1234"
+}
+
+### 쿠폰 사용 취소 API
+POST http://localhost:19096/api/v1/internal/coupons/{{couponPublicId}}/orderInfo/cancel
+Authorization: Bearer {{jwttoken}}

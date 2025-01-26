@@ -3,11 +3,12 @@ package com.ed.orderservice.infrastructure.entity;
 import com.ed.orderservice.domain.enums.OrderStatus;
 import com.ed.orderservice.domain.vo.order.OrderDelivery;
 import com.ed.orderservice.domain.vo.order.item.OrderItem;
+import com.ed.orderservice.infrastructure.db.mysql.converter.OrderStatusConverter;
+import com.ed.orderservice.infrastructure.entity.common.BaseTimeByJpaEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,7 +29,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "ED_ORDER")
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderEntity {
+public class OrderEntity extends BaseTimeByJpaEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,13 +39,16 @@ public class OrderEntity {
   @Column(name = "ORDER_PUBLIC_ID", updatable = false, nullable = false)
   private String orderPublicId;
 
+  @Column(name = "ORDER_PUBLIC_NAME", updatable = false, nullable = false)
+  private String orderPublicName;
+
   @Column(name = "ORDER_NAME", nullable = false)
   private String orderName;
 
   @Column(name = "PHONE_NUMBER", nullable = false)
   private String phoneNumber;
 
-  @Enumerated(EnumType.STRING)
+  @Convert(converter = OrderStatusConverter.class)
   @Column(name = "ORDER_STATUS", nullable = false)
   private OrderStatus orderStatus;
 
@@ -56,6 +60,9 @@ public class OrderEntity {
 
   @Column(name = "ORDER_CANCEL_DEADLINE", nullable = false)
   private LocalDateTime orderCancelDeadline;
+
+  @Column(name = "PRODUCT_TRANSACTION_ID", nullable = false)
+  private String productTransactionId;
 
   @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<OrderItemEntity> orderItemEntitys = new ArrayList<>();
@@ -74,25 +81,27 @@ public class OrderEntity {
   private Long totalQuantity;
 
   @Column(name = "USER_ID", nullable = false)
-  private String userid;
+  private String userId;
 
-  @Column(name = "PAUMENT_ID", nullable = true)
+  @Column(name = "PAYMENT_ID", nullable = true)
   private String paymentId = null;
   @Column(name = "PAID_AT", nullable = true)
   private LocalDateTime paidAt = null;
 
   @Builder
   public OrderEntity(String orderPublicId, String orderName, String phoneNumber,
-      OrderStatus orderStatus, LocalDateTime orderDate,
-      Long totalAmount, Long totalQuantity, String userid, String paymentId, LocalDateTime paidAt) {
+      OrderStatus orderStatus, LocalDateTime orderDate, String productTransactionId,
+      Long totalAmount, Long totalQuantity, String userId, String paymentId, LocalDateTime paidAt, String orderPublicName) {
     this.orderPublicId = orderPublicId;
     this.orderName = orderName;
+    this.orderPublicName = orderPublicName;
     this.phoneNumber = phoneNumber;
     this.orderStatus = orderStatus;
     this.orderDate = orderDate;
     this.totalAmount = totalAmount;
     this.totalQuantity = totalQuantity;
-    this.userid = userid;
+    this.userId = userId;
+    this.productTransactionId = productTransactionId;
     this.paymentId = paymentId;
     this.paidAt = paidAt;
   }
@@ -109,15 +118,23 @@ public class OrderEntity {
     orderItemEntity.updateOrder(this);
   }
 
-  public void addOrderStatuesHistory(OrderStatus orderStatus) {
-    OrderStatusHistoryEntity history =
+  public void updateOrderStatus(OrderStatus newStatus) {
+    addOrderStatusHistory(newStatus);
+    if (this.orderStatus != null &&
+        newStatus.getOrderValue() < this.orderStatus.getOrderValue()) {
+      return;
+    }
+    this.orderStatus = newStatus;
+
+  }
+
+  public void addOrderStatusHistory(OrderStatus orderStatus) {
+    OrderStatusHistoryEntity newOrderStatusHistoryEntity =
         OrderStatusHistoryEntity.builder()
             .orderStatus(orderStatus)
-            .build();
-
-    this.orderStatusHistoryEntity = orderStatusHistoryEntity;
-    history.updateOrder(this);
-    this.orderStatusHistoryEntity.add(history);
+            .orderEntity(this)
+          .build();
+    this.orderStatusHistoryEntity.add(newOrderStatusHistoryEntity);
   }
 
   public void addOrderDeliveryEntity(OrderDelivery orderDelivery) {

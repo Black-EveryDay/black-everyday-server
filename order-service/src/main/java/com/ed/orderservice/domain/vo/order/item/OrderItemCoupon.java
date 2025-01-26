@@ -1,6 +1,7 @@
 package com.ed.orderservice.domain.vo.order.item;
 
 import com.ed.orderservice.infrastructure.entity.OrderItemCouponEntity;
+import com.ed.orderservice.infrastructure.entity.OrderItemCouponTemplateEntity;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -26,7 +27,8 @@ public class OrderItemCoupon {
 
   public OrderItemCouponEntity toEntity(OrderItemCoupon orderItemCoupon) {
     return OrderItemCouponEntity.builder()
-        .orderItemCoupon(orderItemCoupon)
+        .orderCouponPublicId(orderItemCoupon.getOrderCouponPublicId())
+        .orderItemCouponTemplateEntity(OrderItemCouponTemplateEntity.fromDomain(orderItemCoupon.getOrderItemCouponTemplate()))
         .build();
   }
 
@@ -34,8 +36,12 @@ public class OrderItemCoupon {
     return OrderItemCoupon.builder()
         .orderCouponPublicId(orderItemCouponEntity.getOrderCouponPublicId())
         .orderCouponId(orderItemCouponEntity.getOrderCouponId())
-        .orderItemCouponTemplate(orderItemCouponEntity.getOrderItemCouponTemplate())
+        .orderItemCouponTemplate(OrderItemCouponTemplate.fromEntity(
+            orderItemCouponEntity.getOrderItemCouponTemplateEntity())
+        )
         .build();
   }
+
+
 
 }

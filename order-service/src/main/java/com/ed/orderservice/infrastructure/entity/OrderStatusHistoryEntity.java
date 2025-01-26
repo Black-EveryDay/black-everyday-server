@@ -2,6 +2,7 @@ package com.ed.orderservice.infrastructure.entity;
 
 import com.ed.orderservice.domain.enums.OrderStatus;
 import com.ed.orderservice.infrastructure.db.mysql.converter.OrderStatusConverter;
+import com.ed.orderservice.infrastructure.entity.common.BaseTimeJpaEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -16,14 +17,14 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "ED_ORDER_STATUS_HISTORYS")
+@Table(name = "ED_ORDER_STATUS_HISTORY")
 @NoArgsConstructor
-public class OrderStatusHistoryEntity {
+public class OrderStatusHistoryEntity extends BaseTimeJpaEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "ORDER_HISTORY_ID")
-  private Long orderHistoryId;
+  @Column(name = "ORDER_STATUS_HISTORY_ID")
+  private Long orderStatusHistoryId;
 
   @Convert(converter = OrderStatusConverter.class)
   @Column(name = "ORDER_STATUS", nullable = false)
@@ -34,12 +35,18 @@ public class OrderStatusHistoryEntity {
   private OrderEntity orderEntity;
 
   @Builder
-  private OrderStatusHistoryEntity(OrderStatus orderStatus) {
+  private OrderStatusHistoryEntity(OrderStatus orderStatus, OrderEntity orderEntity) {
     this.orderStatus = orderStatus;
+    this.orderEntity = orderEntity;
   }
 
   public void updateOrder(OrderEntity orderEntity) {
-    this.orderEntity = orderEntity;
+    if (this.orderEntity != orderEntity) {
+      this.orderEntity = orderEntity;
+      if (!orderEntity.getOrderStatusHistoryEntity().contains(this)) {
+        orderEntity.getOrderStatusHistoryEntity().add(this);
+      }
+    }
   }
 
 }

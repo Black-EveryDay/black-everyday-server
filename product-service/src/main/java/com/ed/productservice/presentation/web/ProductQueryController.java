@@ -1,6 +1,6 @@
 package com.ed.productservice.presentation.web;
 
-import com.ed.productservice.domain.vo.ProductInfoDto;
+import com.ed.productservice.domain.vo.ProductDetails;
 import com.ed.productservice.infrastructure.persistence.adapter.ProductQueryAdapter;
 import com.ed.productservice.infrastructure.persistence.search.ProductSearchCondition;
 import com.ed.productservice.presentation.web.response.ProductDetailResponse;
@@ -23,14 +23,14 @@ public class ProductQueryController {
 
   @GetMapping("/{productPublicId}")
   public ProductDetailResponse findOne(@PathVariable("productPublicId") String productPublicId) {
-    ProductInfoDto dto = productQueryAdapter.findById(productPublicId);
+    ProductDetails dto = productQueryAdapter.findById(productPublicId);
 
     return ProductDetailResponse.from(dto);
   }
 
   @GetMapping("/{productPublicId}/{version}")
   public ProductDetailResponse findOneByVersion(@PathVariable("productPublicId") String productPublicId, @PathVariable ("version") int version) {
-    ProductInfoDto dto = productQueryAdapter.getProductByVersion(productPublicId, version);
+    ProductDetails dto = productQueryAdapter.getProductByVersion(productPublicId, version);
 
     return ProductDetailResponse.from(dto);
   }

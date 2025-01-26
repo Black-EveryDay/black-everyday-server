@@ -1,7 +1,9 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
     properties:
       hibernate:
@@ -10,6 +12,11 @@ spring:
         default_schema: public
         default_batch_fetch_size: 500
     open-in-view: false
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/init.sql
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${SPRING_DATASOURCE_URL}
@@ -20,12 +27,6 @@ spring:
     schema-registry-url: ${SCHEMA_REGISTRY_URL}
 server:
   port: 19095
-
-feign:
-  client:
-    config:
-      event-service:
-        loggerLevel: FULL
 
 eureka:
   client:

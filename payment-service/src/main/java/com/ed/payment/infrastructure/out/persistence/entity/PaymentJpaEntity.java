@@ -3,7 +3,6 @@ package com.ed.payment.infrastructure.out.persistence.entity;
 import static com.ed.payment.domain.PaymentStatus.ABORTED;
 import static com.ed.payment.domain.PaymentStatus.READY;
 import static com.ed.payment.domain.PaymentStatus.getCancelPaymentStatus;
-import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.ed.payment.domain.PaymentStatus;
@@ -22,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +28,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "ED_PAYMENT")
-@AllArgsConstructor(access = PRIVATE)
 @NoArgsConstructor(access = PROTECTED)
 public class PaymentJpaEntity extends BaseTimeJpaEntity {
 

@@ -1,8 +1,6 @@
 package com.ed.orderservice.domain.enums;
 
-import lombok.Getter;
 
-@Getter
 public enum OrderDeliveryStatus {
   ORDER_CONFIRMED("1","주문확인"),
   DELIVERY_REQUESTED("2","배송요청"),

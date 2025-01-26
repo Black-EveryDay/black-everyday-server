@@ -5,7 +5,7 @@ import static com.ed.productservice.infrastructure.persistence.entity.QProductEn
 import static com.ed.productservice.infrastructure.persistence.entity.QProductPriceVersionEntity.productPriceVersionEntity;
 
 import com.ed.productservice.domain.vo.ProductCategory;
-import com.ed.productservice.domain.vo.ProductInfoDto;
+import com.ed.productservice.domain.vo.ProductDetails;
 import com.ed.productservice.infrastructure.persistence.entity.QProductPriceVersionEntity;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -29,7 +29,7 @@ public class ProductQueryDslRepository {
 
   private final JPAQueryFactory queryFactory;
 
-  public Page<ProductInfoDto> search(
+  public Page<ProductDetails> search(
       String productName,
       String color,
       ProductCategory category,
@@ -38,8 +38,8 @@ public class ProductQueryDslRepository {
       String brandName,
       Pageable pageable
   ) {
-    JPAQuery<ProductInfoDto> query = queryFactory
-        .select(Projections.constructor(ProductInfoDto.class,
+    JPAQuery<ProductDetails> query = queryFactory
+        .select(Projections.constructor(ProductDetails.class,
             productEntity.productPublicId,
             productEntity.color,
             productEntity.image,
@@ -61,7 +61,7 @@ public class ProductQueryDslRepository {
             priceBetween(minPrice, maxPrice)
         );
 
-    List<ProductInfoDto> results = query
+    List<ProductDetails> results = query
         .orderBy(getOrderSpecifier(pageable))
         .offset(pageable.getOffset())
         .limit(pageable.getPageSize())

@@ -1,7 +1,6 @@
 package com.ed.orderservice.infrastructure.entity;
 
-import com.ed.orderservice.domain.vo.order.item.OrderItemCoupon;
-import com.ed.orderservice.domain.vo.order.item.OrderItemCouponTemplate;
+import com.ed.orderservice.infrastructure.entity.common.BaseTimeByJpaEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -20,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "ED_ORDER_COUPON")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderItemCouponEntity {
+public class OrderItemCouponEntity extends BaseTimeByJpaEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,16 +38,25 @@ public class OrderItemCouponEntity {
   private OrderItemEntity orderItemEntity;
 
   @Embedded
-  private OrderItemCouponTemplate orderItemCouponTemplate;
+  private OrderItemCouponTemplateEntity orderItemCouponTemplateEntity;
 
   @Builder
-  public OrderItemCouponEntity(OrderItemCoupon orderItemCoupon) {
-    this.orderItemCouponTemplate = orderItemCoupon.getOrderItemCouponTemplate();
-    this.orderCouponPublicId = orderItemCoupon.getOrderCouponPublicId();
+  private OrderItemCouponEntity(String orderCouponPublicId,
+      OrderItemEntity orderItemEntity,
+      OrderItemCouponTemplateEntity orderItemCouponTemplateEntity) {
+    this.orderCouponPublicId = orderCouponPublicId;
+    this.orderItemEntity = orderItemEntity;
+    this.orderItemCouponTemplateEntity = orderItemCouponTemplateEntity;
+  }
+
+  @Builder
+  private OrderItemCouponEntity(String orderCouponPublicId
+  ) {
+    this.orderCouponPublicId = orderCouponPublicId;
   }
 
   public void updateOrderItemEntity(OrderItemEntity orderItemEntity) {
     this.orderItemEntity = orderItemEntity;
   }
-  
+
 }
