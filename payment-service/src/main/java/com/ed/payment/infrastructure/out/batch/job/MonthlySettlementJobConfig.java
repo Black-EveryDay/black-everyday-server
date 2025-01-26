@@ -1,6 +1,6 @@
 package com.ed.payment.infrastructure.out.batch.job;
 
-import com.ed.payment.application.port.out.persistence.dtos.SettleablePaymentResponse;
+import com.ed.payment.application.port.out.persistence.dtos.AggregatedDailySettlement;
 import com.ed.payment.infrastructure.out.batch.listener.JobDurationListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -19,29 +19,29 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @RequiredArgsConstructor
 @EnableTransactionManagement
-public class DailySettlementJobConfig extends DefaultBatchConfiguration {
+public class MonthlySettlementJobConfig extends DefaultBatchConfiguration {
 
-  private static final String JOB_NAME = "dailySettlementJob";
-  private static final String STEP_NAME = "dailySettlementStep";
-  private static final int DEFAULT_CHUNK_SIZE = 1000;
+  private static final String JOB_NAME = "monthlySettlementJob";
+  private static final String STEP_NAME = "monthlySettlementStep";
+  private static final int DEFAULT_CHUNK_SIZE = 3000;
 
-  private final AbstractPagingItemReader<SettleablePaymentResponse> settleablePaymentItemReader;
-  private final ItemWriter<SettleablePaymentResponse> dailySettlementItemWriter;
+  private final AbstractPagingItemReader<AggregatedDailySettlement> aggregateDailySettlementItemReader;
+  private final ItemWriter<AggregatedDailySettlement> monthlySettlementItemWriter;
 
   @Bean
-  public Job dailySettlementJob(JobRepository jobRepository, Step dailySettlementStep) {
+  public Job monthlySettlementJob(JobRepository jobRepository, Step monthlySettlementStep) {
     return new JobBuilder(JOB_NAME, jobRepository)
         .listener(new JobDurationListener())
-        .start(dailySettlementStep)
+        .start(monthlySettlementStep)
         .build();
   }
 
   @Bean
-  public Step dailySettlementStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+  public Step monthlySettlementStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
     return new StepBuilder(STEP_NAME, jobRepository)
-        .<SettleablePaymentResponse, SettleablePaymentResponse>chunk(DEFAULT_CHUNK_SIZE, transactionManager)
-        .reader(settleablePaymentItemReader)
-        .writer(dailySettlementItemWriter)
+        .<AggregatedDailySettlement, AggregatedDailySettlement>chunk(DEFAULT_CHUNK_SIZE, transactionManager)
+        .reader(aggregateDailySettlementItemReader)
+        .writer(monthlySettlementItemWriter)
         .build();
   }
 }

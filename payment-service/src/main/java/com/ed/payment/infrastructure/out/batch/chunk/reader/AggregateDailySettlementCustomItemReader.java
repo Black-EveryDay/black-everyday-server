@@ -1,7 +1,7 @@
 package com.ed.payment.infrastructure.out.batch.chunk.reader;
 
-import com.ed.payment.application.port.out.persistence.GetPaymentPort;
-import com.ed.payment.application.port.out.persistence.dtos.SettleablePaymentResponse;
+import com.ed.payment.application.port.out.persistence.GetDailySettlementPort;
+import com.ed.payment.application.port.out.persistence.dtos.AggregatedDailySettlement;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
@@ -13,22 +13,26 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.springframework.batch.item.database.AbstractPagingItemReader;
 import org.springframework.util.CollectionUtils;
 
-public class SettleablePaymentCustomItemReader extends
-    AbstractPagingItemReader<SettleablePaymentResponse> {
+public class AggregateDailySettlementCustomItemReader extends
+    AbstractPagingItemReader<AggregatedDailySettlement> {
 
     private final Map<String, Object> jpaPropertyMap = new HashMap<>();
     private EntityManagerFactory entityManagerFactory;
     private EntityManager entityManager;
-    private GetPaymentPort getPaymentPort;
-    private LocalDateTime requestDateTime;
-    private Long currentId = null;
+    private final GetDailySettlementPort getDailySettlementPort;
+    private final LocalDateTime startDateTime;
+    private final LocalDateTime endDateTime;
+    private final int pageSize;
+    private String currentId = null;
 
-
-    public SettleablePaymentCustomItemReader(EntityManagerFactory emf,
-        GetPaymentPort getPaymentPort, LocalDateTime requestDateTime, int pageSize) {
+    public AggregateDailySettlementCustomItemReader(
+        EntityManagerFactory emf, GetDailySettlementPort getDailySettlementPort,
+        LocalDateTime startDateTime, LocalDateTime endDateTime, int pageSize) {
         this.entityManagerFactory = emf;
-        this.getPaymentPort = getPaymentPort;
-        this.requestDateTime = requestDateTime;
+        this.getDailySettlementPort = getDailySettlementPort;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.pageSize = pageSize;
         setPageSize(pageSize);
     }
 
@@ -44,9 +48,9 @@ public class SettleablePaymentCustomItemReader extends
 
         initResults();
 
-        List<SettleablePaymentResponse> settleablePayments = getPaymentPort
-            .getSettleablePayments(requestDateTime, currentId, getPageSize());
-        results.addAll(settleablePayments);
+        List<AggregatedDailySettlement> aggregateLastMonthDailySettlements = getDailySettlementPort
+            .aggregateLastMonthDailySettlements(startDateTime, endDateTime, currentId, pageSize);
+        results.addAll(aggregateLastMonthDailySettlements);
 
         nextCurrentId();
         tx.commit();
@@ -64,7 +68,7 @@ public class SettleablePaymentCustomItemReader extends
         if (isEmptyResult()) {
             currentId = null;
         } else {
-            currentId = results.getLast().getPaymentId();
+            currentId = results.getLast().getBrandPublicId();
         }
     }
 
