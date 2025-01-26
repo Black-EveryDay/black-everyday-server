@@ -24,8 +24,7 @@
     - 기술 도입 시 '현재 겪고 있는 문제가 무엇인가?'를 먼저 생각하고 해결하기 위한 여러 기술들의 장단점을 비교하여 적용
 
 ## 인프라 설계도
-
-![image (3)](https://github.com/user-attachments/assets/1a5a9e38-acda-4fc3-a2a6-18de1c9403b2)
+![image](https://github.com/user-attachments/assets/7f90a7b4-2f67-425c-92ae-2b58b7fd5d71)
 
 ## 주요 기능
 
