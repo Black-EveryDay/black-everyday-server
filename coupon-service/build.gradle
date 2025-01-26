@@ -39,6 +39,10 @@ repositories {
 }
 
 dependencies {
+
+    implementation "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+    implementation "io.micrometer:micrometer-registry-prometheus:${prometheusVersion}"
+
     implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
     implementation "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}"
 
@@ -139,7 +143,7 @@ tasks.register("downloadAvroSchema") {
     def activeProfile = System.getProperty("spring.profiles.active") ?: "dev"
 
     def schemaRegistryUrl = schemaRegistryUrls[activeProfile]
-    def subjectPattern = ~/^event-coupon-.*-value$/
+    def subjectPattern = ~/^event_coupon_.*-value$/
     def outputDir = file("src/main/avro")
 
     inputs.property("schemaRegistryUrl", schemaRegistryUrl)

@@ -1,0 +1,52 @@
+server:
+  port: ${SPRING_PORT}
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        default_schema: public
+        default_batch_fetch_size: 500
+    open-in-view: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+
+jwt:
+  issuer: auth-service
+  secretKey: ${JWT_SECRET_KEY}
+  duration: ${JWT_DURATION}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_DEFAULT_ZONE}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+      base-path: ${ACTUATOR_BASE_PATH}
+    jmx:
+      exposure:
+        exclude: "*"
+    access:
+      default: none
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  endpoint:
+    prometheus:
+      access: unrestricted
+  server:
+    address: ${MANAGEMENT_SERVER_ADDRESS}
+    port: ${MANAGEMENT_SERVER_PORT}
