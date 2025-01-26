@@ -1,11 +1,13 @@
 package com.ed.productservice.domain.vo;
 
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
+@AllArgsConstructor
 public class Product {
 
   private Long productId;

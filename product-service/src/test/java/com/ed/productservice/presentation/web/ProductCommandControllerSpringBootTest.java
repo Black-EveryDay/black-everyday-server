@@ -1,5 +1,10 @@
 package com.ed.productservice.presentation.web;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.ed.productservice.domain.vo.BrandType;
 import com.ed.productservice.domain.vo.ProductCategory;
 import com.ed.productservice.domain.vo.ProductStatus;
@@ -9,6 +14,8 @@ import com.ed.productservice.presentation.web.request.BottomProductCreateRequest
 import com.ed.productservice.presentation.web.request.ProductCommonInfo;
 import com.ed.productservice.presentation.web.request.TopProductCreateRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,20 +29,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Slf4j
 class ProductCommandControllerSpringBootTest {
-
   @Autowired
   private MockMvc mockMvc;
   @Autowired
@@ -57,7 +55,7 @@ class ProductCommandControllerSpringBootTest {
   void t1() throws Exception {
     brandRepository.save(new BrandEntity("테스트 브랜드", BrandType.CASUAL, "서울특별시"));
 
-    TopProductCreateRequest topProductRequest = createTopProductRequest();
+    TopProductCreateRequest topProductRequest = createTopProductRequest(1L);
 
     String requestBody = objectMapper.writerWithDefaultPrettyPrinter()
         .writeValueAsString(topProductRequest);
@@ -76,7 +74,7 @@ class ProductCommandControllerSpringBootTest {
   @DisplayName(value = "상의 상품 등록 시 브랜드 정보 존재하지 않으면 false, BrandNotFoundException 반환")
   @Test
   void t2() throws Exception {
-    TopProductCreateRequest topProductRequest = createTopProductRequest();
+    TopProductCreateRequest topProductRequest = createTopProductRequest(-1L);
 
     String requestBody = objectMapper.writerWithDefaultPrettyPrinter()
         .writeValueAsString(topProductRequest);
@@ -97,7 +95,7 @@ class ProductCommandControllerSpringBootTest {
   void t3() throws Exception {
     brandRepository.save(new BrandEntity("테스트 브랜드", BrandType.CASUAL, "서울특별시"));
 
-    BottomProductCreateRequest bottomProductRequest = createBottomProductRequest();
+    BottomProductCreateRequest bottomProductRequest = createBottomProductRequest(1L);
 
     String requestBody = objectMapper.writerWithDefaultPrettyPrinter()
         .writeValueAsString(bottomProductRequest);
@@ -116,7 +114,7 @@ class ProductCommandControllerSpringBootTest {
   @DisplayName(value = "하의 상품 등록 시 브랜드 정보 존재하지 않으면 false, BrandNotFoundException 반환")
   @Test
   void t4() throws Exception {
-    BottomProductCreateRequest bottomProductRequest = createBottomProductRequest();
+    BottomProductCreateRequest bottomProductRequest = createBottomProductRequest(-1L);
 
     String requestBody = objectMapper.writerWithDefaultPrettyPrinter()
         .writeValueAsString(bottomProductRequest);
@@ -131,9 +129,9 @@ class ProductCommandControllerSpringBootTest {
         .andDo(print());
   }
 
-  private BottomProductCreateRequest createBottomProductRequest() {
+  private BottomProductCreateRequest createBottomProductRequest(Long brandId) {
     ProductCommonInfo productInfo = new ProductCommonInfo(
-        1L,
+        brandId,
         "스웻 팬츠",
         29900,
         "편안한 착용감의 데일리 팬츠",
@@ -174,9 +172,9 @@ class ProductCommandControllerSpringBootTest {
     return new BottomProductCreateRequest(productInfo, sizeList);
   }
 
-  private static TopProductCreateRequest createTopProductRequest() {
+  private static TopProductCreateRequest createTopProductRequest(Long brandId) {
     ProductCommonInfo productInfo = new ProductCommonInfo(
-        1L,
+        brandId,
         "베이직 긴팔 티셔츠",
         29900,
         "편안한 착용감의 데일리 티셔츠",
