@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SettleablePaymentReaderConfig {
 
-  private static final int DEFAULT_PAGE_SIZE = 5000;
+  private static final int DEFAULT_PAGE_SIZE = 1000;
 
   @Bean
   @StepScope

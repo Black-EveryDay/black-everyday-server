@@ -22,7 +22,7 @@ public class DailySettlementBatchScheduler {
   private final JobLauncher jobLauncher;
   private final Job dailySettlementJob;
 
-  @Scheduled(cron = "00 19 10 * * *")
+  @Scheduled(cron = "00 00 04 * * *")
   public void runSettlementJob()
       throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
     JobParameters jobParameters = new JobParametersBuilder()

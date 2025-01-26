@@ -23,7 +23,7 @@ public class DailySettlementJobConfig extends DefaultBatchConfiguration {
 
   private static final String JOB_NAME = "dailySettlementJob";
   private static final String STEP_NAME = "dailySettlementStep";
-  private static final int DEFAULT_CHUNK_SIZE = 5000;
+  private static final int DEFAULT_CHUNK_SIZE = 1000;
 
   private final AbstractPagingItemReader<SettleablePaymentResponse> settleablePaymentItemReader;
   private final ItemWriter<SettleablePaymentResponse> dailySettlementItemWriter;
