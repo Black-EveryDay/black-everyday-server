@@ -5,7 +5,8 @@ public enum PaymentStatus {
   DONE,
   PARTIAL_CANCELED,
   CANCELED,
-  ABORTED
+  ABORTED,
+  SETTLEMENT_COMPLETE
   ;
 
   public static boolean isConfirmed(PaymentStatus paymentStatus) {

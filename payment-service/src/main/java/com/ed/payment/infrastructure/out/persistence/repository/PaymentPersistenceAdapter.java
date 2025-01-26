@@ -2,13 +2,15 @@ package com.ed.payment.infrastructure.out.persistence.repository;
 
 import static com.ed.payment.domain.PaymentStatus.CANCELED;
 import static com.ed.payment.domain.PaymentStatus.DONE;
+import static com.ed.payment.domain.PaymentStatus.SETTLEMENT_COMPLETE;
 import static com.ed.payment.libs.common.exception.ErrorCode.PAYMENT_NOT_FOUND;
 
 import com.ed.payment.application.port.out.persistence.CreatePaymentPort;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
+import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.application.port.out.persistence.dtos.CreatePaymentRequest;
 import com.ed.payment.application.port.out.persistence.dtos.PaymentResponse;
-import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
+import com.ed.payment.application.port.out.persistence.dtos.SettleablePaymentResponse;
 import com.ed.payment.application.port.out.persistence.dtos.UpdateCancelPaymentRequest;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.domain.PaymentStatus;
@@ -25,6 +27,7 @@ class PaymentPersistenceAdapter implements CreatePaymentPort, GetPaymentPort, Up
 
   private final PaymentPersistenceMapper paymentPersistenceMapper;
   private final SpringDataPaymentRepository paymentRepository;
+  private final PaymentQueryDslAdapter paymentQueryDslAdapter;
 
   @Override
   public Payment createPayment(CreatePaymentRequest request) {
@@ -41,7 +44,7 @@ class PaymentPersistenceAdapter implements CreatePaymentPort, GetPaymentPort, Up
   public List<PaymentResponse> getReadyPayments(String userPublicId) {
     List<PaymentJpaEntity> entities = paymentRepository.findMyReadyPayments(userPublicId, List.of(DONE, CANCELED), LocalDateTime.now());
     return entities.stream()
-        .map(paymentPersistenceMapper::mapToApplication)
+        .map(paymentPersistenceMapper::mapToPaymentResponse)
         .toList();
   }
 
@@ -53,8 +56,19 @@ class PaymentPersistenceAdapter implements CreatePaymentPort, GetPaymentPort, Up
   }
 
   @Override
+  public List<SettleablePaymentResponse> getSettleablePayments(
+      LocalDateTime requestDateTime, Long currentId, int pageSize) {
+    return paymentQueryDslAdapter.findSettleablePayments(requestDateTime, currentId, pageSize);
+  }
+
+  @Override
   public void updatePaymentStatusAbortedById(Long paymentId) {
     getPaymentJpaEntity(paymentId).fail();
+  }
+
+  @Override
+  public void bulkUpdatePaymentStatusByIds(List<Long> paymentIds) {
+    paymentRepository.bulkUpdatePaymentStatus(paymentIds, SETTLEMENT_COMPLETE);
   }
 
   @Override
