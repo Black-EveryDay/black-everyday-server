@@ -7,5 +7,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class KafkaTopics {
 
-  public static final String EVENT_COUPON_CREATE_REQUEST = "event_coupon_create_request";
+  public static final String EVENT_COUPON_CREATE_REQUEST = "event-coupon-create-request";
 }

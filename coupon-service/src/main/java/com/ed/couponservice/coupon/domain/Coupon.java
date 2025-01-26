@@ -7,6 +7,7 @@ import com.ed.couponservice.coupon.domain.vo.CouponStatusChangeLog;
 import com.ed.couponservice.libs.exception.DomainException;
 import com.ed.couponservice.libs.exception.ExceptionStatus;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -20,8 +21,8 @@ public class Coupon {
   private final UUID publicId;
   private final CouponTemplate couponTemplate;
   private final LocalDateTime expirationDate;
-  private final LocalDateTime issuedAt;
   private final List<CouponStatusChangeLog> couponStatusChangeLogs;
+  private LocalDateTime issuedAt;
   private UUID userId;
   private CouponState state;
 
@@ -36,7 +37,8 @@ public class Coupon {
     this.state = Objects.isNull(state) ? CouponState.CREATED : state;
     this.expirationDate = expirationDate;
     this.issuedAt = issuedAt;
-    this.couponStatusChangeLogs = couponStatusChangeLogs;
+    this.couponStatusChangeLogs =
+        Objects.isNull(couponStatusChangeLogs) ? new ArrayList<>() : couponStatusChangeLogs;
   }
 
   public void useCoupon(UUID userId, UUID brandId, UUID productId, String orderId) {
@@ -124,6 +126,7 @@ public class Coupon {
     }
 
     this.userId = userId;
+    this.issuedAt = LocalDateTime.now();
     this.couponStatusChangeLogs.add(
         CouponStatusChangeLog.builder()
             .couponId(this.id)

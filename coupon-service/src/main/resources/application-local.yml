@@ -4,13 +4,13 @@ server:
 spring:
   sql:
     init:
-      mode: never
+      mode: always
       schema-locations: classpath:schema.sql
       data-locations: classpath:data.sql
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
@@ -21,7 +21,6 @@ spring:
         default_schema: public
         default_batch_fetch_size: 500
     open-in-view: false
-
 
   kafka:
     bootstrap-servers: ${KAFKA_SERVERS}

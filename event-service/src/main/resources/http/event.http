@@ -7,15 +7,15 @@ Content-Type: application/json
   "type": "RUSH_EVENT",
   "startAt": "2021-08-01T00:00:00",
   "endAt": "2025-08-31T23:59:59",
-  "couponTemplateId": "16908823-9ec2-4b6c-8a0d-485ab7bad8bc",
+  "couponTemplateId": "ae7dacf1-b39b-4b31-8ca0-ce5db0747e4f",
   "maxParticipants": 10000000
 }
 
 ### 이벤트 참여 API
-@eventPublicId=67d2e97d-282b-4898-be60-a3357ad6ab66
+@eventPublicId=580c2350-12ce-4a63-9d46-76a50fadf6ed
 POST localhost:19097/api/v1/events/{{eventPublicId}}/join
 Content-Type: application/json
 
 {
-  "userId": "aff9c535-cd4c-4252-989b-7bb10d9aec3d"
+  "userId": "aff9c535-cd4c-4252-989b-7bb10d9aec3a"
 }
