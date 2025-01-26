@@ -156,13 +156,22 @@
 
 </details>
 
+## 기술 스택
+- **Language** <div> <img src = "https://img.shields.io/badge/Java 21-ED8B00?&logo=openjdk&logoColor=white"> </div>
 
+- **Backend Framework** <div> <img src = "https://img.shields.io/badge/Spring 6-6DB33F?&logo=spring&logoColor=white"> <img src = "https://img.shields.io/badge/Spring_Boot 3.4.1-6DB33F?&logo=spring-boot&logoColor=white"> <img src = "https://img.shields.io/badge/Spring_Data_JPA 3.4.1-6DB33F?&logo=spring&logoColor=white"> <img src = "https://img.shields.io/badge/Spring_Batch 5-6DB33F?&logo=spring&logoColor=white"> <img src = "https://img.shields.io/badge/Spring_Cloud_Gateway-6DB33F?&logo=spring&logoColor=white"> <img src = "https://img.shields.io/badge/Eureka-6DB33F?&logo=spring&logoColor=white"> <img src = "https://img.shields.io/badge/OpenFeign-6DB33F?&logo=spring&logoColor=white"> </div>
+  
+- **IDE** <div> <img src = "https://img.shields.io/badge/IntelliJ_IDEA-807d7d.svg?&logo=intellij-idea&logoColor=white"> </div>
 
+- **Database** <div> <img src="https://img.shields.io/badge/MySQL 8-005C84?&logo=mysql&logoColor=white"> <img src="https://img.shields.io/badge/redis-%23DD0031.svg?&logo=redis&logoColor=white"> <img src = "https://img.shields.io/badge/Elastic_Search-005571?&logo=elasticsearch&logoColor=white"> </div>
 
-## 적용 기술
-![스크린샷 2025-01-26 오후 9 47 16](https://github.com/user-attachments/assets/2fcfa7be-5204-4e1c-b627-f2bc65922ef7)
+- **Messaging** <div> <img src = "https://img.shields.io/badge/Apache_Kafka-231F20?&logo=apache-kafka&logoColor=white"> <img src = "https://img.shields.io/badge/Schema_Registry-231F20"> </div>
 
+- **Monitoring & Logging** <div> <img src = "https://img.shields.io/badge/-Logstash-005571?logo=Logstash&logoColor=white"> <img src="https://img.shields.io/badge/Elastic_Search-005571?&logo=elasticsearch&logoColor=white"> <img src= "https://img.shields.io/badge/Kibana-005571?&logo=Kibana&logoColor=white"> <img src= "https://img.shields.io/badge/Prometheus-000000?&logo=prometheus&labelColor=000000"> <img src= "https://img.shields.io/badge/Grafana-F2F4F9?&logo=grafana&logoColor=orange&labelColor=F2F4F9"> <img src = "https://img.shields.io/badge/PINPOINT-327ba8"> </div>
 
+- **PG** <div> <img src = "https://img.shields.io/badge/Toss Payments-0008ff"> </div>
+
+- **Infra** <div> <img src = "https://img.shields.io/badge/Amazon_AWS-FF9900?&logo=amazonaws&logoColor=white"> <img src = "https://img.shields.io/badge/Terraform-7B42BC?&logo=terraform&logoColor=white"> <img src = "https://img.shields.io/badge/Kubernetes-3069DE?&logo=kubernetes&logoColor=white"> <img src = "https://img.shields.io/badge/Docker-2CA5E0?&logo=docker&logoColor=white"> </div>
 
 ## 기술적 의사결정
 
@@ -173,6 +182,7 @@
 - [Elasticsearch 도입이유](https://www.notion.so/Elasticsearch-e5ec4243ac13462ca34f4835b20d2a1f?pvs=21)
 
 - [이벤트-쿠폰 인프라 설계](https://www.notion.so/eb509bf55c8f4d3bac40e294800fe439?pvs=21)
+
 ## 트러블슈팅
 
 - [상품 재고 차감 동시성 문제](https://www.notion.so/teamsparta/0080139c2a2144668542290e33da7c1b)
@@ -208,5 +218,5 @@
 |------|----------|-------|--------|
 | 황시면 | Leader | • **주문 서비스 기능 구현**<br>- 상품 재고 차감, 2PC 검증<br>- 쿠폰 검증 및 생성 결제<br>• **배포 및 모니터링**<br>- 테라폼, AWS EC2<br>- Pinpoint, 메트릭, 로깅 등 | [github.com/lowgiant](https://github.com/lowgiant) |
 | 박준형 | SubLeader | • **쿠폰 서비스**<br>- 쿠폰 정책 및 사용 로직 개발<br>- 비동기 쿠폰발급 개발<br>- 쿼리 dsl을 이용, 다대일한 검색 제공<br>• **이벤트 서비스**<br>- 선착순 이벤트 설계 및 개발<br>- Redis를 이용한 동시성 문제 해결<br>- 인덱스로 속도우 쿼리 성능 개선<br>• **Auth 및 게이트웨이**<br>- 인증 및 jwt 발급<br>- jwt 필터 개발 | [github.com/POKUDING](http://github.com/POKUDING) |
-| 안주환 | member | • **결제 서비스 기능 구현**<br>- Kafka를 통한 비동기 방식으로, 사용자 주문 시 결제 데이터를 생성 및 결제 승인 및 취소 동답 반환<br>- PG(Toss Payments) 연동하여 결제 승인 및 취소 기능 구현<br>• **정산 서비스 기능 구현**<br>- Spring Batch를 통한 정산 기능 구현 | [github.com/hut234](https://github.com/hut234) |
-| 손동필 | member | • **상품 서비스**<br>- 주문 서비스와 상품서비스 2PC 동기 방식 구현<br>- 주문 시 비관적락을 사용한 상품 재고 선점<br>- 분산락 기반의 재고 롤백 스케줄러 구현<br>- Elasticsearch 도입으로 대용량 데이터 검색 처리<br>- Logstash 수집한 데이터로 Top10 인기상품 Redis 캐싱 | [github.com/sdongpil](https://github.com/sdongpil) |
+| 안주환 | Member | • **결제 서비스 기능 구현**<br>- Kafka를 통한 비동기 방식으로, 사용자 주문 시 결제 데이터를 생성 및 결제 승인 및 취소 동답 반환<br>- PG(Toss Payments) 연동하여 결제 승인 및 취소 기능 구현<br>• **정산 서비스 기능 구현**<br>- Spring Batch를 통한 정산 기능 구현 | [github.com/hut234](https://github.com/hut234) |
+| 손동필 | Member | • **상품 서비스**<br>- 주문 서비스와 상품서비스 2PC 동기 방식 구현<br>- 주문 시 비관적락을 사용한 상품 재고 선점<br>- 분산락 기반의 재고 롤백 스케줄러 구현<br>- Elasticsearch 도입으로 대용량 데이터 검색 처리<br>- Logstash 수집한 데이터로 Top10 인기상품 Redis 캐싱 | [github.com/sdongpil](https://github.com/sdongpil) |
