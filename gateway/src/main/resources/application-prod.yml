@@ -1,0 +1,76 @@
+server:
+  port: ${SPRING_PORT}
+
+spring:
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      routes:
+        # auth
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/{version}/auth/**, /api/{version}/users/**
+        # product-service
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/{version}/products/**
+        # order-service
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/{version}/orders/**, /api/{version}/internal/**
+        # payment-service
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/{version}/payments/**
+        # coupon-service
+        - id: coupon-service
+          uri: lb://coupon-service
+          predicates:
+            - Path=/api/{version}/coupons/**, /api/{version}/coupon-templates/**
+        # event-service
+        - id: event-service
+          uri: lb://event-service
+          predicates:
+            - Path=/api/{version}/events/**
+      discovery:
+        locator:
+          enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_DEFAULT_ZONE}
+
+service:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY}
+  gateway:
+    secret-key: ${GATEWAY_SECRET_KEY}
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+      base-path: ${ACTUATOR_BASE_PATH}
+    jmx:
+      exposure:
+        exclude: "*"
+    access:
+      default: none
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  endpoint:
+    prometheus:
+      access: unrestricted
+  server:
+    address: ${MANAGEMENT_SERVER_ADDRESS}
+    port: ${MANAGEMENT_SERVER_PORT}
