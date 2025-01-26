@@ -76,7 +76,7 @@ class ProductUseCaseTest {
         UUID.randomUUID().toString(),
         1L,
         "베이직 긴팔 티셔츠",
-        29900,
+        10000,
         "편안한 착용감의 데일리 티셔츠",
         "BLACK",
         "top_image_url.jpg",

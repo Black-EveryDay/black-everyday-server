@@ -10,8 +10,10 @@ import com.ed.productservice.domain.vo.ProductCategory;
 import com.ed.productservice.domain.vo.ProductStatus;
 import com.ed.productservice.infrastructure.persistence.entity.BrandEntity;
 import com.ed.productservice.infrastructure.persistence.entity.ProductEntity;
+import com.ed.productservice.infrastructure.persistence.entity.ProductPriceVersionEntity;
 import com.ed.productservice.infrastructure.persistence.entity.size.TopSizeStockEntity;
 import com.ed.productservice.infrastructure.persistence.repository.BrandRepository;
+import com.ed.productservice.infrastructure.persistence.repository.ProductPriceVersionRepository;
 import com.ed.productservice.infrastructure.persistence.repository.ProductRepository;
 import com.ed.productservice.infrastructure.persistence.repository.TopSizeStockRepository;
 import com.ed.productservice.libs.common.ApiResponse;
@@ -32,7 +34,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -40,7 +41,6 @@ import org.springframework.test.web.servlet.MvcResult;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Slf4j
-@TestPropertySource(locations = "classpath:application-test.yml") // application-test.yml만 로드
 class ProductInternalControllerTest {
 
   @Autowired
@@ -55,6 +55,8 @@ class ProductInternalControllerTest {
   private ProductRepository productRepository;
   @Autowired
   private TopSizeStockRepository topSizeStockRepository;
+  @Autowired
+  private ProductPriceVersionRepository productPriceVersionRepository;
 
   @BeforeEach
   void setUp() {
@@ -164,6 +166,10 @@ class ProductInternalControllerTest {
     createTopSizeStock(productEntity1.getProductId(), "M");
     createTopSizeStock(productEntity2.getProductId(), "L");
 
+    productPriceVersionRepository.saveAll(
+        List.of(ProductPriceVersionEntity.of(productEntity1.getProductId(), 10000),
+            ProductPriceVersionEntity.of(productEntity2.getProductId(), 20000)));
+
     return List.of(productEntity1, productEntity2);
   }
 
@@ -210,7 +216,6 @@ class ProductInternalControllerTest {
         UUID.randomUUID().toString(),
         brandId,
         name,
-        30000,
         "테스트 상품입니다",
         "BLACK",
         "test-image.jpg",
