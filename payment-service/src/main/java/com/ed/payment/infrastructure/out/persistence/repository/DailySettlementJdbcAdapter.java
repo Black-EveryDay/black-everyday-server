@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-class DailySettlementPersistenceAdapter implements CreateDailySettlementPort {
+class DailySettlementJdbcAdapter implements CreateDailySettlementPort {
 
   private final JdbcTemplate jdbcTemplate;
 
