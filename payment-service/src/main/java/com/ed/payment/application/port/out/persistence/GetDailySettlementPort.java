@@ -5,5 +5,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface GetDailySettlementPort {
-  List<AggregatedDailySettlement> aggregateLastMonthDailySettlements(LocalDateTime startDateTime, LocalDateTime endDateTime, Long currentId, int pageSize);
+  List<AggregatedDailySettlement> aggregateLastMonthDailySettlements(LocalDateTime startDateTime, LocalDateTime endDateTime, String currentId, int pageSize);
 }

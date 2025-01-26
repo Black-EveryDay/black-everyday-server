@@ -2,6 +2,7 @@ package com.ed.payment.infrastructure.out.batch.chunk.reader;
 
 import com.ed.payment.application.port.out.persistence.GetDailySettlementPort;
 import com.ed.payment.application.port.out.persistence.dtos.AggregatedDailySettlement;
+import jakarta.persistence.EntityManagerFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,8 +18,8 @@ public class AggregateDailySettlementReaderConfig {
 
   @Bean
   public AbstractPagingItemReader<AggregatedDailySettlement> aggregateDailySettlementItemReader(
-      GetDailySettlementPort getDailySettlementPort) {
-    return new AggregateDailySettlementCustomItemReader(getDailySettlementPort,
+      EntityManagerFactory emf, GetDailySettlementPort getDailySettlementPort) {
+    return new AggregateDailySettlementCustomItemReader(emf, getDailySettlementPort,
         getStartDateTime(), getEndDateTime(), DEFAULT_PAGE_SIZE);
   }
 

@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PRIVATE)
 public class AggregatedDailySettlement {
 
-  private Long dailySettlementId;
   private String brandPublicId;
   private BigDecimal totalNetRevenue;
   private BigDecimal totalDiscountAmount;

@@ -20,25 +20,23 @@ class DailySettlementQueryDslAdapter implements GetDailySettlementPort {
 
   @Override
   public List<AggregatedDailySettlement> aggregateLastMonthDailySettlements(
-      LocalDateTime startDateTime, LocalDateTime endDateTime, Long currentId, int pageSize) {
+      LocalDateTime startDateTime, LocalDateTime endDateTime, String currentId, int pageSize) {
     return queryFactory
         .select(Projections.constructor(AggregatedDailySettlement.class,
-            dailySettlementJpaEntity.id,
             dailySettlementJpaEntity.brandPublicId,
             dailySettlementJpaEntity.netRevenue.sum().as("totalNetRevenue"),
             dailySettlementJpaEntity.discountAmount.sum().as("totalDiscountAmount"),
             dailySettlementJpaEntity.commission.sum().as("totalCommission")))
         .from(dailySettlementJpaEntity)
         .where(dailySettlementJpaEntity.settledAt.between(startDateTime, endDateTime)
-            .and(dailySettlementIdGt(currentId)))
-        .groupBy(dailySettlementJpaEntity.brandPublicId, dailySettlementJpaEntity.id)
-        .orderBy(dailySettlementJpaEntity.id.asc())
+            .and(brandPublicIdGt(currentId)))
+        .groupBy(dailySettlementJpaEntity.brandPublicId)
+        .orderBy(dailySettlementJpaEntity.brandPublicId.asc())
         .limit(pageSize)
         .fetch();
   }
 
-
-  private BooleanExpression dailySettlementIdGt(Long currentId) {
-    return currentId != null ? dailySettlementJpaEntity.id.gt(currentId) : null;
+  private BooleanExpression brandPublicIdGt(String currentId) {
+    return currentId != null ? dailySettlementJpaEntity.brandPublicId.gt(currentId) : null;
   }
 }
