@@ -13,13 +13,18 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${SPRING_DATASOURCE_URL}
+    url: jdbc:mysql://localhost:3306/product?useSSL=false&
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
 
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
   kafka:
     bootstrap-servers: ${KAFKA_SERVERS}
-    schema-registry-url: ${SCHEMA_REGISTRY_URL}
+    schema-registry-url: ${PROD_SCHEMA_REGISTRY_URL}
     consumer:
       group-id: ${CONSUMER_GROUP_ID}
 
@@ -27,3 +32,25 @@ pg:
   tosspayments:
     secret-key: ${TOSS_PAYMENTS_SECRET_KEY}
     base-url: ${TOSS_PAYMENTS_BASE_URL}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+      base-path: ${ACTUATOR_BASE_PATH}
+    jmx:
+      exposure:
+        exclude: "*"
+    access:
+      default: none
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  endpoint:
+    prometheus:
+      access: unrestricted
+  server:
+    address: ${MANAGEMENT_SERVER_ADDRESS}
+    port: ${MANAGEMENT_SERVER_PORT}
