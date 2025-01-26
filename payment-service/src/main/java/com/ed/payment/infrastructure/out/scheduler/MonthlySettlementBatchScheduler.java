@@ -15,17 +15,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class DailySettlementBatchScheduler {
+public class MonthlySettlementBatchScheduler {
 
   private final JobLauncher jobLauncher;
-  private final Job dailySettlementJob;
+  private final Job monthlySettlementJob;
 
-  @Scheduled(cron = "00 00 04 * * *")
-  public void runDailySettlementJob()
+  @Scheduled(cron = "00 00 00 1 * *")
+  public void runMonthlySettlementJob()
       throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
     JobParameters jobParameters = new JobParametersBuilder()
         .addLocalDateTime("requestDateTime", LocalDateTime.now())
         .toJobParameters();
-    jobLauncher.run(dailySettlementJob, jobParameters);
+    jobLauncher.run(monthlySettlementJob, jobParameters);
   }
 }

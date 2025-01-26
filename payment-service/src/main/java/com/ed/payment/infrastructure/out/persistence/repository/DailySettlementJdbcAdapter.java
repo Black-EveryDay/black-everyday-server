@@ -21,6 +21,7 @@ class DailySettlementJdbcAdapter implements CreateDailySettlementPort {
       String sql = "INSERT INTO ED_DAILY_SETTLEMENT (ORDER_PUBLIC_ID, BRAND_PUBLIC_ID, PRODUCT_PUBLIC_ID, NET_REVENUE, DISCOUNT_AMOUNT, COMMISSION, SETTLED_AT, CREATED_AT, UPDATED_AT, IS_DELETED) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+      Timestamp now = Timestamp.valueOf(LocalDateTime.now());
       jdbcTemplate.batchUpdate(sql, dailySettlements, dailySettlements.size(),
           (PreparedStatement ps, DailySettlement data) -> {
               ps.setString(1, data.getOrderPublicId());
@@ -29,9 +30,9 @@ class DailySettlementJdbcAdapter implements CreateDailySettlementPort {
               ps.setBigDecimal(4, data.getNetRevenue());
               ps.setBigDecimal(5, data.getDiscountAmount());
               ps.setBigDecimal(6, data.getCommission());
-              ps.setTimestamp(7, Timestamp.valueOf(LocalDateTime.now()));
-              ps.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
-              ps.setTimestamp(9, Timestamp.valueOf(LocalDateTime.now()));
+              ps.setTimestamp(7, now);
+              ps.setTimestamp(8, now);
+              ps.setTimestamp(9, now);
               ps.setBoolean(10, false);
           });
   }
