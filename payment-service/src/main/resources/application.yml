@@ -6,9 +6,9 @@ spring:
     active: dev
 
 server:
-  port: 19096
+  port: ${SPRING_PORT}
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka
+      defaultZone: ${EUREKA_DEFAULT_ZONE}
