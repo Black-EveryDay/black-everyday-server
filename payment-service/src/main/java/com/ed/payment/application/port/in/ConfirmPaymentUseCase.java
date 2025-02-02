@@ -2,7 +2,8 @@ package com.ed.payment.application.port.in;
 
 import com.ed.payment.application.port.in.command.ConfirmPaymentCommand;
 import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
+import java.io.IOException;
 
 public interface ConfirmPaymentUseCase {
-  PaymentDoneResponse confirmPayment(ConfirmPaymentCommand command);
+  PaymentDoneResponse confirmPayment(ConfirmPaymentCommand command) throws IOException;
 }

@@ -1,6 +1,4 @@
-package com.ed.payment.infrastructure.out.pg.toss;
-
-import static com.ed.payment.domain.PaymentStatus.getConfirmStatus;
+package com.ed.payment.infrastructure.out.pg.toss.retrofit;
 
 import com.ed.payment.application.port.out.pg.dtos.PaymentCanceledResponse;
 import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
@@ -18,7 +16,7 @@ class PaymentPgMapper {
         .orderId(response.getOrderId())
         .totalAmount(response.getTotalAmount())
         .balanceAmount(response.getBalanceAmount())
-        .paymentStatus(getConfirmStatus(response.getStatus()))
+        .paymentStatus(response.getStatus())
         .build();
   }
 

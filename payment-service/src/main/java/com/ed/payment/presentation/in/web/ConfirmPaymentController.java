@@ -5,6 +5,7 @@ import static com.ed.payment.libs.common.response.ApiResponseUtils.ok;
 import com.ed.payment.application.port.in.command.ConfirmPaymentCommand;
 import com.ed.payment.application.port.in.ConfirmPaymentUseCase;
 import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class ConfirmPaymentController {
   @GetMapping("/api/v1/payments/success")
   public ResponseEntity<PaymentDoneResponse> requestPaymentSuccess(
       @RequestParam String paymentType, @RequestParam String paymentKey,
-      @RequestParam String orderId, @RequestParam Long amount) {
+      @RequestParam String orderId, @RequestParam Long amount) throws IOException {
     return ok(confirmPaymentUseCase.confirmPayment(
         ConfirmPaymentCommand.of(paymentType, paymentKey, orderId, amount)));
   }

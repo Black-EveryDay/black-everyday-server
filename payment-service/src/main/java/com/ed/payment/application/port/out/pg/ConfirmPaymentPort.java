@@ -1,8 +1,9 @@
 package com.ed.payment.application.port.out.pg;
 
+import com.ed.payment.application.port.out.pg.dtos.ConfirmPaymentRequest;
 import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
-import com.ed.payment.domain.Payment;
+import java.io.IOException;
 
 public interface ConfirmPaymentPort {
-  PaymentDoneResponse confirmPayment(Payment payment, String paymentKey);
+  PaymentDoneResponse confirmPayment(String idempotencyKey, ConfirmPaymentRequest request) throws IOException;
 }

@@ -10,10 +10,12 @@ import com.ed.payment.application.port.out.mq.Producer;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.application.port.out.pg.CancelPaymentPort;
+import com.ed.payment.application.port.out.pg.dtos.CancelPaymentRequest;
 import com.ed.payment.application.port.out.pg.dtos.PaymentCanceledResponse;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.libs.common.validator.PaymentCancelValidator;
 import com.ed.payment.libs.common.validator.dtos.PaymentValidatorRequest;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +37,15 @@ public class CancelPaymentService implements CancelPaymentUseCase {
 
   @Transactional
   @Override
-  public void cancelPayment(OrderPaymentCancelRequestEvent request) {
+  public void cancelPayment(OrderPaymentCancelRequestEvent request) throws IOException {
     Payment payment = getPaymentPort.getPaymentByOrderPublicId(request.getOrderId());
 
     payment.validatePayment(cancelValidator, createPaymentValidatorRequest(payment, request));
 
-    PaymentCanceledResponse paymentCanceledResponse = cancelPaymentPort.cancelPayment(outPortPgMapper.cancelPaymentToPg(payment, request));
+    CancelPaymentRequest cancelRequest = outPortPgMapper.toCancelRequest(
+        request.getCancelReason(), request.getCancelAmount());
+    PaymentCanceledResponse paymentCanceledResponse = cancelPaymentPort.cancelPayment(
+        payment.getPaymentKey(), payment.getIdempotencyKey(), cancelRequest);
 
     updatePaymentPort.updatePaymentStatusAndIdempotencyKeyById(
         outPortPersistenceMapper.updateCancelPaymentToPersistence(payment.getPaymentId(), paymentCanceledResponse));

@@ -1,9 +1,12 @@
 package com.ed.payment.infrastructure.in.mq;
 
 import static com.ed.payment.libs.common.constant.KafkaTopics.ORDER_PAYMENT_CANCEL_REQUEST;
+import static com.ed.payment.libs.common.exception.ErrorCode.COMMON_SYSTEM_ERROR;
 
 import com.ed.OrderPaymentCancelRequestEvent;
 import com.ed.payment.application.port.in.CancelPaymentUseCase;
+import com.ed.payment.libs.common.exception.CustomException;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -21,7 +24,12 @@ public class OrderPaymentCancel {
   public void receiveOrderCanceled(ConsumerRecord<String, OrderPaymentCancelRequestEvent> consumerRecord) {
     OrderPaymentCancelRequestEvent payload = consumerRecord.value();
     logConsumerRecord(payload);
-    cancelPaymentUseCase.cancelPayment(payload);
+
+    try {
+      cancelPaymentUseCase.cancelPayment(payload);
+    } catch (IOException e) {
+      throw new CustomException(COMMON_SYSTEM_ERROR);
+    }
   }
 
   private void logConsumerRecord(OrderPaymentCancelRequestEvent request) {

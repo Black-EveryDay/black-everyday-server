@@ -9,11 +9,13 @@ import com.ed.payment.application.port.in.command.ConfirmPaymentCommand;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
 import com.ed.payment.application.port.out.pg.ConfirmPaymentPort;
+import com.ed.payment.application.port.out.pg.dtos.ConfirmPaymentRequest;
 import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import com.ed.payment.libs.common.validator.PaymentConfirmValidator;
 import com.ed.payment.libs.common.validator.dtos.PaymentValidatorRequest;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ConfirmPaymentService implements ConfirmPaymentUseCase {
 
+  private final OutPortPgMapper outPortPgMapper;
   private final GetPaymentPort getPaymentPort;
   private final PaymentConfirmValidator confirmValidator;
   private final ConfirmPaymentPort confirmPaymentPort;
@@ -33,12 +36,14 @@ public class ConfirmPaymentService implements ConfirmPaymentUseCase {
 
   @Transactional
   @Override
-  public PaymentDoneResponse confirmPayment(ConfirmPaymentCommand command) {
+  public PaymentDoneResponse confirmPayment(ConfirmPaymentCommand command) throws IOException {
     Payment payment = getPaymentPort.getPaymentByOrderPublicId(command.getOrderId());
 
     payment.validatePayment(confirmValidator, createPaymentValidatorRequest(payment, command));
 
-    PaymentDoneResponse paymentDoneResponse = confirmPaymentPort.confirmPayment(payment, command.getPaymentKey());
+    ConfirmPaymentRequest confirmRequest = outPortPgMapper.toConfirmRequest(
+        command.getPaymentKey(), payment.getOrderPublicId(), payment.getTotalAmount());
+    PaymentDoneResponse paymentDoneResponse = confirmPaymentPort.confirmPayment(payment.getIdempotencyKey(), confirmRequest);
 
     updatePaymentPort.updatePaymentStatusAndPaymentKeyById(
         payment.getPaymentId(), paymentDoneResponse.getPaymentStatus(), command.getPaymentKey());

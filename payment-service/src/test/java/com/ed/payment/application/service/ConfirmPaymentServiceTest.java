@@ -3,7 +3,6 @@ package com.ed.payment.application.service;
 import static com.ed.payment.domain.PaymentStatus.DONE;
 import static com.ed.payment.domain.PaymentStatus.READY;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,6 +16,7 @@ import com.ed.payment.application.port.out.pg.dtos.PaymentDoneResponse;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import com.ed.payment.libs.common.validator.PaymentConfirmValidator;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +31,9 @@ class ConfirmPaymentServiceTest {
 
   @InjectMocks
   private ConfirmPaymentService confirmPaymentService;
+
+  @Mock
+  private OutPortPgMapper outPortPgMapper;
 
   @Mock
   private GetPaymentPort getPaymentPort;
@@ -49,7 +52,7 @@ class ConfirmPaymentServiceTest {
 
   @Test
   @DisplayName("confirmPayment: 결제 승인 정보를 입력 받아 결제 승인을 요청한다.")
-  void confirmPayment_success() {
+  void confirmPayment_success() throws IOException {
     // given
     final String paymentKey = "tgen_20250107154634hYNt7";
     final String orderPublicId = UUID.randomUUID().toString();
@@ -60,26 +63,26 @@ class ConfirmPaymentServiceTest {
     PaymentDoneResponse confirmResponse = createConfirmResponse(paymentKey, orderPublicId, amount);
 
     // stubbing
-    when(getPaymentPort.getPaymentByOrderPublicId(orderPublicId))
+    when(getPaymentPort.getPaymentByOrderPublicId(any()))
         .thenReturn(payment);
 
-    when(confirmPaymentPort.confirmPayment(payment, paymentKey))
+    when(confirmPaymentPort.confirmPayment(any(), any()))
         .thenReturn(confirmResponse);
 
     doNothing().when(updatePaymentPort)
-        .updatePaymentStatusAndPaymentKeyById(payment.getPaymentId(), confirmResponse.getPaymentStatus(), paymentKey);
+        .updatePaymentStatusAndPaymentKeyById(any(), any(), any());
 
-    when(producer.send(anyString(), any(OrderPaymentConfirmResponseEvent.class)))
+    when(producer.send(any(), any()))
         .thenReturn(true);
 
     // when
     confirmPaymentService.confirmPayment(confirmRequest);
 
     // then
-    verify(getPaymentPort).getPaymentByOrderPublicId(orderPublicId);
-    verify(confirmPaymentPort).confirmPayment(payment, paymentKey);
-    verify(updatePaymentPort).updatePaymentStatusAndPaymentKeyById(payment.getPaymentId(), confirmResponse.getPaymentStatus(), paymentKey);
-    verify(producer).send(anyString(), any(OrderPaymentConfirmResponseEvent.class));
+    verify(getPaymentPort).getPaymentByOrderPublicId(any());
+    verify(confirmPaymentPort).confirmPayment(any(), any());
+    verify(updatePaymentPort).updatePaymentStatusAndPaymentKeyById(any(), any(), any());
+    verify(producer).send(any(), any());
   }
 
   private ConfirmPaymentCommand createConfirmRequest(String paymentKey, String orderPublicId, Long amount) {

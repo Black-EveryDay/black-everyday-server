@@ -9,8 +9,9 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor(access = PRIVATE)
-public class CancelPaymentRequest {
+public class ConfirmPaymentRequest {
 
-  private String cancelReason;
-  private Long cancelAmount;
+  private String paymentKey;
+  private String orderId;
+  private Long amount;
 }

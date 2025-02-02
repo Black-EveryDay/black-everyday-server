@@ -1,4 +1,4 @@
-package com.ed.payment.libs.common.deserializer;
+package com.ed.payment.infrastructure.out.pg.toss.retrofit.deserializer;
 
 import com.ed.payment.domain.PaymentStatus;
 import com.fasterxml.jackson.core.JsonParser;
