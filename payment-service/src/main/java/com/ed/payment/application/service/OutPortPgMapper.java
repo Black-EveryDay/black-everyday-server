@@ -1,19 +1,24 @@
 package com.ed.payment.application.service;
 
-import com.ed.OrderPaymentCancelRequestEvent;
 import com.ed.payment.application.port.out.pg.dtos.CancelPaymentRequest;
-import com.ed.payment.domain.Payment;
+import com.ed.payment.application.port.out.pg.dtos.ConfirmPaymentRequest;
 import org.springframework.stereotype.Component;
 
 @Component
 class OutPortPgMapper {
 
-  CancelPaymentRequest cancelPaymentToPg(Payment payment, OrderPaymentCancelRequestEvent request) {
+  ConfirmPaymentRequest toConfirmRequest(String paymentKey, String orderPublicId, Long totalAmount) {
+    return ConfirmPaymentRequest.builder()
+        .paymentKey(paymentKey)
+        .orderId(orderPublicId)
+        .amount(totalAmount)
+        .build();
+  }
+
+  CancelPaymentRequest toCancelRequest(String cancelReason, long cancelAmount) {
     return CancelPaymentRequest.builder()
-        .paymentKey(payment.getPaymentKey())
-        .idempotencyKey(payment.getIdempotencyKey())
-        .cancelReason(request.getCancelReason())
-        .cancelAmount(request.getCancelAmount())
+        .cancelReason(cancelReason)
+        .cancelAmount(cancelAmount)
         .build();
   }
 }

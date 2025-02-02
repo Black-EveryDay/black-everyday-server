@@ -77,6 +77,10 @@ dependencies {
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${springCloudVersion}"
     implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${springCloudVersion}"
 
+    // retrofit
+    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-jackson:${retrofitVersion}"
+
     // lombok
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
@@ -84,6 +88,7 @@ dependencies {
     // test
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
+    testImplementation "com.squareup.retrofit2:retrofit-mock:${retrofitVersion}"
 }
 
 tasks.named('test') {

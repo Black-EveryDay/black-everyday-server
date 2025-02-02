@@ -13,10 +13,6 @@ public enum PaymentStatus {
     return paymentStatus == DONE;
   }
 
-  public static PaymentStatus getConfirmStatus(PaymentStatus paymentStatus) {
-    return DONE == paymentStatus ? DONE : ABORTED;
-  }
-
   public static boolean isCanceled(PaymentStatus paymentStatus) {
     return paymentStatus == CANCELED || paymentStatus == PARTIAL_CANCELED;
   }

@@ -3,7 +3,6 @@ package com.ed.payment.application.service;
 import static com.ed.payment.domain.PaymentStatus.CANCELED;
 import static com.ed.payment.domain.PaymentStatus.DONE;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,13 +11,12 @@ import com.ed.OrderPaymentCancelRequestEvent;
 import com.ed.OrderPaymentCancelResponseEvent;
 import com.ed.payment.application.port.out.persistence.GetPaymentPort;
 import com.ed.payment.application.port.out.persistence.UpdatePaymentPort;
-import com.ed.payment.application.port.out.persistence.dtos.UpdateCancelPaymentRequest;
 import com.ed.payment.application.port.out.pg.CancelPaymentPort;
-import com.ed.payment.application.port.out.pg.dtos.CancelPaymentRequest;
 import com.ed.payment.application.port.out.pg.dtos.PaymentCanceledResponse;
 import com.ed.payment.domain.Payment;
 import com.ed.payment.infrastructure.out.mq.OrderPaymentResponse;
 import com.ed.payment.libs.common.validator.PaymentCancelValidator;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -57,11 +55,10 @@ class CancelPaymentServiceTest {
 
   @Test
   @DisplayName("cancelPayment: 주문 취소 시 발행한 취소 메시지를 기반으로 결제를 취소한다.")
-  void cancelPayment_success() {
+  void cancelPayment_success() throws IOException {
   	// given
     final String userPublicId = UUID.randomUUID().toString();
     final String paymentPublicId = UUID.randomUUID().toString();
-    final Long paymentId = 1L;
     final String paymentKey ="tgen_20250107154634hYNt7";
     final String orderPublicId = UUID.randomUUID().toString();
     final Long totalAmount = 10000L;
@@ -78,31 +75,26 @@ class CancelPaymentServiceTest {
     PaymentCanceledResponse cancelResponse = createPaymentResponse(
         paymentKey, orderPublicId, totalAmount, balanceAmount, cancelAmount);
 
-    CancelPaymentRequest cancelPaymentRequest = outPortPgMapper.cancelPaymentToPg(payment, cancelRequest);
-
-    UpdateCancelPaymentRequest updateCancelPaymentRequest = outPortPersistenceMapper.updateCancelPaymentToPersistence(
-        paymentId, cancelResponse);
-
     // stubbing
-    when(getPaymentPort.getPaymentByOrderPublicId(orderPublicId))
+    when(getPaymentPort.getPaymentByOrderPublicId(any()))
         .thenReturn(payment);
 
-    when(cancelPaymentPort.cancelPayment(cancelPaymentRequest))
+    when(cancelPaymentPort.cancelPayment(any(), any(), any()))
         .thenReturn(cancelResponse);
 
     doNothing().when(updatePaymentPort)
-        .updatePaymentStatusAndIdempotencyKeyById(updateCancelPaymentRequest);
+        .updatePaymentStatusAndIdempotencyKeyById(any());
 
-    when(producer.send(anyString(), any()))
+    when(producer.send(any(), any()))
         .thenReturn(true);
 
     // when
     cancelPaymentService.cancelPayment(cancelRequest);
 
     // then
-    verify(getPaymentPort).getPaymentByOrderPublicId(anyString());
-    verify(updatePaymentPort).updatePaymentStatusAndIdempotencyKeyById(updateCancelPaymentRequest);
-    verify(producer).send(anyString(), any());
+    verify(getPaymentPort).getPaymentByOrderPublicId(any());
+    verify(updatePaymentPort).updatePaymentStatusAndIdempotencyKeyById(any());
+    verify(producer).send(any(), any());
   }
 
   private Payment createPayment(
